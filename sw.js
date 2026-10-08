@@ -1,7 +1,7 @@
 /* Powrót 2026 — service worker
    Apka „Wyprawy”: index.html (wszystkie wyprawy) + powroty.html (skrót do wyprawy Powrót).
    Podbij VERSION przy każdym wgraniu — inaczej przeglądarka nie zauważy zmiany. */
-const VERSION = 'v15';
+const VERSION = 'v16';
 const SHELL   = 'powrot-shell-' + VERSION;
 const TILES   = 'powrot-tiles';   // BEZ wersji — aktualizacja apki nie kasuje zapisanych map
 const MAX_TILES = 1200;
