@@ -1551,6 +1551,11 @@ main{padding-bottom:120px}
 .cr-b{background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 10px;font:600 11.5px/1 Inter,sans-serif;color:var(--muted);cursor:pointer}
 .cr-b.del{color:var(--alarm)}
 .calc-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.csec{margin-bottom:16px}
+.csec-h{display:flex;align-items:baseline;gap:8px;padding:0 2px 7px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.csec-h b{font-family:'Fraunces',serif;font-size:16px;color:var(--burgundy)}
+.csec-h span{font-size:11px;color:var(--muted)}
+.csec-h em{margin-left:auto;font-style:normal;font:700 14px/1 Inter,sans-serif;color:var(--cop-deep)}
 </style>
 </head>
 <body>
@@ -3394,7 +3399,7 @@ function buildCalc(){
     '<small>'+(t.dateless?'termin nieustalony · ':'')+plural(days,'dzień','dni','dni')+' · '+plural(rows.length,'pozycja','pozycje','pozycji')+'</small></div>'+
     '<button class="tb-btn" id="calc-add">+ Pozycja</button></div>';
   h+='<div class="calc-sum">'+
-    '<div class="k"><div class="l">Razem</div><div class="v">'+fmt(sum)+' zł</div><div class="s">'+fmt2(sum/rate(t.cur))+' '+esc(toSym(t.cur))+'</div></div>'+
+    '<div class="k"><div class="l">Razem</div><div class="v">'+fmt(sum)+' zł</div><div class="s">'+fmt2(sum/rate('EUR'))+' €'+'</div></div>'+
     '<div class="k"><div class="l">Na dzień</div><div class="v">'+fmt(perDay)+' zł</div><div class="s">przy '+plural(days,'dniu','dniach','dniach')+'</div></div>'+
     '<div class="k cap"><div class="l">Mój limit</div><div class="v"><input id="calc-cap" type="number" inputmode="numeric" placeholder="—" value="'+(cap||'')+'"> zł</div>'+
       '<div class="s '+(cap?(sum<=cap?'ok':'over'):'')+'">'+(cap?(sum<=cap?'mieści się, zostaje '+fmt(cap-sum)+' zł':'przekroczone o '+fmt(sum-cap)+' zł'):'wpisz, żeby sprawdzić')+'</div></div>'+
@@ -3402,7 +3407,7 @@ function buildCalc(){
   if(!rows.length){
     h+='<div class="empty">Pusto. Wpisz loty, noclegi i transport, a apka policzy, czy to się spina.<br><br>Możesz też wygenerować szkic z planu wyprawy i poprawić liczby.</div>';
   }else{
-    h+=rows.map((r,i)=>'<div class="crow'+(r.off?' off':'')+'" data-ci="'+i+'">'+
+    const rowHtml=(r,i)=>'<div class="crow'+(r.off?' off':'')+'" data-ci="'+i+'">'+
       '<div class="cr-1"><input class="cr-d" data-cf="desc" value="'+attr(r.desc||'')+'" placeholder="opis, np. Lizbona → Sal"></div>'+
       '<div class="cr-2">'+
         '<select class="cr-c" data-cf="cat">'+CALC_CATS.map(c=>'<option value="'+c[0]+'"'+(r.cat===c[0]?' selected':'')+'>'+esc(c[1])+'</option>').join('')+'</select>'+
@@ -3411,13 +3416,23 @@ function buildCalc(){
       '<div class="cr-3">'+
         '<label>ile<input type="number" inputmode="decimal" data-cf="qty" value="'+attr(r.qty!=null?r.qty:1)+'"></label>'+
         '<label>cena<input type="number" inputmode="decimal" data-cf="price" value="'+attr(r.price||'')+'"></label>'+
-        '<label>waluta<select data-cf="cur">'+['PLN','EUR','USD','GBP',toCode(t.cur)].filter((v,i,a)=>a.indexOf(v)===i)
+        '<label>waluta<select data-cf="cur">'+['PLN','EUR','USD','GBP',toCode(t.cur)].filter((v,i2,a)=>a.indexOf(v)===i2)
           .map(c=>'<option value="'+c+'"'+(toCode(r.cur)===c?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
         '<div class="cr-sum">'+fmt(calcLine(r))+' zł</div>'+
       '</div>'+
       '<div class="cr-4"><button class="cr-b" data-coff="'+i+'">'+(r.off?'✓ wliczam':'○ pomijam')+'</button>'+
         '<button class="cr-b del" data-cdel="'+i+'">🗑</button></div>'+
-    '</div>').join('');
+    '</div>';
+    const idx=rows.map((r,i)=>i);
+    CALC_CATS.forEach(c=>{
+      const mine=idx.filter(i=>(rows[i].cat||'inne')===c[0]);
+      if(!mine.length)return;
+      const sub=mine.filter(i=>!rows[i].off).reduce((a,i)=>a+calcLine(rows[i]),0);
+      h+='<div class="csec"><div class="csec-h"><b>'+esc(c[1])+'</b>'+
+        '<span>'+plural(mine.length,'pozycja','pozycje','pozycji')+'</span>'+
+        '<em>'+fmt(sub)+' zł</em></div>'+
+        mine.map(i=>rowHtml(rows[i],i)).join('')+'</div>';
+    });
   }
   h+='<div class="calc-acts"><button class="tb-btn" id="calc-gen">⚙ Szkic z planu</button>'+
      '<button class="tb-btn" id="calc-csv">⬇ CSV do Excela</button>'+
@@ -3455,6 +3470,7 @@ $('#calc').addEventListener('input',e=>{
   const t=T(),r=calcRows(t)[+row.dataset.ci];if(!r)return;
   r[f.dataset.cf]=(f.dataset.cf==='qty'||f.dataset.cf==='price')?num(f.value):f.value;
   saveTrips();
+  if(f.dataset.cf==='cat'){buildCalc();return;}
   row.querySelector('.cr-sum').textContent=fmt(calcLine(r))+' zł';
   const sum=calcSum(t),cap=num(t.calcCap),r0=tripRange(t);
   const k=$$('#calc .calc-sum .k');
