@@ -1519,6 +1519,38 @@ main{padding-bottom:120px}
 .pk-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:6px}
 .pk-row b{font-size:13.5px}
 .pk-row small{display:block;color:var(--muted);font-size:11px}
+/* karty informacyjne */
+.irow{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.irow:first-child{border-top:0}
+.ik{flex:0 0 96px;font:600 12px/1.4 Inter,sans-serif;color:var(--cop-deep)}
+.iv{flex:1;font-size:13.5px;line-height:1.55}
+.iv small{display:block;color:var(--muted);font-size:11.5px;margin-top:4px}
+/* kosztorys */
+.calc-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.calc-h b{font-family:'Fraunces',serif;font-size:18px;color:var(--burgundy);display:block}
+.calc-h small{color:var(--muted);font-size:11.5px}
+.calc-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.calc-sum .k{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px}
+.calc-sum .l{font:600 10px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.calc-sum .v{font-family:'Fraunces',serif;font-size:17px;color:var(--burgundy);margin:4px 0 2px}
+.calc-sum .s{font-size:10.5px;color:var(--muted);line-height:1.3}
+.calc-sum .s.ok{color:var(--olive-deep);font-weight:600}
+.calc-sum .s.over{color:var(--alarm);font-weight:600}
+.calc-sum .cap input{width:72px;border:1px solid var(--line);border-radius:7px;padding:3px 6px;font:inherit;font-size:15px}
+.crow{background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.crow.off{opacity:.45}
+.cr-1 input{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;font:inherit;font-size:14px;padding:4px 0;color:var(--ink)}
+.cr-2{display:flex;gap:6px;margin-top:8px}
+.cr-2 select,.cr-2 input{flex:1;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:12.5px;background:#fff;min-width:0}
+.cr-3{display:flex;gap:6px;align-items:flex-end;margin-top:8px;flex-wrap:wrap}
+.cr-3 label{font:600 9.5px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.cr-3 input,.cr-3 select{border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px;background:#fff;width:66px}
+.cr-3 select{width:78px}
+.cr-sum{margin-left:auto;font-family:'Fraunces',serif;font-size:15px;color:var(--burgundy);padding-bottom:4px}
+.cr-4{display:flex;gap:6px;margin-top:8px}
+.cr-b{background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 10px;font:600 11.5px/1 Inter,sans-serif;color:var(--muted);cursor:pointer}
+.cr-b.del{color:var(--alarm)}
+.calc-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
 </style>
 </head>
 <body>
@@ -1548,6 +1580,7 @@ main{padding-bottom:120px}
     <button class="tab" data-p="wydatki"><span class="ti">∑</span>Wydatki</button>
     <span class="nav-sep"></span>
     <button class="tab" data-p="przew"><span class="ti">★</span>Przewodnik</button>
+    <button class="tab plan-only" data-p="kosztorys"><span class="ti">∑</span>Kosztorys</button>
     <button class="tab plan-only" data-p="pomysly"><span class="ti">✦</span>Pomysły</button>
     <button class="tab" data-p="insta"><span class="ti">◎</span>Insta</button>
     <button class="tab" data-p="lista"><span class="ti">✓</span>Lista</button>
@@ -1607,6 +1640,8 @@ main{padding-bottom:120px}
   </section>
 
   <!-- INSTA -->
+  <section class="panel" id="kosztorys"><div id="calc"></div></section>
+
   <section class="panel" id="pomysly"><div id="ideas"></div></section>
 
   <section class="panel" id="insta">
@@ -2442,12 +2477,19 @@ function buildInfos(){
     r.innerHTML='<b>Nowa wersja planu</b><p>Jest zaktualizowany plan tej wyprawy. Masz własne etapy, więc nie podmieniłem ich automatycznie. Zastosowanie zastąpi etapy (notatki przy starych dniach zostaną).</p><button class="insert-btn" id="rev-apply">↻ Zastosuj nowy plan</button>';
     w.appendChild(r);r.querySelector('#rev-apply').onclick=()=>{applyPackRev(T());saveTrips();buildStages();buildOptions();buildInfos();buildHeader&&buildHeader();toast('Plan zaktualizowany');};}
   const info=(P()&&P().info)||[];if(!info.length)return;
-  const f=el('div','fold');
-  f.innerHTML='<div class="fold-top"><div class="fold-ico" style="background:var(--burgundy)">✈</div><div class="fold-h"><div class="fold-n">Rezerwacje i loty</div>'+
-    '<div class="fold-s">'+plural(info.length,'pozycja','pozycje','pozycji')+'</div></div><span class="expand">⌄</span></div>'+
-    '<div class="fold-body"><div class="fold-body-inner">'+info.map(x=>'<div class="info-c"><b>'+esc(x.title)+'</b><small>'+esc(x.sub)+'</small><p>'+esc(x.body)+'</p></div>').join('')+'</div></div>';
-  f.querySelector('.fold-top').onclick=()=>f.classList.toggle('open');
-  w.appendChild(f);
+  info.forEach((x,i)=>{
+    const f=el('div','fold');
+    const rows=Array.isArray(x.rows)?x.rows:[];
+    const body=rows.length
+      ? rows.map(r=>'<div class="irow"><span class="ik">'+esc(r[0])+'</span><div class="iv">'+(r[1]||'')+'</div></div>').join('')
+      : ((x.sub?'<small>'+esc(x.sub)+'</small>':'')+(x.body?'<p>'+esc(x.body)+'</p>':''));
+    f.innerHTML='<div class="fold-top"><div class="fold-ico" style="background:var(--burgundy)">i</div>'+
+      '<div class="fold-h"><div class="fold-n">'+esc(x.title||'Informacje')+'</div>'+
+      '<div class="fold-s">'+(rows.length?plural(rows.length,'pozycja','pozycje','pozycji'):'rozwiń')+'</div></div><span class="expand">⌄</span></div>'+
+      '<div class="fold-body"><div class="fold-body-inner info-c">'+body+'</div></div>';
+    f.querySelector('.fold-top').onclick=()=>f.classList.toggle('open');
+    w.appendChild(f);
+  });
 }
 
 
@@ -2711,7 +2753,7 @@ document.addEventListener('keydown',e=>{
 /* ============ zakładki i tryb ============ */
 const tabs=$$('.tab');
 const BUILD={dzis:buildToday,plan:()=>{buildStages();buildOptions();buildInfos();if(!planScrolled){planScrolled=true;setTimeout(scrollToToday,120);}},
-  mapa:()=>setTimeout(initMap,60),wydatki:buildExpenses,przew:buildGuide,insta:buildIG,lista:buildChecks,pomysly:buildIdeas};
+  mapa:()=>setTimeout(initMap,60),wydatki:buildExpenses,przew:buildGuide,insta:buildIG,lista:buildChecks,pomysly:buildIdeas,kosztorys:buildCalc};
 let curTab=null;
 tabs.forEach(b=>b.addEventListener('click',()=>{
   tabs.forEach(t=>t.classList.remove('active'));$$('.panel').forEach(p=>p.classList.remove('active'));
@@ -3337,6 +3379,115 @@ $('#ideas').addEventListener('click',e=>{
     buildIdeas();toast(n?'Dodano '+plural(n,'pytanie','pytania','pytań'):'Szkielet już tu jest');return;}
   const f=e.target.closest('[data-f]');
   if(f){ideaFilter=f.dataset.f;buildIdeas();}
+});
+
+/* ============ KOSZTORYS — wstępny plan wyjazdu ============ */
+const CALC_CATS=[['lot','✈ Lot'],['transport','🚌 Transport'],['nocleg','🛏 Nocleg'],['jedzenie','🍽 Jedzenie'],['atrakcje','🎟 Atrakcje'],['inne','• Inne']];
+function calcRows(t){if(!Array.isArray(t.calc))t.calc=[];return t.calc;}
+function calcSum(t){return calcRows(t).filter(r=>!r.off).reduce((a,r)=>a+num(r.qty||1)*toPln(r.price,r.cur),0);}
+function calcLine(r){return num(r.qty||1)*toPln(r.price,r.cur);}
+function buildCalc(){
+  const t=T(),w=$('#calc'),rows=calcRows(t),r0=tripRange(t),days=r0.days;
+  const sum=calcSum(t),cap=num(t.calcCap);
+  const perDay=days?sum/days:0;
+  let h='<div class="calc-top"><div class="calc-h"><b>'+esc(t.emoji)+' '+esc(t.name)+'</b>'+
+    '<small>'+(t.dateless?'termin nieustalony · ':'')+plural(days,'dzień','dni','dni')+' · '+plural(rows.length,'pozycja','pozycje','pozycji')+'</small></div>'+
+    '<button class="tb-btn" id="calc-add">+ Pozycja</button></div>';
+  h+='<div class="calc-sum">'+
+    '<div class="k"><div class="l">Razem</div><div class="v">'+fmt(sum)+' zł</div><div class="s">'+fmt2(sum/rate(t.cur))+' '+esc(toSym(t.cur))+'</div></div>'+
+    '<div class="k"><div class="l">Na dzień</div><div class="v">'+fmt(perDay)+' zł</div><div class="s">przy '+plural(days,'dniu','dniach','dniach')+'</div></div>'+
+    '<div class="k cap"><div class="l">Mój limit</div><div class="v"><input id="calc-cap" type="number" inputmode="numeric" placeholder="—" value="'+(cap||'')+'"> zł</div>'+
+      '<div class="s '+(cap?(sum<=cap?'ok':'over'):'')+'">'+(cap?(sum<=cap?'mieści się, zostaje '+fmt(cap-sum)+' zł':'przekroczone o '+fmt(sum-cap)+' zł'):'wpisz, żeby sprawdzić')+'</div></div>'+
+  '</div>';
+  if(!rows.length){
+    h+='<div class="empty">Pusto. Wpisz loty, noclegi i transport, a apka policzy, czy to się spina.<br><br>Możesz też wygenerować szkic z planu wyprawy i poprawić liczby.</div>';
+  }else{
+    h+=rows.map((r,i)=>'<div class="crow'+(r.off?' off':'')+'" data-ci="'+i+'">'+
+      '<div class="cr-1"><input class="cr-d" data-cf="desc" value="'+attr(r.desc||'')+'" placeholder="opis, np. Lizbona → Sal"></div>'+
+      '<div class="cr-2">'+
+        '<select class="cr-c" data-cf="cat">'+CALC_CATS.map(c=>'<option value="'+c[0]+'"'+(r.cat===c[0]?' selected':'')+'>'+esc(c[1])+'</option>').join('')+'</select>'+
+        '<input class="cr-w" type="date" data-cf="when" value="'+attr(r.when||'')+'">'+
+      '</div>'+
+      '<div class="cr-3">'+
+        '<label>ile<input type="number" inputmode="decimal" data-cf="qty" value="'+attr(r.qty!=null?r.qty:1)+'"></label>'+
+        '<label>cena<input type="number" inputmode="decimal" data-cf="price" value="'+attr(r.price||'')+'"></label>'+
+        '<label>waluta<select data-cf="cur">'+['PLN','EUR','USD','GBP',toCode(t.cur)].filter((v,i,a)=>a.indexOf(v)===i)
+          .map(c=>'<option value="'+c+'"'+(toCode(r.cur)===c?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
+        '<div class="cr-sum">'+fmt(calcLine(r))+' zł</div>'+
+      '</div>'+
+      '<div class="cr-4"><button class="cr-b" data-coff="'+i+'">'+(r.off?'✓ wliczam':'○ pomijam')+'</button>'+
+        '<button class="cr-b del" data-cdel="'+i+'">🗑</button></div>'+
+    '</div>').join('');
+  }
+  h+='<div class="calc-acts"><button class="tb-btn" id="calc-gen">⚙ Szkic z planu</button>'+
+     '<button class="tb-btn" id="calc-csv">⬇ CSV do Excela</button>'+
+     '<button class="tb-btn" id="calc-copy">📋 Kopiuj tabelę</button>'+
+     (rows.length?'<button class="tb-btn danger" id="calc-clear">Wyczyść</button>':'')+'</div>';
+  w.innerHTML=h;a11y(w);
+}
+function calcGenerate(){
+  const t=T(),p=P(),out=[];
+  computeOffsets(t);
+  t.stages.forEach(s=>{
+    if(s.status==='skip')return;
+    const when=t.dateless?'':dateFor(t.start,s._off).iso;
+    if(s.price)out.push({cat:(s.mode==='plane'?'lot':'transport'),desc:stageTitle(s),when,qty:1,price:num(s.price),cur:toCode(s.curr)});
+    if(s.nights>0)out.push({cat:'nocleg',desc:(s.stay||s.to||stageTitle(s))+' — '+plural(s.nights,'noc','noce','nocy'),when,
+      qty:s.nights,price:num(s.stayPrice)||0,cur:toCode(s.curr2)});
+  });
+  ((p&&p.budget)||[]).forEach(b=>{
+    if(/nocleg/i.test(b.n))return;
+    out.push({cat:/lot|przelot/i.test(b.n)?'lot':(/jedzen/i.test(b.n)?'jedzenie':(/transport|alugu|prom/i.test(b.n)?'transport':'inne')),
+      desc:b.n,when:'',qty:1,price:num(b.v),cur:toCode(b.c)});
+  });
+  return out;
+}
+function calcTable(t){
+  const head=['Kategoria','Opis','Data','Ilość','Cena','Waluta','Razem PLN'];
+  const body=calcRows(t).map(r=>[(CALC_CATS.find(c=>c[0]===r.cat)||['','inne'])[1].replace(/^\S+\s/,''),r.desc||'',r.when||'',
+    r.qty!=null?r.qty:1,r.price||0,toCode(r.cur),Math.round(calcLine(r))]);
+  body.push(['','RAZEM','','','','',Math.round(calcSum(t))]);
+  return[head].concat(body);
+}
+$('#calc').addEventListener('input',e=>{
+  const f=e.target.closest('[data-cf]');if(!f)return;
+  const row=f.closest('[data-ci]');if(!row)return;
+  const t=T(),r=calcRows(t)[+row.dataset.ci];if(!r)return;
+  r[f.dataset.cf]=(f.dataset.cf==='qty'||f.dataset.cf==='price')?num(f.value):f.value;
+  saveTrips();
+  row.querySelector('.cr-sum').textContent=fmt(calcLine(r))+' zł';
+  const sum=calcSum(t),cap=num(t.calcCap),r0=tripRange(t);
+  const k=$$('#calc .calc-sum .k');
+  if(k[0])k[0].querySelector('.v').textContent=fmt(sum)+' zł';
+  if(k[0])k[0].querySelector('.s').textContent=fmt2(sum/rate('EUR'))+' €';
+  if(k[1])k[1].querySelector('.v').textContent=fmt(r0.days?sum/r0.days:0)+' zł';
+  if(k[2]){const s=k[2].querySelector('.s');s.className='s '+(cap?(sum<=cap?'ok':'over'):'');
+    s.textContent=cap?(sum<=cap?'mieści się, zostaje '+fmt(cap-sum)+' zł':'przekroczone o '+fmt(sum-cap)+' zł'):'wpisz, żeby sprawdzić';}
+});
+$('#calc').addEventListener('change',e=>{
+  if(e.target.id==='calc-cap'){T().calcCap=num(e.target.value);saveTrips();buildCalc();}
+});
+$('#calc').addEventListener('click',e=>{
+  const t=T();
+  if(e.target.id==='calc-add'){calcRows(t).push({cat:'inne',desc:'',when:'',qty:1,price:'',cur:'PLN'});saveTrips();buildCalc();
+    const last=$$('#calc .crow').pop();if(last)last.querySelector('.cr-d').focus();return;}
+  if(e.target.id==='calc-gen'){
+    const gen=calcGenerate();
+    if(calcRows(t).length&&!confirm('Dopisać '+gen.length+' pozycji ze szkicu planu do tego, co już masz?'))return;
+    t.calc=calcRows(t).concat(gen);saveTrips();buildCalc();toast('Dopisano '+plural(gen.length,'pozycję','pozycje','pozycji'));return;}
+  if(e.target.id==='calc-clear'){if(!confirm('Usunąć wszystkie pozycje kosztorysu?'))return;t.calc=[];saveTrips();buildCalc();return;}
+  if(e.target.id==='calc-csv'){
+    const rows=calcTable(t).map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+    const blob=new Blob(['﻿'+rows],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kosztorys-'+t.id+'.csv';a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Pobrano CSV');return;}
+  if(e.target.id==='calc-copy'){
+    const txt=calcTable(t).map(r=>r.join('\t')).join('\n');
+    (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Skopiowano tabelę')).catch(()=>toast('Nie udało się skopiować'));return;}
+  const off=e.target.closest('[data-coff]');
+  if(off){const r=calcRows(t)[+off.dataset.coff];r.off=!r.off;saveTrips();buildCalc();return;}
+  const del=e.target.closest('[data-cdel]');
+  if(del){calcRows(t).splice(+del.dataset.cdel,1);saveTrips();buildCalc();return;}
 });
 
 </script>
