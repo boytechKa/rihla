@@ -1,18 +1,18 @@
 {
- "_opis": "Kosztorys Cabo Verde 29.11–18.12.2026 — wczytaj w zakładce Kosztorys przyciskiem „Wczytaj”.",
+ "_opis": "Cabo Verde 30.11–18.12.2026: Porto, Santiago, Fogo, São Vicente, Santo Antão, Sal.",
  "trip": "cabo",
  "rows": [
   {
    "cat": "lot",
-   "desc": "Kraków → Porto",
-   "when": "2026-11-29",
+   "desc": "Kraków → Porto (30.11)",
+   "when": "2026-11-30",
    "qty": 1,
    "price": 27,
    "cur": "EUR"
   },
   {
    "cat": "lot",
-   "desc": "Porto → Praia",
+   "desc": "Porto → Praia (1.12) — wpisz swoją cenę",
    "when": "2026-12-01",
    "qty": 1,
    "price": 52,
@@ -20,31 +20,23 @@
   },
   {
    "cat": "lot",
-   "desc": "Praia → Fogo (CVsky)",
-   "when": "2026-12-04",
-   "qty": 1,
-   "price": 75,
-   "cur": "EUR"
-  },
-  {
-   "cat": "lot",
-   "desc": "Fogo → São Vicente przez Praię (CVsky)",
+   "desc": "São Filipe → Mindelo przez Praię (CVsky 10:45)",
    "when": "2026-12-08",
    "qty": 1,
-   "price": 115,
+   "price": 108,
    "cur": "EUR"
   },
   {
    "cat": "lot",
-   "desc": "São Vicente → Sal (CVsky)",
-   "when": "2026-12-16",
+   "desc": "Mindelo → Sal (CVsky 20:15)",
+   "when": "2026-12-17",
    "qty": 1,
-   "price": 115,
+   "price": 91,
    "cur": "EUR"
   },
   {
    "cat": "lot",
-   "desc": "Sal → Londyn",
+   "desc": "Sal → Londyn (16:00)",
    "when": "2026-12-18",
    "qty": 1,
    "price": 46,
@@ -60,11 +52,19 @@
   },
   {
    "cat": "lot",
-   "desc": "Bagaż rejestrowany do tanich biletów",
+   "desc": "Bagaż rejestrowany",
    "when": "",
    "qty": 1,
    "price": 200,
    "cur": "PLN"
+  },
+  {
+   "cat": "transport",
+   "desc": "Prom Praia → São Filipe, „Kriola” 07:00",
+   "when": "2026-12-03",
+   "qty": 1,
+   "price": 4450,
+   "cur": "CVE"
   },
   {
    "cat": "transport",
@@ -77,7 +77,7 @@
   {
    "cat": "transport",
    "desc": "Prom Porto Novo → Mindelo (bufor)",
-   "when": "2026-12-15",
+   "when": "2026-12-16",
    "qty": 1,
    "price": 1500,
    "cur": "CVE"
@@ -101,7 +101,7 @@
   {
    "cat": "transport",
    "desc": "Aluguer São Filipe → Chã",
-   "when": "2026-12-05",
+   "when": "2026-12-04",
    "qty": 1,
    "price": 900,
    "cur": "CVE"
@@ -116,55 +116,55 @@
   },
   {
    "cat": "transport",
-   "desc": "Dojazdy z lotnisk: Praia, Mindelo, Sal",
+   "desc": "Dojazdy z lotnisk i do portu",
    "when": "",
    "qty": 1,
-   "price": 100,
+   "price": 120,
    "cur": "PLN"
   },
   {
    "cat": "transport",
-   "desc": "Aluguer i drobny transport, 19 dni",
+   "desc": "Aluguer i drobny transport, 18 dni",
    "when": "",
-   "qty": 19,
+   "qty": 18,
    "price": 4,
    "cur": "EUR"
   },
   {
    "cat": "nocleg",
-   "desc": "Porto — 2 noce",
-   "when": "2026-11-29",
-   "qty": 2,
+   "desc": "Porto — 1 noc",
+   "when": "2026-11-30",
+   "qty": 1,
    "price": 120,
    "cur": "PLN"
   },
   {
    "cat": "nocleg",
-   "desc": "Praia (Plateau) — 3 noce",
+   "desc": "Praia — 2 noce (blisko portu)",
    "when": "2026-12-01",
-   "qty": 3,
+   "qty": 2,
    "price": 90,
    "cur": "PLN"
   },
   {
    "cat": "nocleg",
    "desc": "São Filipe — 1 noc",
-   "when": "2026-12-04",
+   "when": "2026-12-03",
    "qty": 1,
    "price": 100,
    "cur": "PLN"
   },
   {
    "cat": "nocleg",
-   "desc": "Chã das Caldeiras — 2 noce",
-   "when": "2026-12-05",
-   "qty": 2,
+   "desc": "Chã das Caldeiras — 3 noce",
+   "when": "2026-12-04",
+   "qty": 3,
    "price": 110,
    "cur": "PLN"
   },
   {
    "cat": "nocleg",
-   "desc": "São Filipe — 1 noc",
+   "desc": "São Filipe — 1 noc (przed lotem)",
    "when": "2026-12-07",
    "qty": 1,
    "price": 100,
@@ -188,40 +188,40 @@
   },
   {
    "cat": "nocleg",
-   "desc": "Ponta do Sol — 2 noce",
+   "desc": "Ponta do Sol — 3 noce",
    "when": "2026-12-13",
-   "qty": 2,
+   "qty": 3,
    "price": 110,
    "cur": "PLN"
   },
   {
    "cat": "nocleg",
    "desc": "Mindelo — 1 noc (bufor)",
-   "when": "2026-12-15",
+   "when": "2026-12-16",
    "qty": 1,
    "price": 100,
    "cur": "PLN"
   },
   {
    "cat": "nocleg",
-   "desc": "Sal: Santa Maria albo Espargos — 2 noce",
-   "when": "2026-12-16",
-   "qty": 2,
+   "desc": "Sal — 1 noc",
+   "when": "2026-12-17",
+   "qty": 1,
    "price": 180,
    "cur": "PLN"
   },
   {
    "cat": "jedzenie",
-   "desc": "Jedzenie i picie — 19 dni",
+   "desc": "Jedzenie i picie — 18 dni",
    "when": "",
-   "qty": 19,
-   "price": 20,
+   "qty": 18,
+   "price": 18,
    "cur": "EUR"
   },
   {
    "cat": "atrakcje",
    "desc": "Przewodnik na Pico do Fogo",
-   "when": "2026-12-06",
+   "when": "2026-12-05",
    "qty": 1,
    "price": 40,
    "cur": "EUR"
@@ -252,10 +252,18 @@
   },
   {
    "cat": "inne",
+   "desc": "Tabletki na chorobę morską i apteczka",
+   "when": "",
+   "qty": 1,
+   "price": 80,
+   "cur": "PLN"
+  },
+  {
+   "cat": "inne",
    "desc": "Rezerwa na nieprzewidziane",
    "when": "",
    "qty": 1,
-   "price": 700,
+   "price": 600,
    "cur": "PLN"
   }
  ]
