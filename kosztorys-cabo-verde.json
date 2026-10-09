@@ -1,0 +1,262 @@
+{
+ "_opis": "Kosztorys Cabo Verde 29.11–18.12.2026 — wczytaj w zakładce Kosztorys przyciskiem „Wczytaj”.",
+ "trip": "cabo",
+ "rows": [
+  {
+   "cat": "lot",
+   "desc": "Kraków → Porto",
+   "when": "2026-11-29",
+   "qty": 1,
+   "price": 27,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "Porto → Praia",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 52,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "Praia → Fogo (CVsky)",
+   "when": "2026-12-04",
+   "qty": 1,
+   "price": 75,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "Fogo → São Vicente przez Praię (CVsky)",
+   "when": "2026-12-08",
+   "qty": 1,
+   "price": 115,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "São Vicente → Sal (CVsky)",
+   "when": "2026-12-16",
+   "qty": 1,
+   "price": 115,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "Sal → Londyn",
+   "when": "2026-12-18",
+   "qty": 1,
+   "price": 46,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "Londyn → Polska",
+   "when": "2026-12-18",
+   "qty": 1,
+   "price": 300,
+   "cur": "PLN"
+  },
+  {
+   "cat": "lot",
+   "desc": "Bagaż rejestrowany do tanich biletów",
+   "when": "",
+   "qty": 1,
+   "price": 200,
+   "cur": "PLN"
+  },
+  {
+   "cat": "transport",
+   "desc": "Prom Mindelo → Porto Novo",
+   "when": "2026-12-10",
+   "qty": 1,
+   "price": 1500,
+   "cur": "CVE"
+  },
+  {
+   "cat": "transport",
+   "desc": "Prom Porto Novo → Mindelo (bufor)",
+   "when": "2026-12-15",
+   "qty": 1,
+   "price": 1500,
+   "cur": "CVE"
+  },
+  {
+   "cat": "transport",
+   "desc": "Aluguer Porto Novo → Vale do Paul",
+   "when": "2026-12-10",
+   "qty": 1,
+   "price": 500,
+   "cur": "CVE"
+  },
+  {
+   "cat": "transport",
+   "desc": "Aluguer Paul → Ponta do Sol",
+   "when": "2026-12-13",
+   "qty": 1,
+   "price": 250,
+   "cur": "CVE"
+  },
+  {
+   "cat": "transport",
+   "desc": "Aluguer São Filipe → Chã",
+   "when": "2026-12-05",
+   "qty": 1,
+   "price": 900,
+   "cur": "CVE"
+  },
+  {
+   "cat": "transport",
+   "desc": "Aluguer Chã → São Filipe",
+   "when": "2026-12-07",
+   "qty": 1,
+   "price": 900,
+   "cur": "CVE"
+  },
+  {
+   "cat": "transport",
+   "desc": "Dojazdy z lotnisk: Praia, Mindelo, Sal",
+   "when": "",
+   "qty": 1,
+   "price": 100,
+   "cur": "PLN"
+  },
+  {
+   "cat": "transport",
+   "desc": "Aluguer i drobny transport, 19 dni",
+   "when": "",
+   "qty": 19,
+   "price": 4,
+   "cur": "EUR"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Porto — 2 noce",
+   "when": "2026-11-29",
+   "qty": 2,
+   "price": 120,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Praia (Plateau) — 3 noce",
+   "when": "2026-12-01",
+   "qty": 3,
+   "price": 90,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "São Filipe — 1 noc",
+   "when": "2026-12-04",
+   "qty": 1,
+   "price": 100,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Chã das Caldeiras — 2 noce",
+   "when": "2026-12-05",
+   "qty": 2,
+   "price": 110,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "São Filipe — 1 noc",
+   "when": "2026-12-07",
+   "qty": 1,
+   "price": 100,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Mindelo — 2 noce",
+   "when": "2026-12-08",
+   "qty": 2,
+   "price": 100,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Vale do Paul — 3 noce",
+   "when": "2026-12-10",
+   "qty": 3,
+   "price": 100,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Ponta do Sol — 2 noce",
+   "when": "2026-12-13",
+   "qty": 2,
+   "price": 110,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Mindelo — 1 noc (bufor)",
+   "when": "2026-12-15",
+   "qty": 1,
+   "price": 100,
+   "cur": "PLN"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Sal: Santa Maria albo Espargos — 2 noce",
+   "when": "2026-12-16",
+   "qty": 2,
+   "price": 180,
+   "cur": "PLN"
+  },
+  {
+   "cat": "jedzenie",
+   "desc": "Jedzenie i picie — 19 dni",
+   "when": "",
+   "qty": 19,
+   "price": 20,
+   "cur": "EUR"
+  },
+  {
+   "cat": "atrakcje",
+   "desc": "Przewodnik na Pico do Fogo",
+   "when": "2026-12-06",
+   "qty": 1,
+   "price": 40,
+   "cur": "EUR"
+  },
+  {
+   "cat": "atrakcje",
+   "desc": "Wstępy, degustacje, drobne",
+   "when": "",
+   "qty": 1,
+   "price": 200,
+   "cur": "PLN"
+  },
+  {
+   "cat": "inne",
+   "desc": "Opłata TSA i rejestracja EASE",
+   "when": "",
+   "qty": 1,
+   "price": 31,
+   "cur": "EUR"
+  },
+  {
+   "cat": "inne",
+   "desc": "Ubezpieczenie z trekkingiem",
+   "when": "",
+   "qty": 1,
+   "price": 150,
+   "cur": "PLN"
+  },
+  {
+   "cat": "inne",
+   "desc": "Rezerwa na nieprzewidziane",
+   "when": "",
+   "qty": 1,
+   "price": 700,
+   "cur": "PLN"
+  }
+ ]
+}

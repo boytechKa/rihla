@@ -3435,6 +3435,7 @@ function buildCalc(){
     });
   }
   h+='<div class="calc-acts"><button class="tb-btn" id="calc-gen">⚙ Szkic z planu</button>'+
+     '<button class="tb-btn" id="calc-imp">📥 Wczytaj</button><input type="file" id="calc-file" accept=".json,.csv,application/json,text/csv" hidden>'+
      '<button class="tb-btn" id="calc-csv">⬇ CSV do Excela</button>'+
      '<button class="tb-btn" id="calc-copy">📋 Kopiuj tabelę</button>'+
      (rows.length?'<button class="tb-btn danger" id="calc-clear">Wyczyść</button>':'')+'</div>';
@@ -3496,6 +3497,7 @@ $('#calc').addEventListener('click',e=>{
     if(calcRows(t).length&&!confirm('Dopisać '+gen.length+' pozycji ze szkicu planu do tego, co już masz?'))return;
     t.calc=calcRows(t).concat(gen);saveTrips();buildCalc();toast('Dopisano '+plural(gen.length,'pozycję','pozycje','pozycji'));return;}
   if(e.target.id==='calc-clear'){if(!confirm('Usunąć wszystkie pozycje kosztorysu?'))return;t.calc=[];saveTrips();buildCalc();return;}
+  if(e.target.id==='calc-imp'){$('#calc-file').click();return;}
   if(e.target.id==='calc-csv'){
     const rows=calcTable(t).map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\r\n');
     const blob=new Blob(['﻿'+rows],{type:'text/csv;charset=utf-8'});
@@ -3508,6 +3510,45 @@ $('#calc').addEventListener('click',e=>{
   if(off){const r=calcRows(t)[+off.dataset.coff];r.off=!r.off;saveTrips();buildCalc();return;}
   const del=e.target.closest('[data-cdel]');
   if(del){calcRows(t).splice(+del.dataset.cdel,1);saveTrips();buildCalc();return;}
+});
+
+/* ---- wczytywanie kosztorysu: JSON albo CSV z eksportu ---- */
+function calcParse(txt){
+  txt=String(txt||'').replace(/^\ufeff/,'').trim();
+  if(txt[0]==='{'||txt[0]==='['){
+    let o;try{o=JSON.parse(txt);}catch(e){return{err:'Plik JSON jest uszkodzony.'};}
+    const arr=Array.isArray(o)?o:(Array.isArray(o.rows)?o.rows:null);
+    if(!arr)return{err:'W pliku nie ma listy „rows”.'};
+    return{rows:arr.map(r=>({cat:CALC_CATS.some(c=>c[0]===r.cat)?r.cat:'inne',desc:String(r.desc||''),when:String(r.when||''),
+      qty:num(r.qty)||1,price:num(r.price)||0,cur:toCode(r.cur||'PLN'),off:!!r.off}))};
+  }
+  const lines=txt.split(/\r?\n/).filter(x=>x.trim());
+  if(lines.length<2)return{err:'Plik CSV jest pusty.'};
+  const cell=l=>l.split(/[;\t]/).map(x=>x.replace(/^"|"$/g,'').replace(/""/g,'"').trim());
+  const out=[];
+  lines.slice(1).forEach(l=>{
+    const c=cell(l);if(c.length<6)return;
+    if(/^razem$/i.test(c[1])||!c[1]&&!c[4])return;
+    const lab=(c[0]||'').toLowerCase();
+    const cat=(CALC_CATS.find(x=>x[1].toLowerCase().indexOf(lab)>=0||x[0]===lab)||['inne'])[0];
+    out.push({cat,desc:c[1],when:/^\d{4}-\d{2}-\d{2}$/.test(c[2])?c[2]:'',qty:num(c[3])||1,price:num(c[4])||0,cur:toCode(c[5]||'PLN')});
+  });
+  return out.length?{rows:out}:{err:'Nie znalazłem w CSV żadnych wierszy.'};
+}
+document.addEventListener('change',e=>{
+  if(e.target.id!=='calc-file')return;
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    const r=calcParse(rd.result);
+    if(r.err){toast(r.err);return;}
+    const t=T(),had=calcRows(t).length;
+    if(had&&!confirm('Masz już '+plural(had,'pozycję','pozycje','pozycji')+'. OK zastąpi je wczytanymi, Anuluj dopisze na koniec.'))
+      t.calc=calcRows(t).concat(r.rows);
+    else t.calc=r.rows;
+    saveTrips();buildCalc();toast('Wczytano '+plural(r.rows.length,'pozycję','pozycje','pozycji'));
+  };
+  rd.readAsText(f);e.target.value='';
 });
 
 </script>
