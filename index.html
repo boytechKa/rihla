@@ -1618,6 +1618,38 @@ main{padding-bottom:120px}
 .blk-fix{appearance:none;border:1px solid currentColor;background:#fff;border-radius:8px;padding:3px 8px;font:700 11px/1 Inter,sans-serif;color:inherit;cursor:pointer;margin-left:4px;white-space:nowrap}
 .blk-add.in{border-style:solid;background:var(--sand)}
 .blk-add b i{font-style:normal;font-size:11px;color:var(--muted)}
+
+/* ===== KOSZTORYS: kupione + noclegi noc po nocy ===== */
+.calc-sum{grid-template-columns:repeat(4,1fr)}
+.calc-sum .k.paid .v{color:var(--olive-deep)}
+.crow.paid{border-color:var(--olive-deep);background:var(--sand)}
+.cr-b.buy.on{color:var(--olive-deep);border-color:var(--olive-deep);font-weight:700}
+.bed-sec{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:14px}
+.bed-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.bed-top b{font-family:'Fraunces',serif;font-size:15px;color:var(--ink)}
+.bed-top span{font-size:11.5px;color:var(--muted)}
+.bed-grp{font:700 10px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+  margin:10px 0 5px;display:flex;gap:8px;align-items:baseline;border-top:1px dashed var(--line);padding-top:8px}
+.bed-grp:first-of-type{border-top:0;padding-top:0;margin-top:2px}
+.bed-grp em{font-style:normal;letter-spacing:0;text-transform:none;font-weight:600;color:var(--burgundy)}
+.bed-row{display:grid;gap:4px 6px;align-items:center;padding:5px 0;
+  grid-template-columns:54px 1fr 60px 60px 32px 64px;
+  grid-template-areas:"d n p c ok s"}
+.bed-row.paid{opacity:.72}
+.bed-d{grid-area:d;line-height:1.1}
+.bed-d b{font-size:12.5px;color:var(--ink);display:block}
+.bed-d small{font-size:10px;color:var(--muted)}
+.bed-n{grid-area:n;min-width:0;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:12.5px;background:#fff}
+.bed-p{grid-area:p;min-width:0;border:1px solid var(--line);border-radius:8px;padding:6px;font:inherit;font-size:12.5px;background:#fff}
+.bed-c{grid-area:c;min-width:0;border:1px solid var(--line);border-radius:8px;padding:6px 4px;font:inherit;font-size:11.5px;background:#fff}
+.bed-ok{grid-area:ok;height:30px;appearance:none;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:14px;color:var(--muted);padding:0}
+.bed-row.paid .bed-ok{border-color:var(--olive-deep);color:var(--olive-deep);font-weight:700}
+.bed-s{grid-area:s;text-align:right;font-family:'Fraunces',serif;font-size:13px;color:var(--burgundy);white-space:nowrap}
+.bed-dup{margin-top:10px;font-size:12px;color:var(--alarm);line-height:1.5;border:1px solid var(--alarm);border-radius:10px;padding:8px 10px}
+.bed-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:560px){.calc-sum{grid-template-columns:repeat(2,1fr)}
+ .bed-row{grid-template-columns:54px 1fr 58px 32px;grid-template-areas:"d n n ok" "d p c s"}
+ .bed-row+.bed-row{border-top:1px dashed var(--line)}}
 </style>
 </head>
 <body>
@@ -3457,23 +3489,92 @@ const CALC_CATS=[['lot','✈ Lot'],['transport','🚌 Transport'],['nocleg','�
 function calcRows(t){if(!Array.isArray(t.calc))t.calc=[];return t.calc;}
 function calcSum(t){return calcRows(t).filter(r=>!r.off).reduce((a,r)=>a+num(r.qty||1)*toPln(r.price,r.cur),0);}
 function calcLine(r){return num(r.qty||1)*toPln(r.price,r.cur);}
+
+/* ---------- noclegi noc po nocy ---------- */
+function bedsMap(t){if(!t.beds||typeof t.beds!=='object')t.beds={};return t.beds;}
+function bedKey(t,k){return(t.start&&!t.dateless)?dateFor(t.start,k).iso:('n'+k);}
+function bedsNights(t){
+  t=t||T();computeOffsets(t);
+  const total=tripRange(t).days-1,out=[];
+  for(let k=0;k<total;k++){
+    const s=t.stages.find(x=>x.status!=='skip'&&x._off<=k&&k<x._off+Math.max(0,num(x.nights)));
+    const d=(t.start&&!t.dateless)?dateFor(t.start,k):null;
+    out.push({k:k,key:bedKey(t,k),iso:d?d.iso:'',d:d?d.d:('Dzień '+(k+1)),wd:d?d.wd:'',
+      place:s?(s.stay||s.to||'—'):'—'});
+  }
+  return out;
+}
+function bedRec(t,key){const m=bedsMap(t);if(!m[key])m[key]={price:'',cur:'EUR',name:'',paid:false};return m[key];}
+function bedLine(b){return toPln(b.price,b.cur);}
+function bedsSum(t){return bedsNights(t).reduce((a,n)=>a+bedLine(bedRec(t,n.key)),0);}
+function bedsPaid(t){return bedsNights(t).reduce((a,n)=>{const b=bedRec(t,n.key);return a+(b.paid?bedLine(b):0);},0);}
+function bedsBooked(t){return bedsNights(t).filter(n=>bedRec(t,n.key).paid).length;}
+
+function calcGrand(t){return calcSum(t)+bedsSum(t);}
+function calcPaidSum(t){
+  return calcRows(t).filter(r=>!r.off&&r.paid).reduce((a,r)=>a+calcLine(r),0)+bedsPaid(t);
+}
+function calcPaidCount(t){return calcRows(t).filter(r=>!r.off&&r.paid).length+bedsBooked(t);}
+
+function calcTiles(t){
+  const sum=calcGrand(t),paid=calcPaidSum(t),left=sum-paid,cap=num(t.calcCap),days=tripRange(t).days;
+  return{sum:sum,paid:paid,left:left,cap:cap,days:days};
+}
+function calcTilesHTML(t){
+  const x=calcTiles(t);
+  return'<div class="k"><div class="l">Razem</div><div class="v" data-kv="sum">'+fmt(x.sum)+' zł</div>'+
+      '<div class="s" data-ks="sum">'+fmt2(x.sum/rate('EUR'))+' € · '+fmt(x.days?x.sum/x.days:0)+' zł/dzień</div></div>'+
+    '<div class="k paid"><div class="l">Zapłacone</div><div class="v" data-kv="paid">'+fmt(x.paid)+' zł</div>'+
+      '<div class="s" data-ks="paid">'+plural(calcPaidCount(t),'pozycja','pozycje','pozycji')+'</div></div>'+
+    '<div class="k"><div class="l">Zostało</div><div class="v" data-kv="left">'+fmt(x.left)+' zł</div>'+
+      '<div class="s" data-ks="left">'+fmt2(x.left/rate('EUR'))+' €</div></div>'+
+    '<div class="k cap"><div class="l">Mój limit</div><div class="v"><input id="calc-cap" type="number" inputmode="numeric" placeholder="—" value="'+(x.cap||'')+'"> zł</div>'+
+      '<div class="s '+(x.cap?(x.sum<=x.cap?'ok':'over'):'')+'" data-ks="cap">'+
+      (x.cap?(x.sum<=x.cap?'mieści się, zostaje '+fmt(x.cap-x.sum)+' zł':'przekroczone o '+fmt(x.sum-x.cap)+' zł'):'wpisz, żeby sprawdzić')+'</div></div>';
+}
+
 function buildCalc(){
-  const t=T(),w=$('#calc'),rows=calcRows(t),r0=tripRange(t),days=r0.days;
-  const sum=calcSum(t),cap=num(t.calcCap);
-  const perDay=days?sum/days:0;
+  const t=T(),w=$('#calc'),rows=calcRows(t),days=tripRange(t).days;
   let h='<div class="calc-top"><div class="calc-h"><b>'+esc(t.emoji)+' '+esc(t.name)+'</b>'+
     '<small>'+(t.dateless?'termin nieustalony · ':'')+plural(days,'dzień','dni','dni')+' · '+plural(rows.length,'pozycja','pozycje','pozycji')+'</small></div>'+
     '<button class="tb-btn" id="calc-add">+ Pozycja</button></div>';
-  h+='<div class="calc-sum">'+
-    '<div class="k"><div class="l">Razem</div><div class="v">'+fmt(sum)+' zł</div><div class="s">'+fmt2(sum/rate('EUR'))+' €'+'</div></div>'+
-    '<div class="k"><div class="l">Na dzień</div><div class="v">'+fmt(perDay)+' zł</div><div class="s">przy '+plural(days,'dniu','dniach','dniach')+'</div></div>'+
-    '<div class="k cap"><div class="l">Mój limit</div><div class="v"><input id="calc-cap" type="number" inputmode="numeric" placeholder="—" value="'+(cap||'')+'"> zł</div>'+
-      '<div class="s '+(cap?(sum<=cap?'ok':'over'):'')+'">'+(cap?(sum<=cap?'mieści się, zostaje '+fmt(cap-sum)+' zł':'przekroczone o '+fmt(sum-cap)+' zł'):'wpisz, żeby sprawdzić')+'</div></div>'+
-  '</div>';
+  h+='<div class="calc-sum">'+calcTilesHTML(t)+'</div>';
+
+  /* --- noclegi noc po nocy --- */
+  const nights=bedsNights(t);
+  if(nights.length){
+    const bs=bedsSum(t),bk=bedsBooked(t);
+    h+='<div class="bed-sec"><div class="bed-top"><b>🛏 Noclegi — noc po nocy</b>'+
+      '<span>'+bk+' / '+nights.length+' zarezerwowane · '+fmt(bs)+' zł</span></div>';
+    let last=null;
+    nights.forEach(n=>{
+      const b=bedRec(t,n.key);
+      if(n.place!==last){
+        const run=nights.filter(x=>x.place===n.place&&x.k>=n.k&&nights.slice(n.k,x.k+1).every(y=>y.place===n.place)).length;
+        h+='<div class="bed-grp">'+esc(n.place)+'<em>'+plural(run,'noc','noce','nocy')+'</em></div>';
+        last=n.place;
+      }
+      h+='<div class="bed-row'+(b.paid?' paid':'')+'" data-bk="'+attr(n.key)+'">'+
+        '<div class="bed-d"><b>'+esc(n.d)+'</b><small>'+esc(n.wd)+'</small></div>'+
+        '<input class="bed-n" data-bf="name" value="'+attr(b.name||'')+'" placeholder="gdzie — nazwa albo link">'+
+        '<input class="bed-p" type="number" inputmode="decimal" data-bf="price" value="'+attr(b.price||'')+'" placeholder="cena">'+
+        '<select class="bed-c" data-bf="cur">'+['EUR','PLN','GBP','USD',toCode(t.cur)].filter((v,i,a)=>a.indexOf(v)===i)
+          .map(c=>'<option value="'+c+'"'+(toCode(b.cur)===c?' selected':'')+'>'+c+'</option>').join('')+'</select>'+
+        '<button class="bed-ok" data-bpaid="'+attr(n.key)+'">'+(b.paid?'✓':'○')+'</button>'+
+        '<span class="bed-s">'+fmt(bedLine(b))+' zł</span>'+
+      '</div>';
+    });
+    const dup=rows.filter(r=>!r.off&&(r.cat||'')==='nocleg').length;
+    if(dup)h+='<div class="bed-dup">W tabeli niżej masz też '+plural(dup,'pozycję noclegową','pozycje noclegowe','pozycji noclegowych')+
+      ' — liczą się podwójnie. <button class="blk-fix" id="bed-nodup">wyłącz je</button></div>';
+    h+='<div class="bed-acts"><button class="tb-btn" id="bed-fill">Wypełnij ceną orientacyjną</button>'+
+      '<button class="tb-btn" id="bed-clear">Wyczyść noclegi</button></div></div>';
+  }
+
   if(!rows.length){
-    h+='<div class="empty">Pusto. Wpisz loty, noclegi i transport, a apka policzy, czy to się spina.<br><br>Możesz też wygenerować szkic z planu wyprawy i poprawić liczby.</div>';
+    h+='<div class="empty">Reszta kosztorysu pusta. Wpisz loty, transport i jedzenie, a apka policzy, czy to się spina.<br><br>Możesz też wygenerować szkic z planu wyprawy.</div>';
   }else{
-    const rowHtml=(r,i)=>'<div class="crow'+(r.off?' off':'')+'" data-ci="'+i+'">'+
+    const rowHtml=(r,i)=>'<div class="crow'+(r.off?' off':'')+(r.paid?' paid':'')+'" data-ci="'+i+'">'+
       '<div class="cr-1"><input class="cr-d" data-cf="desc" value="'+attr(r.desc||'')+'" placeholder="opis, np. Lizbona → Sal"></div>'+
       '<div class="cr-2">'+
         '<select class="cr-c" data-cf="cat">'+CALC_CATS.map(c=>'<option value="'+c[0]+'"'+(r.cat===c[0]?' selected':'')+'>'+esc(c[1])+'</option>').join('')+'</select>'+
@@ -3486,7 +3587,8 @@ function buildCalc(){
           .map(c=>'<option value="'+c+'"'+(toCode(r.cur)===c?' selected':'')+'>'+c+'</option>').join('')+'</select></label>'+
         '<div class="cr-sum">'+fmt(calcLine(r))+' zł</div>'+
       '</div>'+
-      '<div class="cr-4"><button class="cr-b" data-coff="'+i+'">'+(r.off?'✓ wliczam':'○ pomijam')+'</button>'+
+      '<div class="cr-4"><button class="cr-b buy'+(r.paid?' on':'')+'" data-cpaid="'+i+'">'+(r.paid?'✓ kupione':'○ do kupienia')+'</button>'+
+        '<button class="cr-b" data-coff="'+i+'">'+(r.off?'✓ wliczam':'○ pomijam')+'</button>'+
         '<button class="cr-b del" data-cdel="'+i+'">🗑</button></div>'+
     '</div>';
     const idx=rows.map((r,i)=>i);
@@ -3507,6 +3609,21 @@ function buildCalc(){
      (rows.length?'<button class="tb-btn danger" id="calc-clear">Wyczyść</button>':'')+'</div>';
   w.innerHTML=h;a11y(w);
 }
+
+/* szybkie odświeżenie kafelków bez przerysowania (żeby nie uciekał focus) */
+function calcRefreshTiles(){
+  const t=T(),x=calcTiles(t),q=s=>$('#calc [data-kv="'+s+'"]'),qs=s=>$('#calc [data-ks="'+s+'"]');
+  if(q('sum')){q('sum').textContent=fmt(x.sum)+' zł';
+    qs('sum').textContent=fmt2(x.sum/rate('EUR'))+' € · '+fmt(x.days?x.sum/x.days:0)+' zł/dzień';}
+  if(q('paid')){q('paid').textContent=fmt(x.paid)+' zł';qs('paid').textContent=plural(calcPaidCount(t),'pozycja','pozycje','pozycji');}
+  if(q('left')){q('left').textContent=fmt(x.left)+' zł';qs('left').textContent=fmt2(x.left/rate('EUR'))+' €';}
+  const c=qs('cap');
+  if(c){c.className='s '+(x.cap?(x.sum<=x.cap?'ok':'over'):'');
+    c.textContent=x.cap?(x.sum<=x.cap?'mieści się, zostaje '+fmt(x.cap-x.sum)+' zł':'przekroczone o '+fmt(x.sum-x.cap)+' zł'):'wpisz, żeby sprawdzić';}
+  const bt=$('#calc .bed-top span');
+  if(bt)bt.textContent=bedsBooked(t)+' / '+bedsNights(t).length+' zarezerwowane · '+fmt(bedsSum(t))+' zł';
+}
+
 function calcGenerate(){
   const t=T(),p=P(),out=[];
   computeOffsets(t);
@@ -3514,8 +3631,6 @@ function calcGenerate(){
     if(s.status==='skip')return;
     const when=t.dateless?'':dateFor(t.start,s._off).iso;
     if(s.price)out.push({cat:(s.mode==='plane'?'lot':'transport'),desc:stageTitle(s),when,qty:1,price:num(s.price),cur:toCode(s.curr)});
-    if(s.nights>0)out.push({cat:'nocleg',desc:(s.stay||s.to||stageTitle(s))+' — '+plural(s.nights,'noc','noce','nocy'),when,
-      qty:s.nights,price:num(s.stayPrice)||0,cur:toCode(s.curr2)});
   });
   ((p&&p.budget)||[]).forEach(b=>{
     if(/nocleg/i.test(b.n))return;
@@ -3525,37 +3640,53 @@ function calcGenerate(){
   return out;
 }
 function calcTable(t){
-  const head=['Kategoria','Opis','Data','Ilość','Cena','Waluta','Razem PLN'];
+  const head=['Kategoria','Opis','Data','Ilość','Cena','Waluta','Kupione','Razem PLN'];
   const body=calcRows(t).map(r=>[(CALC_CATS.find(c=>c[0]===r.cat)||['','inne'])[1].replace(/^\S+\s/,''),r.desc||'',r.when||'',
-    r.qty!=null?r.qty:1,r.price||0,toCode(r.cur),Math.round(calcLine(r))]);
-  body.push(['','RAZEM','','','','',Math.round(calcSum(t))]);
+    r.qty!=null?r.qty:1,r.price||0,toCode(r.cur),r.paid?'tak':'nie',Math.round(calcLine(r))]);
+  bedsNights(t).forEach(n=>{const b=bedRec(t,n.key);
+    body.push(['Nocleg',n.place+(b.name?' — '+b.name:''),n.iso,1,b.price||0,toCode(b.cur),b.paid?'tak':'nie',Math.round(bedLine(b))]);});
+  body.push(['','ZAPŁACONE','','','','','',Math.round(calcPaidSum(t))]);
+  body.push(['','RAZEM','','','','','',Math.round(calcGrand(t))]);
   return[head].concat(body);
 }
+
 $('#calc').addEventListener('input',e=>{
+  const t=T();
+  const bf=e.target.closest('[data-bf]');
+  if(bf){const row=bf.closest('[data-bk]');if(!row)return;
+    const b=bedRec(t,row.dataset.bk);
+    b[bf.dataset.bf]=(bf.dataset.bf==='price')?num(bf.value):bf.value;
+    saveTrips();row.querySelector('.bed-s').textContent=fmt(bedLine(b))+' zł';calcRefreshTiles();return;}
   const f=e.target.closest('[data-cf]');if(!f)return;
   const row=f.closest('[data-ci]');if(!row)return;
-  const t=T(),r=calcRows(t)[+row.dataset.ci];if(!r)return;
+  const r=calcRows(t)[+row.dataset.ci];if(!r)return;
   r[f.dataset.cf]=(f.dataset.cf==='qty'||f.dataset.cf==='price')?num(f.value):f.value;
   saveTrips();
   if(f.dataset.cf==='cat'){buildCalc();return;}
   row.querySelector('.cr-sum').textContent=fmt(calcLine(r))+' zł';
-  const sum=calcSum(t),cap=num(t.calcCap),r0=tripRange(t);
   const sec=row.closest('.csec');
   if(sec){const cat=sec.dataset.cat;
     const sub=calcRows(t).filter(x=>!x.off&&(x.cat||'inne')===cat).reduce((a,x)=>a+calcLine(x),0);
     const em=sec.querySelector('.csec-h em');if(em)em.textContent=fmt(sub)+' zł';}
-  const k=$$('#calc .calc-sum .k');
-  if(k[0])k[0].querySelector('.v').textContent=fmt(sum)+' zł';
-  if(k[0])k[0].querySelector('.s').textContent=fmt2(sum/rate('EUR'))+' €';
-  if(k[1])k[1].querySelector('.v').textContent=fmt(r0.days?sum/r0.days:0)+' zł';
-  if(k[2]){const s=k[2].querySelector('.s');s.className='s '+(cap?(sum<=cap?'ok':'over'):'');
-    s.textContent=cap?(sum<=cap?'mieści się, zostaje '+fmt(cap-sum)+' zł':'przekroczone o '+fmt(sum-cap)+' zł'):'wpisz, żeby sprawdzić';}
+  calcRefreshTiles();
 });
 $('#calc').addEventListener('change',e=>{
-  if(e.target.id==='calc-cap'){T().calcCap=num(e.target.value);saveTrips();buildCalc();}
+  if(e.target.id==='calc-cap'){T().calcCap=num(e.target.value);saveTrips();calcRefreshTiles();}
+  if(e.target.closest('.bed-c')){saveTrips();calcRefreshTiles();}
 });
 $('#calc').addEventListener('click',e=>{
   const t=T();
+  const bp=e.target.closest('[data-bpaid]');
+  if(bp){const b=bedRec(t,bp.dataset.bpaid);b.paid=!b.paid;saveTrips();
+    bp.textContent=b.paid?'✓':'○';bp.closest('.bed-row').classList.toggle('paid',b.paid);calcRefreshTiles();return;}
+  if(e.target.id==='bed-nodup'){calcRows(t).forEach(r=>{if((r.cat||'')==='nocleg')r.off=true;});saveTrips();buildCalc();
+    toast('Wyłączone — noclegi liczą się raz');return;}
+  if(e.target.id==='bed-fill'){
+    const v=prompt('Cena za noc (zostanie wpisana tam, gdzie pusto). Waluta: EUR','19');
+    if(v==null)return;const p=num(v);
+    bedsNights(t).forEach(n=>{const b=bedRec(t,n.key);if(!num(b.price)){b.price=p;b.cur='EUR';}});
+    saveTrips();buildCalc();toast('Wypełnione');return;}
+  if(e.target.id==='bed-clear'){if(!confirm('Wyczyścić wszystkie noclegi?'))return;t.beds={};saveTrips();buildCalc();return;}
   if(e.target.id==='calc-add'){calcRows(t).push({cat:'inne',desc:'',when:'',qty:1,price:'',cur:'PLN'});saveTrips();buildCalc();
     const last=$$('#calc .crow').pop();if(last)last.querySelector('.cr-d').focus();return;}
   if(e.target.id==='calc-gen'){
@@ -3572,6 +3703,8 @@ $('#calc').addEventListener('click',e=>{
   if(e.target.id==='calc-copy'){
     const txt=calcTable(t).map(r=>r.join('\t')).join('\n');
     (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Skopiowano tabelę')).catch(()=>toast('Nie udało się skopiować'));return;}
+  const pd=e.target.closest('[data-cpaid]');
+  if(pd){const r=calcRows(t)[+pd.dataset.cpaid];r.paid=!r.paid;saveTrips();buildCalc();return;}
   const off=e.target.closest('[data-coff]');
   if(off){const r=calcRows(t)[+off.dataset.coff];r.off=!r.off;saveTrips();buildCalc();return;}
   const del=e.target.closest('[data-cdel]');
@@ -3580,24 +3713,27 @@ $('#calc').addEventListener('click',e=>{
 
 /* ---- wczytywanie kosztorysu: JSON albo CSV z eksportu ---- */
 function calcParse(txt){
-  txt=String(txt||'').replace(/^\ufeff/,'').trim();
+  txt=String(txt||'').replace(/^﻿/,'').trim();
   if(txt[0]==='{'||txt[0]==='['){
     let o;try{o=JSON.parse(txt);}catch(e){return{err:'Plik JSON jest uszkodzony.'};}
     const arr=Array.isArray(o)?o:(Array.isArray(o.rows)?o.rows:null);
     if(!arr)return{err:'W pliku nie ma listy „rows”.'};
     return{rows:arr.map(r=>({cat:CALC_CATS.some(c=>c[0]===r.cat)?r.cat:'inne',desc:String(r.desc||''),when:String(r.when||''),
-      qty:num(r.qty)||1,price:num(r.price)||0,cur:toCode(r.cur||'PLN'),off:!!r.off}))};
+      qty:num(r.qty)||1,price:num(r.price)||0,cur:toCode(r.cur||'PLN'),off:!!r.off,paid:!!r.paid}))};
   }
   const lines=txt.split(/\r?\n/).filter(x=>x.trim());
   if(lines.length<2)return{err:'Plik CSV jest pusty.'};
   const cell=l=>l.split(/[;\t]/).map(x=>x.replace(/^"|"$/g,'').replace(/""/g,'"').trim());
+  const head=cell(lines[0]).map(x=>x.toLowerCase());
+  const pi=head.indexOf('kupione');
   const out=[];
   lines.slice(1).forEach(l=>{
     const c=cell(l);if(c.length<6)return;
-    if(/^razem$/i.test(c[1])||!c[1]&&!c[4])return;
+    if(/^(razem|zapłacone)$/i.test(c[1])||!c[1]&&!c[4])return;
     const lab=(c[0]||'').toLowerCase();
     const cat=(CALC_CATS.find(x=>x[1].toLowerCase().indexOf(lab)>=0||x[0]===lab)||['inne'])[0];
-    out.push({cat,desc:c[1],when:/^\d{4}-\d{2}-\d{2}$/.test(c[2])?c[2]:'',qty:num(c[3])||1,price:num(c[4])||0,cur:toCode(c[5]||'PLN')});
+    out.push({cat,desc:c[1],when:/^\d{4}-\d{2}-\d{2}$/.test(c[2])?c[2]:'',qty:num(c[3])||1,price:num(c[4])||0,
+      cur:toCode(c[5]||'PLN'),paid:pi>=0?/^(tak|1|true|✓)$/i.test(c[pi]||''):false});
   });
   return out.length?{rows:out}:{err:'Nie znalazłem w CSV żadnych wierszy.'};
 }

@@ -1,46 +1,51 @@
 {
- "_opis": "Cabo Verde 29.11–18.12.2026. Loty kupione wpisane co do grosza; część wyspiarska to wersja bazowa — ułóż trasę w zakładce Klocki i popraw te pozycje.",
+ "_opis": "Cabo Verde 29.11–18.12.2026. Loty kupione oznaczone jako zapłacone. Noclegi NIE są tu wpisane — prowadzisz je w sekcji „Noclegi — noc po nocy” nad tabelą.",
  "trip": "cabo",
  "rows": [
   {
    "cat": "lot",
-   "desc": "✅ Kraków → Porto · FR3047 · S533VZ",
+   "desc": "Kraków → Porto · FR3047 · S533VZ",
    "when": "2026-11-29",
    "qty": 1,
    "price": 131.15,
-   "cur": "PLN"
+   "cur": "PLN",
+   "paid": true
   },
   {
    "cat": "lot",
-   "desc": "✅ Porto → Praia · EJU6869 · KDJBXXQ",
+   "desc": "Porto → Praia · EJU6869 · KDJBXXQ",
    "when": "2026-12-01",
    "qty": 1,
    "price": 46.63,
-   "cur": "GBP"
+   "cur": "GBP",
+   "paid": true
   },
   {
    "cat": "lot",
-   "desc": "✅ Sal → Londyn · EZY8996 · KDJBWX6",
+   "desc": "Sal → Londyn · EZY8996 · KDJBWX6",
    "when": "2026-12-18",
    "qty": 1,
    "price": 41.31,
-   "cur": "GBP"
+   "cur": "GBP",
+   "paid": true
   },
   {
    "cat": "lot",
-   "desc": "Bagaż większy — Ryanair (dokup z rezerwacją)",
+   "desc": "Bagaż większy — Ryanair",
    "when": "2026-11-29",
    "qty": 1,
    "price": 25,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "lot",
-   "desc": "Bagaż większy — easyJet ×2",
+   "desc": "Bagaż większy — easyJet, dwa odcinki",
    "when": "2026-12-01",
    "qty": 1,
    "price": 45,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "inne",
@@ -48,39 +53,35 @@
    "when": "2026-12-01",
    "qty": 1,
    "price": 31,
-   "cur": "EUR"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Porto — 2 noce przed lotem",
-   "when": "2026-11-29",
-   "qty": 2,
-   "price": 25,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "transport",
-   "desc": "Lot krajowy na wyspę wylotową (jeden, konieczny)",
+   "desc": "Lot krajowy na wyspę wylotową",
    "when": "2026-12-16",
    "qty": 1,
    "price": 91,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "transport",
-   "desc": "Promy między wyspami — zależnie od trasy",
+   "desc": "Promy między wyspami",
    "when": "2026-12-04",
    "qty": 1,
    "price": 60,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "transport",
-   "desc": "Opłaty lotniskowe krajowe (150 CVE / lot)",
+   "desc": "Opłaty lotniskowe krajowe",
    "when": "2026-12-16",
    "qty": 1,
    "price": 1.4,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "transport",
@@ -88,15 +89,8 @@
    "when": "2026-12-02",
    "qty": 1,
    "price": 85,
-   "cur": "EUR"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Noclegi na wyspach — 17 nocy w pensão",
-   "when": "2026-12-01",
-   "qty": 17,
-   "price": 19,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "jedzenie",
@@ -104,15 +98,17 @@
    "when": "2026-12-01",
    "qty": 18,
    "price": 15,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "atrakcje",
-   "desc": "Przewodnik na szczyt / wejście do parku",
+   "desc": "Przewodnik na szczyt / wstęp do parku",
    "when": "2026-12-05",
    "qty": 1,
    "price": 40,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "inne",
@@ -120,7 +116,8 @@
    "when": "2026-12-01",
    "qty": 1,
    "price": 15,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   },
   {
    "cat": "inne",
@@ -128,7 +125,8 @@
    "when": "2026-12-10",
    "qty": 1,
    "price": 80,
-   "cur": "EUR"
+   "cur": "EUR",
+   "paid": false
   }
  ]
 }
