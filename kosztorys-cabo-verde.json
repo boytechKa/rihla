@@ -1,270 +1,134 @@
 {
- "_opis": "Cabo Verde 30.11–18.12.2026: Porto, Santiago, Fogo, São Vicente, Santo Antão, Sal.",
+ "_opis": "Cabo Verde 29.11–18.12.2026. Loty kupione wpisane co do grosza; część wyspiarska to wersja bazowa — ułóż trasę w zakładce Klocki i popraw te pozycje.",
  "trip": "cabo",
  "rows": [
   {
    "cat": "lot",
-   "desc": "Kraków → Porto (30.11)",
-   "when": "2026-11-30",
+   "desc": "✅ Kraków → Porto · FR3047 · S533VZ",
+   "when": "2026-11-29",
    "qty": 1,
-   "price": 27,
-   "cur": "EUR"
+   "price": 131.15,
+   "cur": "PLN"
   },
   {
    "cat": "lot",
-   "desc": "Porto → Praia (1.12) — wpisz swoją cenę",
+   "desc": "✅ Porto → Praia · EJU6869 · KDJBXXQ",
    "when": "2026-12-01",
    "qty": 1,
-   "price": 52,
-   "cur": "EUR"
+   "price": 46.63,
+   "cur": "GBP"
   },
   {
    "cat": "lot",
-   "desc": "São Filipe → Mindelo przez Praię (CVsky 10:45)",
-   "when": "2026-12-08",
+   "desc": "✅ Sal → Londyn · EZY8996 · KDJBWX6",
+   "when": "2026-12-18",
    "qty": 1,
-   "price": 108,
+   "price": 41.31,
+   "cur": "GBP"
+  },
+  {
+   "cat": "lot",
+   "desc": "Bagaż większy — Ryanair (dokup z rezerwacją)",
+   "when": "2026-11-29",
+   "qty": 1,
+   "price": 25,
    "cur": "EUR"
   },
   {
    "cat": "lot",
-   "desc": "Mindelo → Sal (CVsky 20:15)",
-   "when": "2026-12-17",
+   "desc": "Bagaż większy — easyJet ×2",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 45,
+   "cur": "EUR"
+  },
+  {
+   "cat": "inne",
+   "desc": "EASE + opłata lotniskowa (online, na lotnisku 2×)",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 31,
+   "cur": "EUR"
+  },
+  {
+   "cat": "nocleg",
+   "desc": "Porto — 2 noce przed lotem",
+   "when": "2026-11-29",
+   "qty": 2,
+   "price": 25,
+   "cur": "EUR"
+  },
+  {
+   "cat": "transport",
+   "desc": "Lot krajowy na wyspę wylotową (jeden, konieczny)",
+   "when": "2026-12-16",
    "qty": 1,
    "price": 91,
    "cur": "EUR"
   },
   {
-   "cat": "lot",
-   "desc": "Sal → Londyn (16:00)",
-   "when": "2026-12-18",
-   "qty": 1,
-   "price": 46,
-   "cur": "EUR"
-  },
-  {
-   "cat": "lot",
-   "desc": "Londyn → Polska",
-   "when": "2026-12-18",
-   "qty": 1,
-   "price": 300,
-   "cur": "PLN"
-  },
-  {
-   "cat": "lot",
-   "desc": "Bagaż rejestrowany",
-   "when": "",
-   "qty": 1,
-   "price": 200,
-   "cur": "PLN"
-  },
-  {
    "cat": "transport",
-   "desc": "Prom Praia → São Filipe, „Kriola” 07:00",
-   "when": "2026-12-03",
-   "qty": 1,
-   "price": 4450,
-   "cur": "CVE"
-  },
-  {
-   "cat": "transport",
-   "desc": "Prom Mindelo → Porto Novo",
-   "when": "2026-12-10",
-   "qty": 1,
-   "price": 1500,
-   "cur": "CVE"
-  },
-  {
-   "cat": "transport",
-   "desc": "Prom Porto Novo → Mindelo (bufor)",
-   "when": "2026-12-16",
-   "qty": 1,
-   "price": 1500,
-   "cur": "CVE"
-  },
-  {
-   "cat": "transport",
-   "desc": "Aluguer Porto Novo → Vale do Paul",
-   "when": "2026-12-10",
-   "qty": 1,
-   "price": 500,
-   "cur": "CVE"
-  },
-  {
-   "cat": "transport",
-   "desc": "Aluguer Paul → Ponta do Sol",
-   "when": "2026-12-13",
-   "qty": 1,
-   "price": 250,
-   "cur": "CVE"
-  },
-  {
-   "cat": "transport",
-   "desc": "Aluguer São Filipe → Chã",
+   "desc": "Promy między wyspami — zależnie od trasy",
    "when": "2026-12-04",
    "qty": 1,
-   "price": 900,
-   "cur": "CVE"
+   "price": 60,
+   "cur": "EUR"
   },
   {
    "cat": "transport",
-   "desc": "Aluguer Chã → São Filipe",
-   "when": "2026-12-07",
+   "desc": "Opłaty lotniskowe krajowe (150 CVE / lot)",
+   "when": "2026-12-16",
    "qty": 1,
-   "price": 900,
-   "cur": "CVE"
+   "price": 1.4,
+   "cur": "EUR"
   },
   {
    "cat": "transport",
-   "desc": "Dojazdy z lotnisk i do portu",
-   "when": "",
+   "desc": "Aluguery, transfery, dojazdy na szlaki",
+   "when": "2026-12-02",
    "qty": 1,
-   "price": 120,
-   "cur": "PLN"
-  },
-  {
-   "cat": "transport",
-   "desc": "Aluguer i drobny transport, 18 dni",
-   "when": "",
-   "qty": 18,
-   "price": 4,
+   "price": 85,
    "cur": "EUR"
   },
   {
    "cat": "nocleg",
-   "desc": "Porto — 1 noc",
-   "when": "2026-11-30",
-   "qty": 1,
-   "price": 120,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Praia — 2 noce (blisko portu)",
+   "desc": "Noclegi na wyspach — 17 nocy w pensão",
    "when": "2026-12-01",
-   "qty": 2,
-   "price": 90,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "São Filipe — 1 noc",
-   "when": "2026-12-03",
-   "qty": 1,
-   "price": 100,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Chã das Caldeiras — 3 noce",
-   "when": "2026-12-04",
-   "qty": 3,
-   "price": 110,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "São Filipe — 1 noc (przed lotem)",
-   "when": "2026-12-07",
-   "qty": 1,
-   "price": 100,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Mindelo — 2 noce",
-   "when": "2026-12-08",
-   "qty": 2,
-   "price": 100,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Vale do Paul — 3 noce",
-   "when": "2026-12-10",
-   "qty": 3,
-   "price": 100,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Ponta do Sol — 3 noce",
-   "when": "2026-12-13",
-   "qty": 3,
-   "price": 110,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Mindelo — 1 noc (bufor)",
-   "when": "2026-12-16",
-   "qty": 1,
-   "price": 100,
-   "cur": "PLN"
-  },
-  {
-   "cat": "nocleg",
-   "desc": "Sal — 1 noc",
-   "when": "2026-12-17",
-   "qty": 1,
-   "price": 180,
-   "cur": "PLN"
+   "qty": 17,
+   "price": 19,
+   "cur": "EUR"
   },
   {
    "cat": "jedzenie",
-   "desc": "Jedzenie i picie — 18 dni",
-   "when": "",
+   "desc": "Jedzenie — 18 dni, głównie tascas",
+   "when": "2026-12-01",
    "qty": 18,
-   "price": 18,
+   "price": 15,
    "cur": "EUR"
   },
   {
    "cat": "atrakcje",
-   "desc": "Przewodnik na Pico do Fogo",
+   "desc": "Przewodnik na szczyt / wejście do parku",
    "when": "2026-12-05",
    "qty": 1,
    "price": 40,
    "cur": "EUR"
   },
   {
-   "cat": "atrakcje",
-   "desc": "Wstępy, degustacje, drobne",
-   "when": "",
-   "qty": 1,
-   "price": 200,
-   "cur": "PLN"
-  },
-  {
    "cat": "inne",
-   "desc": "Opłata TSA i rejestracja EASE",
-   "when": "",
+   "desc": "Karta SIM i dane",
+   "when": "2026-12-01",
    "qty": 1,
-   "price": 31,
+   "price": 15,
    "cur": "EUR"
   },
   {
    "cat": "inne",
-   "desc": "Ubezpieczenie z trekkingiem",
-   "when": "",
-   "qty": 1,
-   "price": 150,
-   "cur": "PLN"
-  },
-  {
-   "cat": "inne",
-   "desc": "Tabletki na chorobę morską i apteczka",
-   "when": "",
+   "desc": "Rezerwa na odwołany prom albo zmianę planu",
+   "when": "2026-12-10",
    "qty": 1,
    "price": 80,
-   "cur": "PLN"
-  },
-  {
-   "cat": "inne",
-   "desc": "Rezerwa na nieprzewidziane",
-   "when": "",
-   "qty": 1,
-   "price": 600,
-   "cur": "PLN"
+   "cur": "EUR"
   }
  ]
 }
