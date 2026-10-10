@@ -1650,6 +1650,13 @@ main{padding-bottom:120px}
 @media(max-width:560px){.calc-sum{grid-template-columns:repeat(2,1fr)}
  .bed-row{grid-template-columns:54px 1fr 58px 32px;grid-template-areas:"d n n ok" "d p c s"}
  .bed-row+.bed-row{border-top:1px dashed var(--line)}}
+.remind.rev-top{display:block;border:2px solid var(--burgundy);background:var(--sand);border-radius:14px;padding:14px;margin-bottom:14px}
+.remind.rev-top b{display:block;width:auto;font-family:'Fraunces',serif;font-size:16px;color:var(--burgundy);margin:0 0 6px}
+.remind.rev-top p{display:block;width:auto;font-size:13px;line-height:1.5;color:var(--ink);margin:0 0 12px}
+.remind.rev-top .rev-acts{display:flex;gap:8px;flex-wrap:wrap}
+.remind.rev-top .insert-btn{margin:0}
+.tab.has-rev{position:relative}
+.tab.has-rev::after{content:'';position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--alarm);box-shadow:0 0 0 2px var(--ink)}
 </style>
 </head>
 <body>
@@ -1693,6 +1700,7 @@ main{padding-bottom:120px}
 
   <!-- PLAN -->
   <section class="panel" id="plan">
+    <div id="revbar"></div>
     <div class="mode-note" id="mode-note"></div>
     <div class="trip-bar">
       <div><label>Start wyprawy</label><input type="date" id="trip-start"></div>
@@ -2574,11 +2582,32 @@ $('#options').addEventListener('click',e=>{
 });
 
 /* ---- karty informacyjne pakietu (np. loty) ---- */
+/* pasek aktualizacji pakietu — NA GÓRZE planu, bo pod listą etapów nikt go nie znajdzie */
+function revDot(){
+  const b=document.querySelector('.tab[data-p="plan"]');
+  if(b)b.classList.toggle('has-rev',!!(T()&&T().pendingRev));
+}
+function buildRevBar(){
+  const w=$('#revbar');if(!w)return;
+  w.innerHTML='';revDot();
+  const t=T();if(!t.pendingRev)return;
+  const Pk=t.pack&&PACKS[t.pack];
+  const r=el('div','remind rev-top');
+  r.innerHTML='<b>↻ Jest nowa wersja tego planu</b>'+
+    '<p>Masz własne etapy, więc nie podmieniam ich sam. Zastosowanie wstawi zaktualizowaną trasę'+
+    (Pk&&Pk.rev?' (wersja '+Pk.rev+')':'')+'. Twoje notatki, ceny i noclegi zostaną.</p>'+
+    '<div class="rev-acts"><button class="insert-btn" id="rev-apply">Zastosuj nowy plan</button>'+
+    '<button class="tb-btn" id="rev-skip">Nie teraz</button></div>';
+  w.appendChild(r);
+  r.querySelector('#rev-apply').onclick=()=>{
+    applyPackRev(T());saveTrips();buildRevBar();revDot();buildStages();buildOptions();buildInfos();
+    if(typeof buildHeader==='function')buildHeader();toast('Plan zaktualizowany');
+    window.scrollTo({top:0,behavior:'smooth'});};
+  r.querySelector('#rev-skip').onclick=()=>{w.innerHTML='';};
+  setTimeout(()=>{try{r.scrollIntoView({block:'start',behavior:'smooth'});}catch(e){}},200);
+}
 function buildInfos(){
   const w=$('#infos');w.innerHTML='';
-  if(T().pendingRev){const r=document.createElement('div');r.className='remind';
-    r.innerHTML='<b>Nowa wersja planu</b><p>Jest zaktualizowany plan tej wyprawy. Masz własne etapy, więc nie podmieniłem ich automatycznie. Zastosowanie zastąpi etapy (notatki przy starych dniach zostaną).</p><button class="insert-btn" id="rev-apply">↻ Zastosuj nowy plan</button>';
-    w.appendChild(r);r.querySelector('#rev-apply').onclick=()=>{applyPackRev(T());saveTrips();buildStages();buildOptions();buildInfos();buildHeader&&buildHeader();toast('Plan zaktualizowany');};}
   const info=(P()&&P().info)||[];if(!info.length)return;
   info.forEach((x,i)=>{
     const f=el('div','fold');
@@ -2855,7 +2884,7 @@ document.addEventListener('keydown',e=>{
 
 /* ============ zakładki i tryb ============ */
 const tabs=$$('.tab');
-const BUILD={dzis:buildToday,plan:()=>{buildStages();buildOptions();buildInfos();if(!planScrolled){planScrolled=true;setTimeout(scrollToToday,120);}},
+const BUILD={dzis:buildToday,plan:()=>{buildRevBar();buildStages();buildOptions();buildInfos();if(!planScrolled&&!T().pendingRev){planScrolled=true;setTimeout(scrollToToday,120);}},
   mapa:()=>setTimeout(initMap,60),wydatki:buildExpenses,przew:buildGuide,insta:buildIG,lista:buildChecks,pomysly:buildIdeas,kosztorys:buildCalc,klocki:buildBlocks};
 let curTab=null;
 tabs.forEach(b=>b.addEventListener('click',()=>{
@@ -3407,7 +3436,7 @@ if('serviceWorker' in navigator){
 /* ============ START ============ */
 if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';
   sb.innerHTML='<b>Uwaga:</b> ta przeglądarka blokuje zapis (tryb prywatny?). Możesz czytać, ale zmiany nie zostaną zapisane.';}
-netState();updateBackupAge();buildHeader();applyMode();a11y();
+netState();updateBackupAge();buildHeader();applyMode();a11y();revDot();
 goTab(effMode()==='travel'?'dzis':'plan');
 refreshRates().then(ok=>{if(ok&&curTab==='dzis')buildToday();});
 if(REV_NOTE)setTimeout(()=>toast(REV_NOTE),600);
