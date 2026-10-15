@@ -1,0 +1,121 @@
+{
+ "_opis": "Cabo Verde 29.11–18.12.2026. Loty kupione mają status „zapłacone”. Noclegi NIE są tu wpisane — prowadzisz je w sekcji „Noclegi — noc po nocy” nad tabelą.",
+ "trip": "cabo",
+ "rows": [
+  {
+   "cat": "lot",
+   "desc": "Kraków → Porto · FR3047",
+   "when": "2026-11-29",
+   "qty": 1,
+   "price": 131.15,
+   "cur": "PLN",
+   "pay": "paid"
+  },
+  {
+   "cat": "lot",
+   "desc": "Porto → Praia · EJU6869",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 46.63,
+   "cur": "GBP",
+   "pay": "paid"
+  },
+  {
+   "cat": "lot",
+   "desc": "Sal → Londyn · EZY8996",
+   "when": "2026-12-18",
+   "qty": 1,
+   "price": 41.31,
+   "cur": "GBP",
+   "pay": "paid"
+  },
+  {
+   "cat": "lot",
+   "desc": "Bagaż większy — Ryanair",
+   "when": "2026-11-29",
+   "qty": 1,
+   "price": 25,
+   "cur": "EUR"
+  },
+  {
+   "cat": "lot",
+   "desc": "Bagaż większy — easyJet, dwa odcinki",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 45,
+   "cur": "EUR"
+  },
+  {
+   "cat": "inne",
+   "desc": "EASE + opłata lotniskowa (online, na lotnisku 2×)",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 31,
+   "cur": "EUR"
+  },
+  {
+   "cat": "transport",
+   "desc": "Lot krajowy na wyspę wylotową",
+   "when": "2026-12-16",
+   "qty": 1,
+   "price": 91,
+   "cur": "EUR"
+  },
+  {
+   "cat": "transport",
+   "desc": "Promy między wyspami",
+   "when": "2026-12-04",
+   "qty": 1,
+   "price": 60,
+   "cur": "EUR"
+  },
+  {
+   "cat": "transport",
+   "desc": "Opłaty lotniskowe krajowe",
+   "when": "2026-12-16",
+   "qty": 1,
+   "price": 1.4,
+   "cur": "EUR"
+  },
+  {
+   "cat": "transport",
+   "desc": "Aluguery, transfery, dojazdy na szlaki",
+   "when": "2026-12-02",
+   "qty": 1,
+   "price": 85,
+   "cur": "EUR"
+  },
+  {
+   "cat": "jedzenie",
+   "desc": "Jedzenie — 18 dni, głównie tascas",
+   "when": "2026-12-01",
+   "qty": 18,
+   "price": 15,
+   "cur": "EUR"
+  },
+  {
+   "cat": "atrakcje",
+   "desc": "Przewodnik na szczyt / wstęp do parku",
+   "when": "2026-12-05",
+   "qty": 1,
+   "price": 40,
+   "cur": "EUR"
+  },
+  {
+   "cat": "inne",
+   "desc": "Karta SIM i dane",
+   "when": "2026-12-01",
+   "qty": 1,
+   "price": 15,
+   "cur": "EUR"
+  },
+  {
+   "cat": "inne",
+   "desc": "Rezerwa na odwołany prom albo zmianę planu",
+   "when": "2026-12-10",
+   "qty": 1,
+   "price": 80,
+   "cur": "EUR"
+  }
+ ]
+}

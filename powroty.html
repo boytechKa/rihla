@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Powrót · Wyprawy</title>
+<meta name="theme-color" content="#221D1C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Powrót">
+<link rel="apple-touch-icon" href="icon-rihla-192.png">
+<link rel="icon" type="image/png" href="icon-rihla-192.png">
+<script>
+/* Plan powrotu mieszka teraz w apce „Wyprawy” (index.html).
+   Ten plik zostaje, żeby stara ikona na ekranie głównym dalej działała. */
+try{localStorage.setItem('wy-active',JSON.stringify('powrot'));}catch(e){}
+location.replace('index.html?trip=powrot');
+</script>
+</head>
+<body style="font-family:system-ui,sans-serif;padding:40px 20px;text-align:center;background:#FBF6EC">
+<p><a href="index.html?trip=powrot" style="color:#6E1B24;font-weight:600">Przejdź do planu powrotu →</a></p>
+</body>
+</html>
