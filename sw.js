@@ -1,7 +1,7 @@
 /* Powrót 2026 — service worker
    Apka „Wyprawy”: index.html (wszystkie wyprawy) + powroty.html (skrót do wyprawy Powrót).
    Podbij VERSION przy każdym wgraniu — inaczej przeglądarka nie zauważy zmiany. */
-const VERSION = 'v32';
+const VERSION = 'v33';
 const SHELL   = 'powrot-shell-' + VERSION;
 const TILES   = 'powrot-tiles';   // BEZ wersji — aktualizacja apki nie kasuje zapisanych map
 const MAX_TILES = 1200;
@@ -13,8 +13,8 @@ const PRECACHE = [
   './app.js',
   './app.css',
   './packs.js',
-  './vendor/leaflet.js',
-  './vendor/leaflet.css',
+  './leaflet.js',
+  './leaflet.css',
   './powroty.html',
   './apple-touch-icon.png',
   './icon-rihla-192.png'
