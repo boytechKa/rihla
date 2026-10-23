@@ -3,7 +3,7 @@
    Podbij VERSION przy każdym wgraniu — inaczej przeglądarka nie zauważy zmiany.
    Tę samą liczbę wpisz w index.html w ?v= (5 miejsc). Dzięki temu nowy index.html
    nigdy nie dostanie starego app.js z pamięci. */
-const VERSION = 'v45';   // ← ta sama liczba co ?v= w index.html
+const VERSION = 'v46';   // ← ta sama liczba co ?v= w index.html
 const Q = '?v=' + VERSION.slice(1);
 const SHELL   = 'powrot-shell-' + VERSION;
 const TILES   = 'powrot-tiles';   // BEZ wersji — aktualizacja apki nie kasuje zapisanych map
@@ -22,18 +22,25 @@ const PRECACHE = [
   './apple-touch-icon.png',
   './icon-rihla-192.png',
   './icon-rihla-512.png',
+  './icon-rihla-maskable-192.png',
+  './icon-rihla-maskable-512.png',
   './manifest.webmanifest',
   './f-fraunces-latin.woff2','./f-fraunces-ext.woff2','./f-fraunces-i-latin.woff2','./f-fraunces-i-ext.woff2',
   './f-inter-latin.woff2','./f-inter-ext.woff2','./f-armenian-500.woff2','./f-armenian-700.woff2'
 ];
+/* bez tych plików apka nie ruszy offline */
+const CORE = ['./', './index.html', './app.js' + Q, './app.css' + Q, './packs.js' + Q, './leaflet.js' + Q, './leaflet.css' + Q];
 /* fonty: miło mieć, ale apka działa bez nich (fallback systemowy) */
 const NICE_TO_HAVE = [];  // fonty są teraz lokalne, w PRECACHE
 
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
     const c = await caches.open(SHELL);
-    // własne pliki muszą się zapisać — to one decydują o offline
-    await Promise.all(PRECACHE.map(u =>
+    // rdzeń MUSI się zapisać — jeśli coś się nie pobierze, instalacja się nie uda
+    // i przeglądarka spróbuje ponownie później (stara wersja działa dalej, offline też)
+    await c.addAll(CORE.map(u => new Request(u, { cache: 'reload' })));
+    // ikony, fonty, stary skrót — miło mieć, ich brak nie może zablokować aktualizacji
+    await Promise.all(PRECACHE.filter(u => !CORE.includes(u)).map(u =>
       c.add(new Request(u, { cache: 'reload' })).catch(() => {})
     ));
     // fonty best-effort: brak sieci lub blokada CDN nie może wywalić instalacji

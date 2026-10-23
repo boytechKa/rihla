@@ -1932,6 +1932,19 @@ if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';
   const sb=$('#sysbar');if(!miss.length||sb.style.display==='block')return;
   sb.className='sysbar info';sb.style.display='block';
   sb.innerHTML='Brakuje opisów i przewodnika dla: <b>'+esc(miss.join(', '))+'</b>. Etapy i wydatki są całe — zaimportuj plik z pakietami (stopka → Importuj).';})();
+/* iPhone/iPad w zwykłym Safari: dane w pamięci przeglądarki mogą zniknąć po kilku dniach bez wizyty.
+   Zainstalowana na ekranie głównym apka tego problemu nie ma. Przypomnienie wraca co 7 dni. */
+(function(){
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const inst=navigator.standalone===true||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+  if(!ios||inst)return;
+  let later=0;try{later=+localStorage.getItem('wy-iosbar')||0;}catch(e){}
+  if(Date.now()-later<7*86400000)return;
+  const b=el('div','sysbar info ios-bar','<b>Dodaj Rihlę do ekranu głównego.</b> W samym Safari iPhone może po kilku dniach bez wizyty skasować Twoje wyprawy i wydatki. '+
+    'Dotknij <b>Udostępnij</b> (kwadrat ze strzałką) → <b>Do ekranu początkowego</b>. <button type="button">Później</button>');
+  b.querySelector('button').onclick=()=>{try{localStorage.setItem('wy-iosbar',String(Date.now()));}catch(e){}b.remove();};
+  $('#sysbar').after(b);
+})();
 netState();updateBackupAge();buildHeader();applyMode();a11y();revDot();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 goTab(effMode()==='travel'?'dzis':'plan');

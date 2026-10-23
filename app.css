@@ -1133,3 +1133,6 @@ body:not(.compact) .fab{display:none}
 /* Ikony SVG (Lucide): rozmiar = rozmiar tekstu, kolor = kolor tekstu */
 .ico{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex:0 0 auto}
 .act span .ico{width:28px;height:28px}
+
+.ios-bar{text-align:left}
+.ios-bar button{margin:8px 0 0;display:block}
