@@ -1097,3 +1097,39 @@ main{padding-bottom:120px}
 .zr-acts .tb-btn.pri{background:var(--cop);color:#fff;border-color:var(--cop)}
 .zr-acts .tb-btn[disabled]{opacity:.45}
 .win-more summary{cursor:pointer;font-size:12px;color:var(--muted);margin:0 0 8px 2px}
+
+/* ===== v45: poprawki wyglądu ===== */
+/* Przewodnik: plakietka pod nazwą, nazwa może się łamać */
+.pc-n{overflow-wrap:anywhere}
+.pc-h .pc-tag{display:inline-block;margin-top:6px}
+.pc-h .pc-w:empty{display:none}
+@media(max-width:620px){.pcard-top{gap:10px;padding:13px 14px}}
+
+/* „+” nie zasłania treści; „Więcej” zawsze ostatnie */
+@media(max-width:700px){
+  main{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+  .more-btn{order:99}
+}
+body:not(.compact) .fab{display:none}
+
+/* Przełącznik trybu jako dwa segmenty, a nie przycisk akcji */
+#mode-btn,#mode-btn.mode-travel,#mode-btn.mode-plan{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.28);padding:3px;gap:2px}
+#mode-btn .seg{padding:6px 11px;border-radius:100px;color:rgba(243,235,221,.7)}
+#mode-btn .seg.on{background:var(--cream);color:var(--burgundy)}
+
+/* „Domyślne” — cicho, na końcu paska narzędzi */
+.toolbar .tb-btn.danger{border-color:transparent;background:transparent;color:var(--muted);font-weight:500;margin-left:auto}
+.toolbar .tb-btn.danger:hover{color:var(--alarm);background:transparent}
+
+/* Lista: etykieta (KLUCZOWE, DOK…) pod treścią, nie obok */
+.chk .task{min-width:0;overflow-wrap:anywhere}
+.chk .task .when{display:block;padding-top:4px}
+
+/* Mniej ramek: karty odróżnia tło i delikatny cień, ramki zostają przy polach i przyciskach */
+.day,.pcard,.chk,.var,.fact,.bud-card,.trip-bar,.phrase,.ig,.fold,.ropt,.card,.learn,.cult,.info-c,.idea,.win,.ev,.crow,.blk-card,.zr-card,.exp-sum .k,.calc-sum .k,.blk-sum .k{
+  border-color:transparent;background:#FFFDF8;box-shadow:0 1px 2px rgba(34,29,28,.06),0 3px 10px rgba(34,29,28,.04)}
+.mode-note{border:0}
+
+/* Ikony SVG (Lucide): rozmiar = rozmiar tekstu, kolor = kolor tekstu */
+.ico{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex:0 0 auto}
+.act span .ico{width:28px;height:28px}

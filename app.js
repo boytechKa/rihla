@@ -32,6 +32,25 @@ function plural(n,a,b,c){return n+' '+pl(n,a,b,c);}
 const norm=s=>' '+String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
   .replace(/ł/g,'l').replace(/ı/g,'i').replace(/[^a-z0-9]+/g,' ').trim()+' ';
 
+/* Ikony: Lucide (lucide.dev), licencja ISC. Wszystkie w jednym stylu, kolor = kolor tekstu. */
+const SVG_I=b=>'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+b+'</svg>';
+const ICO={
+  dzis:SVG_I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'),
+  plan:SVG_I('<circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/>'),
+  mapa:SVG_I('<path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/>'),
+  wydatki:SVG_I('<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>'),
+  przew:SVG_I('<path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/>'),
+  klocki:SVG_I('<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>'),
+  kosztorys:SVG_I('<rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/>'),
+  insta:SVG_I('<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/>'),
+  lista:SVG_I('<path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/>'),
+  more:SVG_I('<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>'),
+  pin:SVG_I('<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>'),
+  raport:SVG_I('<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>'),
+  bagaz:SVG_I('<path d="M6 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2"/><path d="M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14"/><path d="M10 20h4"/><circle cx="16" cy="20" r="2"/><circle cx="8" cy="20" r="2"/>'),
+};
+document.querySelectorAll('[data-i]').forEach(x=>{if(ICO[x.dataset.i])x.innerHTML=ICO[x.dataset.i];});
+
 /* ---------- pamięć ---------- */
 let LS_OK=true;
 function lsGet(k){try{return localStorage.getItem(k);}catch(e){LS_OK=false;return null;}}
@@ -1153,7 +1172,7 @@ async function buildToday(){
       '<div class="tm-prep"><button class="tb-btn" data-go="plan">Otwórz Plan</button></div></div>';
   }else{h+=destCard(c);h+=dayPlanCard(c);}
 
-  h+='<div class="acts"><button class="act exp" data-open="exp"><span>💸</span>Wydatek</button><button class="act chk" data-open="ci"><span>📍</span>Check-in</button></div>';
+  h+='<div class="acts"><button class="act exp" data-open="exp"><span>'+ICO.wydatki+'</span>Wydatek</button><button class="act chk" data-open="ci"><span>'+ICO.pin+'</span>Check-in</button></div>';
   h+=openCard(c);
 
   // przypomnienia
@@ -1248,7 +1267,7 @@ function applyTabs(){
 }
 function moreTabs(){
   return tabs.filter(b=>!b.classList.contains('nav-main')&&b.style.display!=='none').map(b=>{
-    const ti=b.querySelector('.ti');return[b.dataset.p,ti?ti.textContent:'•',b.textContent.replace(ti?ti.textContent:'','').trim()];});
+    const ti=b.querySelector('.ti');return[b.dataset.p,ti?ti.innerHTML:'•',b.textContent.replace(ti?ti.textContent:'','').trim()];});
 }
 tabs.forEach(b=>b.addEventListener('click',()=>{
   tabs.forEach(t=>t.classList.remove('active'));$$('.panel').forEach(p=>p.classList.remove('active'));
@@ -1271,13 +1290,14 @@ function effMode(){
 function applyMode(){
   const m=effMode();
   const b=$('#mode-btn');b.className='hdr-btn '+(m==='travel'?'mode-travel':'mode-plan');
-  b.textContent=m==='travel'?'✈ Podróż':'✎ Planowanie';
+  b.innerHTML='<span class="seg'+(m==='plan'?' on':'')+'">✎ Plan</span><span class="seg'+(m==='travel'?' on':'')+'">✈ Podróż</span>';
+  b.setAttribute('aria-label','Tryb: '+(m==='travel'?'podróż':'planowanie')+'. Dotknij, żeby przełączyć.');
   $$('.plan-only').forEach(x=>x.style.display=m==='plan'?'':'none');
   applyTabs();
   $('#fab').style.display=m==='travel'?'':'none';
   $('#mode-note').innerHTML=m==='travel'
     ?'<b>Tryb podróży.</b> Apka otwiera się na „Dziś”. Plan dalej możesz zmieniać: noce, pomijanie, ✎ w karcie, ⇅ kolejność i ＋ wstawianie etapu.'
-    :'<b>Tryb planowania.</b> Wszystkie narzędzia widoczne. W dniu wyjazdu apka sama przełączy się na tryb podróży.';
+    :'<b>Tryb planowania.</b> Na dole masz Zarys, Plan i Kosztorys, resztę pod „Więcej”. W dniu wyjazdu apka sama przełączy się na tryb podróży.';
 }
 $('#mode-btn').addEventListener('click',()=>{
   const m=effMode()==='travel'?'plan':'travel';save(K.mode,m);applyMode();
@@ -1294,7 +1314,7 @@ let exDraft={};
 function openSheet(kind){
   const t=T();
   if(kind==='pick'){
-    sheet.innerHTML='<h3>Dodaj <button data-close>✕</button></h3><div class="acts" style="margin:0"><button class="act exp" data-open="exp"><span>💸</span>Wydatek</button><button class="act chk" data-open="ci"><span>📍</span>Check-in</button></div>';
+    sheet.innerHTML='<h3>Dodaj <button data-close>✕</button></h3><div class="acts" style="margin:0"><button class="act exp" data-open="exp"><span>'+ICO.wydatki+'</span>Wydatek</button><button class="act chk" data-open="ci"><span>'+ICO.pin+'</span>Check-in</button></div>';
   }else if(kind==='more'){
     sheet.innerHTML='<h3>Więcej <button data-close>✕</button></h3><div class="more-list">'+
       moreTabs().map(m=>'<button class="more-item'+(curTab===m[0]?' on':'')+'" data-gotab="'+m[0]+'"><span>'+m[1]+'</span>'+m[2]+'</button>').join('')+'</div>';
@@ -1369,7 +1389,7 @@ function buildExpenses(){
   const days=[...new Set(ex.map(e=>e.day))];
   const today=ex.filter(e=>e.day===isoToday()).reduce((a,e)=>a+expPln(e),0);
   const plan=plannedPln(t),r=tripRange(t);
-  let h='<div class="acts"><button class="act exp" data-open="exp"><span>💸</span>Dodaj wydatek</button><button class="act chk" data-report><span>📋</span>Kopiuj raport</button></div>';
+  let h='<div class="acts"><button class="act exp" data-open="exp"><span>'+ICO.wydatki+'</span>Dodaj wydatek</button><button class="act chk" data-report><span>'+ICO.raport+'</span>Kopiuj raport</button></div>';
   h+='<div class="exp-sum">'+
     '<div class="k"><div class="l">Razem</div><div class="v">'+fmt(tot)+' zł</div><div class="s">'+plural(ex.length,'pozycja','pozycje','pozycji')+'</div></div>'+
     '<div class="k"><div class="l">Dziennie</div><div class="v">'+fmt(days.length?tot/days.length:0)+' zł</div><div class="s">średnio z '+plural(days.length,'dnia','dni','dni')+'</div></div>'+
@@ -1460,8 +1480,8 @@ function buildGuide(){
       h+='<div class="area-h">'+esc(a)+'<span>'+plural(g[a].length,'miejsce','miejsca','miejsc')+'</span></div>';
       g[a].forEach(x=>{const v=!!visited[t.id+'|'+x.key];
         h+='<div class="pcard '+(x.tag==='must'?'must':x.tag==='detour'?'detour':'')+(v?' visited':'')+'"><div class="pcard-top"><div class="pc-ico">'+esc(x.icon||'◇')+'</div>'+
-          '<div class="pc-h"><div class="pc-n">'+esc(x.name)+'</div><div class="pc-w">'+esc(x.where||'')+'</div></div>'+
-          '<span class="pc-tag">'+({must:'must see',worth:'warto',detour:'objazd'}[x.tag]||'')+'</span>'+tickDot(x.key,'Odwiedzone')+'<span class="expand">⌄</span></div>'+
+          '<div class="pc-h"><div class="pc-n">'+esc(x.name)+'</div><div class="pc-w">'+esc(x.where||'')+'</div>'+
+          '<span class="pc-tag">'+({must:'must see',worth:'warto',detour:'objazd'}[x.tag]||'')+'</span></div>'+tickDot(x.key,'Odwiedzone')+'<span class="expand">⌄</span></div>'+
           '<div class="pc-body"><div class="pc-body-inner">'+esc(x.desc||'')+(x.tip?'<div class="lbl">Praktycznie</div>'+esc(x.tip):'')+
           tickBtn(x.key,'Odwiedzone')+'</div></div></div>';});
     });
@@ -1553,13 +1573,13 @@ function buildChecks(){
     t.checks.forEach((c,i)=>{if(c.cat!==cat)return;if(c.done)done++;
       const d=el('div','chk'+(c.done?' done':''));
       const kk=isKeyCheck(t,c);
-      d.innerHTML='<span class="box">'+(c.done?'✓':'')+'</span><span class="task">'+esc(c.t)+'</span><span class="when">'+esc(c.w||'')+'</span>'+
+      d.innerHTML='<span class="box">'+(c.done?'✓':'')+'</span><span class="task">'+esc(c.t)+(c.w?'<small class="when">'+esc(c.w)+'</small>':'')+'</span>'+
         '<button class="ord-btn star'+(kk?' on':'')+'" data-ckey="'+i+'" title="kluczowe — pokaże się w Dziś, dopóki nie odhaczone" style="flex:0 0 auto;margin-left:8px">'+(kk?'★':'☆')+'</button>'+
         '<button class="ord-btn del" data-cdel="'+i+'" style="flex:0 0 auto;margin-left:4px">✕</button>';
       d.onclick=ev=>{if(ev.target.closest('[data-cdel]')||ev.target.closest('[data-ckey]'))return;c.done=!c.done;saveTrips();buildChecks();};
       w.appendChild(d);});
   });
-  $('#chk-progress').innerHTML='Odhaczone: <b>'+done+'</b> z <b>'+t.checks.length+'</b>';a11y(w);
+  $('#chk-progress').innerHTML='<span>Odhaczone: <b>'+done+'</b> z <b>'+t.checks.length+'</b></span>';a11y(w);
 }
 $('#checks').addEventListener('click',e=>{
   const ks=e.target.closest('[data-ckey]');
