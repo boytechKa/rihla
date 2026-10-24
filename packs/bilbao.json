@@ -8,7 +8,7 @@
  "extra": [
   "PLN"
  ],
- "rev": 2,
+ "rev": 3,
  "dateless": true,
  "stages": [
   {
@@ -838,7 +838,9 @@
     "slot": "day",
     "zone": "casco",
     "indoor": false,
-    "tag": "must"
+    "tag": "must",
+    "hl": true,
+    "short": "Casco Viejo"
    },
    {
     "id": "ribera",
@@ -874,7 +876,9 @@
     "tag": "must",
     "closed": [
      1
-    ]
+    ],
+    "hl": true,
+    "short": "Guggenheim"
    },
    {
     "id": "ria",
@@ -894,7 +898,9 @@
     "slot": "day",
     "zone": "ria",
     "indoor": false,
-    "tag": "must"
+    "tag": "must",
+    "hl": true,
+    "short": "Artxanda"
    },
    {
     "id": "bellas",
@@ -945,7 +951,9 @@
     "slot": "day",
     "zone": "getxo",
     "indoor": false,
-    "tag": "must"
+    "tag": "must",
+    "hl": true,
+    "short": "Most Bizkaia"
    },
    {
     "id": "algorta",
@@ -955,7 +963,9 @@
     "slot": "day",
     "zone": "getxo",
     "indoor": false,
-    "tag": "worth"
+    "tag": "worth",
+    "hl": true,
+    "short": "Getxo"
    },
    {
     "id": "klify",
@@ -997,7 +1007,9 @@
     "slot": "evening",
     "zone": "casco",
     "indoor": true,
-    "tag": "must"
+    "tag": "must",
+    "hl": true,
+    "short": "Plaza Nueva"
    },
    {
     "id": "ensanche",
@@ -1017,7 +1029,9 @@
     "slot": "evening",
     "zone": "lavieja",
     "indoor": true,
-    "tag": "worth"
+    "tag": "worth",
+    "hl": true,
+    "short": "Bilbao La Vieja"
    },
    {
     "id": "antzokia",
