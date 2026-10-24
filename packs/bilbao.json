@@ -1,5 +1,5 @@
 {
- "_opis": "Pakiet publiczny Rihla: Bilbao, 2–4 dni. Tylko treść przewodnikowa — żadnych danych osobowych. Ceny i godziny sprawdzone w październiku 2026.",
+ "_opis": "Pakiet publiczny Rihla: Bilbao, miasto bez przejazdów — dni układa Zarys z klocków (city.acts). Tylko treść przewodnikowa, żadnych danych osobowych. Ceny i godziny sprawdzone w październiku 2026. Przy zmianach podbij rev; etapy mają stałe armIdx.",
  "id": "bilbao",
  "name": "Bilbao",
  "emoji": "🇪🇸",
@@ -8,71 +8,41 @@
  "extra": [
   "PLN"
  ],
- "rev": 1,
+ "rev": 2,
  "dateless": true,
  "stages": [
   {
-   "title": "Przylot i Casco Viejo",
+   "title": "Bilbao",
    "from": "Lotnisko Bilbao",
    "to": "Bilbao",
    "mode": "bus",
-   "nights": 1,
+   "nights": 3,
+   "armIdx": 0,
    "lat": 43.263,
    "lng": -2.935,
    "carrier": "Bizkaibus A3247 · co 15–20 min",
    "price": "5",
    "curr": "€",
    "stay": "Bilbao — Casco Viejo albo Abando",
-   "see": "Siedem ulic, Plaza Nueva i pierwszy wieczór na pintxos.",
-   "detail": "Autobus z lotniska jedzie ok. 20–30 min i zatrzymuje się m.in. na Plaza Moyua i przy dworcu Termibus. Po zameldowaniu: spacer po Casco Viejo — katedra Santiago, Siete Calles, Mercado de la Ribera nad rzeką. Wieczorem Plaza Nueva: arkady, bary jeden przy drugim.",
+   "see": "Miasto do chodzenia. Co którego dnia — układasz w zakładce Zarys.",
+   "detail": "Autobus z lotniska jedzie ok. 20–30 min i zatrzymuje się m.in. na Plaza Moyua i przy dworcu Termibus. Tu zmieniasz tylko liczbę nocy; plan dni i miejsca układa Zarys.",
    "note": "Na pierwszym przystanku metra kup kartę Barik (3 € + doładowanie min. 5 €). Działa w metrze, tramwaju, autobusach, funikularze i na moście Bizkaia, a przejazd wychodzi mniej więcej o połowę taniej niż bilet jednorazowy."
   },
   {
-   "title": "Guggenheim, ría i Artxanda",
-   "from": "Bilbao",
-   "to": "Bilbao",
-   "mode": "walk",
-   "nights": 1,
-   "lat": 43.263,
-   "lng": -2.935,
-   "carrier": "Pieszo + funikular Artxanda",
-   "price": "12",
-   "curr": "€",
-   "stay": "Bilbao",
-   "see": "Gehry, spacer wzdłuż rzeki i całe miasto z góry o zachodzie.",
-   "detail": "Rano Guggenheim (otwarte od 10:00, w poniedziałki zwykle zamknięte). Potem bulwarem wzdłuż ría: kładka Zubizuri, czerwone łuki na moście La Salve, park Doña Casilda. Po południu funikularem na Artxandę — widok na całe Bilbao, a na górze bary z txakoli.",
-   "note": "Bilet do Guggenheima kupuj na oficjalnej stronie muzeum — są fałszywe sprzedaże. Bilet łączony z Bellas Artes kosztuje 16 €. Jeśli wypada wtorek, kolekcja Bellas Artes jest za darmo (10:00–18:00)."
-  },
-  {
-   "title": "Getxo i most Bizkaia",
-   "from": "Bilbao",
-   "to": "Getxo",
-   "mode": "train",
-   "nights": 1,
-   "lat": 43.333,
-   "lng": -3.015,
-   "carrier": "Metro L1 do Areeta, wracasz z Algorty",
-   "price": "4",
-   "curr": "€",
-   "stay": "Bilbao",
-   "see": "Najstarszy most transportowy świata, port rybacki i klify nad Atlantykiem.",
-   "detail": "Metrem L1 do Areeta (ok. 20 min). Gondolą przez ría pod mostem Bizkaia, a dla odważnych górą po kładce na 45 m. Potem nabrzeżem Las Arenas i Ereaga do Puerto Viejo w Algorcie: białe domki, rybackie tawerny. Jeśli pogoda dopisze, dalej klifami w stronę Sopeli.",
-   "note": "Wariant dla miłośników natury: zamiast Getxo cały dzień na San Juan de Gaztelugatxe. Zimą bez auta to trudny dojazd (autobus do Bakio, dalej taxibus tylko w dni robocze), więc prościej wykupić wycieczkę albo wynająć auto na dzień. W dni z kontrolowanym wejściem obowiązuje darmowa rezerwacja online."
-  },
-  {
-   "title": "Ribera, Bilbao La Vieja i wylot",
+   "title": "Wylot",
    "from": "Bilbao",
    "to": "Lotnisko Bilbao",
    "mode": "bus",
    "nights": 0,
+   "armIdx": 1,
    "lat": 43.263,
    "lng": -2.935,
    "carrier": "Bizkaibus A3247",
    "price": "5",
    "curr": "€",
    "stay": "",
-   "see": "Targ, kawa w Café Iruña i ostatnie pintxos przed lotem.",
-   "detail": "Rano Mercado de la Ribera: na dole stragany, w strefie gastro bary z pintxos. Przez most na drugi brzeg do Bilbao La Vieja — murale, galerie, najbardziej alternatywna część miasta. Jeśli lot jest późno, Café Iruña przy Jardines de Albia (neomauretańskie wnętrze z początku XX wieku).",
+   "see": "Ostatnie pintxos i autobus na lotnisko.",
+   "detail": "",
    "note": "Na lotnisko wyjedź z zapasem: autobus co 15–20 min, ale w godzinach szczytu stoi w korkach. Taksówka kosztuje ok. 25–30 €."
   }
  ],
@@ -824,5 +794,253 @@
     ]
    ]
   }
- ]
+ ],
+ "city": {
+  "stay": 0,
+  "firstDay": 0.7,
+  "lastDay": 0.6,
+  "zones": [
+   {
+    "id": "casco",
+    "n": "Casco Viejo"
+   },
+   {
+    "id": "ria",
+    "n": "Nad rzeką"
+   },
+   {
+    "id": "abando",
+    "n": "Abando i Indautxu"
+   },
+   {
+    "id": "lavieja",
+    "n": "Bilbao La Vieja"
+   },
+   {
+    "id": "getxo",
+    "n": "Getxo i wybrzeże"
+   },
+   {
+    "id": "gory",
+    "n": "Góry"
+   },
+   {
+    "id": "daleko",
+    "n": "Poza miastem"
+   }
+  ],
+  "acts": [
+   {
+    "id": "casco",
+    "t": "Casco Viejo: Siete Calles i katedra",
+    "d": "Spacer po siedmiu średniowiecznych uliczkach i katedra Santiago.",
+    "dur": 2,
+    "slot": "day",
+    "zone": "casco",
+    "indoor": false,
+    "tag": "must"
+   },
+   {
+    "id": "ribera",
+    "t": "Mercado de la Ribera",
+    "d": "Stragany na dole, bary z pintxos w strefie gastro. Najżywiej rano.",
+    "dur": 1,
+    "slot": "morning",
+    "zone": "casco",
+    "indoor": true,
+    "tag": "worth",
+    "closed": [
+     0
+    ]
+   },
+   {
+    "id": "vasco",
+    "t": "Museo Vasco",
+    "d": "Muzeum o tym, kim są Baskowie, po remoncie z 2026 r.",
+    "dur": 1.5,
+    "slot": "day",
+    "zone": "casco",
+    "indoor": true,
+    "tag": "worth"
+   },
+   {
+    "id": "gugg",
+    "t": "Muzeum Guggenheima",
+    "d": "Gehry, labirynty Serry, Puppy i Maman. Bilet tylko z oficjalnej strony.",
+    "dur": 2.5,
+    "slot": "day",
+    "zone": "ria",
+    "indoor": true,
+    "tag": "must",
+    "closed": [
+     1
+    ]
+   },
+   {
+    "id": "ria",
+    "t": "Spacer nad ría: Zubizuri i czerwone łuki",
+    "d": "Bulwarem od Campo Volantín do parku Doña Casilda.",
+    "dur": 1.5,
+    "slot": "day",
+    "zone": "ria",
+    "indoor": false,
+    "tag": "worth"
+   },
+   {
+    "id": "artxanda",
+    "t": "Funikular na Artxandę",
+    "d": "Całe miasto z góry, najpiękniej przed zachodem słońca.",
+    "dur": 1.5,
+    "slot": "day",
+    "zone": "ria",
+    "indoor": false,
+    "tag": "must"
+   },
+   {
+    "id": "bellas",
+    "t": "Museo de Bellas Artes",
+    "d": "Od El Greca po sztukę baskijską. We wtorki kolekcja za darmo.",
+    "dur": 2,
+    "slot": "day",
+    "zone": "ria",
+    "indoor": true,
+    "tag": "worth"
+   },
+   {
+    "id": "azkuna",
+    "t": "Azkuna Zentroa",
+    "d": "Kolumny Starcka i basen ze szklanym dnem — atrium za darmo.",
+    "dur": 0.5,
+    "slot": "day",
+    "zone": "abando",
+    "indoor": true,
+    "tag": "worth"
+   },
+   {
+    "id": "iruna",
+    "t": "Kawa w Café Iruña",
+    "d": "Neomauretańskie wnętrze przy Jardines de Albia.",
+    "dur": 0.75,
+    "slot": "morning",
+    "zone": "abando",
+    "indoor": true,
+    "tag": "worth"
+   },
+   {
+    "id": "sanmames",
+    "t": "San Mamés: muzeum i stadion",
+    "d": "„Katedra” Athleticu, zwiedzanie razem z muzeum klubu.",
+    "dur": 1.5,
+    "slot": "day",
+    "zone": "abando",
+    "indoor": true,
+    "tag": "worth",
+    "pick": false
+   },
+   {
+    "id": "bizkaia",
+    "t": "Most Bizkaia: gondola i kładka",
+    "d": "Metrem do Areeta, gondolą przez ría, dla odważnych górą po kładce.",
+    "dur": 1.5,
+    "slot": "day",
+    "zone": "getxo",
+    "indoor": false,
+    "tag": "must"
+   },
+   {
+    "id": "algorta",
+    "t": "Getxo: nabrzeżem do Puerto Viejo",
+    "d": "Las Arenas, plaża Ereaga i stary port rybacki w Algorcie.",
+    "dur": 2,
+    "slot": "day",
+    "zone": "getxo",
+    "indoor": false,
+    "tag": "worth"
+   },
+   {
+    "id": "klify",
+    "t": "Klify Barinatxe w Sopeli",
+    "d": "Dzika plaża i ścieżka po krawędzi klifu. Zimą buty z bieżnikiem.",
+    "dur": 2,
+    "slot": "day",
+    "zone": "getxo",
+    "indoor": false,
+    "tag": "worth"
+   },
+   {
+    "id": "pagasarri",
+    "t": "Pagasarri — góra nad miastem",
+    "d": "673 m, ok. 2 h podejścia, schronisko na szczycie. Tylko przy suchej pogodzie.",
+    "dur": 4,
+    "slot": "day",
+    "zone": "gory",
+    "indoor": false,
+    "tag": "worth",
+    "pick": false
+   },
+   {
+    "id": "gazte",
+    "t": "San Juan de Gaztelugatxe",
+    "d": "Pustelnia na skale, 241 schodów. Zimą najlepiej z wycieczką albo autem; sprawdź, czy trzeba rezerwacji.",
+    "dur": 6,
+    "slot": "day",
+    "zone": "daleko",
+    "indoor": false,
+    "tag": "detour",
+    "pick": false
+   },
+   {
+    "id": "pintxos",
+    "t": "Pintxos na Plaza Nueva",
+    "d": "Runda pod arkadami: Gure Toki, Sorginzulo, Victor Montes, Café Bar Bilbao.",
+    "dur": 2.5,
+    "slot": "evening",
+    "zone": "casco",
+    "indoor": true,
+    "tag": "must"
+   },
+   {
+    "id": "ensanche",
+    "t": "Kolacja w Ensanche",
+    "d": "El Globo i La Viña del Ensanche przy Diputación.",
+    "dur": 2,
+    "slot": "evening",
+    "zone": "abando",
+    "indoor": true,
+    "tag": "worth"
+   },
+   {
+    "id": "lavieja",
+    "t": "Wieczór w Bilbao La Vieja",
+    "d": "Bary z muzyką przy San Francisco i Dos de Mayo.",
+    "dur": 2.5,
+    "slot": "evening",
+    "zone": "lavieja",
+    "indoor": true,
+    "tag": "worth"
+   },
+   {
+    "id": "antzokia",
+    "t": "Koncert w Kafe Antzokia",
+    "d": "Program na stronie klubu — sprawdź, co gra w czasie pobytu.",
+    "dur": 2.5,
+    "slot": "evening",
+    "zone": "abando",
+    "indoor": true,
+    "tag": "worth",
+    "pick": false
+   },
+   {
+    "id": "athletic",
+    "t": "Mecz Athleticu",
+    "d": "Jeśli wypada w czasie pobytu — terminarz na athletic-club.eus.",
+    "dur": 3,
+    "slot": "evening",
+    "zone": "abando",
+    "indoor": false,
+    "tag": "worth",
+    "pick": false
+   }
+  ]
+ }
 }
