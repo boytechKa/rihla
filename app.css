@@ -1242,3 +1242,39 @@ body.kb-open nav,body.kb-open .fab{display:none!important}
 
 /* nagłówek: nazwy miejsc nie łamią się w połowie */
 .route-line em,.route-line u,.route-line span,.route-line s{white-space:nowrap}
+
+/* ===== Nagłówek: tytuł = przełącznik wypraw, tryb w linii z datą ===== */
+.h1-wrap{margin:0;font-size:inherit}
+.h1-btn{appearance:none;background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;display:inline-flex;align-items:baseline;gap:10px;max-width:100%}
+.h1-btn #h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(38px,7.4vw,84px);line-height:.95;letter-spacing:.02em;color:var(--cream);overflow-wrap:anywhere}
+.h1-caret{font-size:clamp(18px,3vw,28px);color:var(--cop);transform:translateY(-.12em);transition:transform .2s}
+.h1-btn:active .h1-caret{transform:translateY(0)}
+.h1-btn:focus-visible{outline:2px solid var(--cop);outline-offset:4px;border-radius:8px}
+.hdr-row2{display:flex;align-items:center;gap:10px;margin-top:14px;min-height:40px}
+.hdr-row2 .brand-dates{flex:1;min-width:0;white-space:normal}
+.hdr-row2 #mode-btn{margin-left:auto;flex:0 0 auto}
+.netpill{flex:0 0 auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--alarm,#C0392B);border-radius:20px;padding:4px 9px}
+.netpill[hidden]{display:none}
+body.compact .h1-btn #h1{font-size:26px}
+body.compact .hdr-row2{margin-top:8px;min-height:0}
+header{padding-top:calc(26px + env(safe-area-inset-top))}
+/* ===== Stopka: tylko podpis; dane w arkuszu ===== */
+footer{padding:22px 20px 30px}
+footer .sig{font-size:17px;margin-bottom:2px}
+#foot-name{font-size:12px}
+#data-sheet .ds-row{margin:-2px 0 10px}
+#data-sheet .ds-txt{font-size:14px;line-height:1.5;color:var(--muted)}
+#data-sheet .data-bar{justify-content:flex-start}
+#data-sheet .ds-sep{height:1px;background:var(--line);margin:16px 0 14px}
+#data-sheet .ds-wide{width:100%}
+#data-sheet .hint{text-align:left}
+
+.brand{position:relative}
+.netpill{position:absolute;top:-20px;left:0}
+.hdr-row2 .brand-dates{white-space:normal;letter-spacing:.16em;line-height:1.5}
+
+/* Kafelki Wydatek / Check-in: klasy .exp i .chk są też używane przez listy wydatków i zadań —
+   tu je neutralizujemy, żeby oba kafelki miały tę samą wysokość i wygląd */
+.acts .act{margin:0;border:0;border-radius:16px;padding:18px 12px;box-shadow:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff}
+.acts .act.exp{background:var(--cop)}
+.acts .act.chk{background:var(--iznik)}

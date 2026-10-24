@@ -45,6 +45,7 @@ const ICO={
   insta:SVG_I('<path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"/><circle cx="12" cy="13" r="3"/>'),
   lista:SVG_I('<path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/>'),
   szkolenie:SVG_I('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>'),
+  dane:SVG_I('<path d="M12 2v8"/><path d="m16 6-4 4-4-4"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 18h.01"/><path d="M10 18h.01"/>'),
   more:SVG_I('<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>'),
   pin:SVG_I('<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>'),
   raport:SVG_I('<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>'),
@@ -690,7 +691,6 @@ function scrollToToday(){
 }
 function buildHeader(){
   const t=T();
-  $('#trip-name').textContent=t.emoji+' '+t.name;
   $('#h1').textContent=t.name.toUpperCase();
   $('#hdr-mark').textContent=t.emoji||'✦';
   $('#foot-name').textContent=t.name+' · '+(new Date(dAt(t.start))).getFullYear();
@@ -1274,7 +1274,7 @@ const BUILD={dzis:buildToday,plan:()=>{buildRevBar();buildStages();cityPlanSumma
   mapa:()=>setTimeout(initMap,60),wydatki:buildExpenses,przew:buildGuide,insta:buildIG,lista:buildChecks,kosztorys:buildCalc,klocki:()=>{(cityPack()?buildCity:blkPack()?buildBlocks:buildZarys)();buildIdeas();}};
 let curTab=null;
 /* które zakładki są „główne” (dolny pasek na telefonie) zależy od trybu */
-const TAB_SETS={travel:['dzis','mapa','wydatki','insta'],plan:['dzis','klocki','plan','kosztorys']};
+const TAB_SETS={travel:['dzis','przew','mapa','wydatki'],plan:['dzis','klocki','plan','kosztorys']};
 function applyTabs(){
   const main=TAB_SETS[effMode()]||TAB_SETS.plan;
   tabs.forEach(b=>{const i=main.indexOf(b.dataset.p);b.classList.toggle('nav-main',i>=0);b.style.order=i>=0?i:20;});
@@ -1320,7 +1320,9 @@ $('#mode-btn').addEventListener('click',()=>{
 
 /* ============ ARKUSZ: wydatek i check-in ============ */
 const sheet=$('#sheet'),sheetBg=$('#sheet-bg');
-function closeSheet(){sheet.classList.remove('on');sheetBg.classList.remove('on');}
+function closeSheet(){sheet.classList.remove('on');sheetBg.classList.remove('on');const ds=$('#data-sheet');if(ds)ds.classList.remove('on');}
+function openDataSheet(){closeSheet();updateBackupAge();updateUndo();netState();$('#data-sheet').classList.add('on');sheetBg.classList.add('on');a11y($('#data-sheet'));}
+$('#data-sheet').addEventListener('click',e=>{if(e.target.closest('[data-close]'))closeSheet();});
 sheetBg.addEventListener('click',closeSheet);
 $('#fab').addEventListener('click',()=>openSheet('pick'));
 $('#more-btn').addEventListener('click',()=>openSheet('more'));
@@ -1332,6 +1334,7 @@ function openSheet(kind){
   }else if(kind==='more'){
     sheet.innerHTML='<h3>Więcej <button data-close>✕</button></h3><div class="more-list">'+
       moreTabs().map(m=>'<button class="more-item'+(curTab===m[0]?' on':'')+'" data-gotab="'+m[0]+'"><span>'+m[1]+'</span>'+m[2]+'</button>').join('')+
+      '<button class="more-item" data-dane-open><span>'+ICO.dane+'</span>Dane i kopia</button>'+
       '<button class="more-item" data-train-open><span>'+ICO.szkolenie+'</span>Szkolenie</button></div>';
   }else if(kind==='exp'){
     const curs=[...new Set([toCode(t.cur),...t.extra.map(toCode),'PLN'])];
@@ -1874,7 +1877,9 @@ function cleanTrips(a){
 }
 function updateUndo(){
   const b=$('#undo-import');if(!b)return;
-  const snap=load(PRE,null);b.style.display=snap?'':'none';
+  let snap=load(PRE,null);
+  if(snap&&snap._exported&&Date.now()-Date.parse(snap._exported)>7*86400000){try{localStorage.removeItem(PRE);}catch(e){}snap=null;}   // kopia sprzed importu żyje 7 dni
+  b.style.display=snap?'':'none';
   if(snap&&snap._exported){const d=new Date(snap._exported);
     b.textContent='↶ Cofnij import z '+d.toLocaleDateString('pl-PL')+' '+d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'});}
 }
@@ -1937,7 +1942,7 @@ $('#undo-import').addEventListener('click',()=>{
 updateUndo();
 
 /* ============ SIEĆ, SERVICE WORKER ============ */
-function netState(){const d=$('#netdot'),on=navigator.onLine;d.className='netdot'+(on?'':' off');d.innerHTML='<i></i>'+(on?'online':'offline — działa z pamięci');}
+function netState(){const d=$('#netdot'),on=navigator.onLine;d.className='netdot'+(on?'':' off');d.innerHTML='<i></i>'+(on?'online':'offline — działa z pamięci');const np=$('#netpill');if(np)np.hidden=on;}
 window.addEventListener('online',()=>{netState();refreshRates().then(ok=>{if(ok&&curTab==='dzis')buildToday();});});
 window.addEventListener('offline',netState);
 if('serviceWorker' in navigator){
@@ -1964,15 +1969,15 @@ if('serviceWorker' in navigator){
    sheet:'exp' (otwórz arkusz wydatku), trips:true (otwórz listę wypraw). */
 const TRAIN=[
  {id:'start',n:'Pierwsze kroki',d:'Najważniejsze rzeczy w minutę.',steps:[
-  {sel:'#trip-btn',t:'Twoje wyprawy',d:'Tu przełączasz się między wyprawami, dodajesz nową albo wczytujesz gotowy pakiet.'},
+  {sel:'#trip-btn',t:'Twoje wyprawy',d:'Dotknij nazwy wyprawy, żeby przełączyć się na inną, dodać nową albo wczytać gotowy pakiet.'},
   {sel:'#mode-btn',t:'Plan i Podróż',d:'„Plan” to przygotowania przed wyjazdem. „Podróż” to tryb na miejscu. W dniu wyjazdu apka przełączy się sama.'},
-  {sel:'#tabs',t:'Zakładki',d:'Na dole są najważniejsze zakładki dla danego trybu. Reszta, czyli Przewodnik, Lista i Insta, jest pod „Więcej”.'},
+  {sel:'#tabs',t:'Zakładki',d:'Na dole są najważniejsze zakładki dla danego trybu: przy planowaniu Zarys, Plan i Kosztorys, w podróży Przewodnik, Mapa i Wydatki. Reszta jest pod „Więcej”.'},
   {tab:'plan',sel:'#stages .day',alt:'#add-stage',t:'Etapy dzień po dniu',d:'Dotknij etapu, żeby zobaczyć szczegóły. Przyciskami − i + zmieniasz liczbę nocy, a „pomijam” wyłącza etap. Daty reszty przeliczą się same.',altd:'Tu dodajesz kolejne etapy podróży. Daty przeliczają się z liczby nocy.'},
   {tab:'klocki',sel:'.cy-ctrls',t:'Układacz dni',d:'W mieście nie ma przejazdów, więc dni układa apka. Wybierasz tempo i liczbę dni, a każde miejsce możesz przenieść na inny dzień albo usunąć. Przy deszczu włącz „Plan B”.'},
   {tab:'plan',sel:'.trip-bar',t:'Termin',d:'Ustaw datę startu albo wybierz jeden z sugerowanych terminów. Do tego czasu wyprawa ma „termin nieustalony”.'},
   {tab:'przew',sel:'#subtabs',t:'Przewodnik',d:'Miejsca, jedzenie, zwroty, kultura i święta. Kółkiem przy miejscu odhaczasz to, co już zobaczone.'},
   {tab:'dzis',sel:'#today .acts',t:'W podróży',d:'„Wydatek” wpisujesz w lokalnej walucie, apka przeliczy na złote. „Check-in” zapisuje miejsce i godzinę na mapie, także bez internetu.'},
-  {sel:'#export-btn',t:'Twoje dane',d:'Wszystko zapisuje się tylko w tym telefonie. Co jakiś czas zrób backup i zachowaj plik, np. w mailu albo na Dysku.'}
+  {sheet:'dane',sel:'#export-btn',t:'Twoje dane',d:'Wszystko zapisuje się tylko w tym telefonie. Co jakiś czas zrób backup i zachowaj plik, np. w mailu albo na Dysku. Znajdziesz go w „Więcej” → „Dane i kopia”.'}
 ]},
  {id:'dni',n:'Układanie dni w mieście',d:'Tempo, liczba dni, przenoszenie miejsc, plan B na deszcz.',need:()=>!!cityPack(),steps:[
   {tab:'klocki',sel:'.cy-days',t:'Liczba dni',d:'− i + zmieniają liczbę nocy w mieście. Przy mniejszej liczbie dni apka nie wycina atrakcji, tylko upycha je gęściej. To, co się nie zmieści, pokaże osobno, z podpowiedzią „+1 dzień” albo „Intensywniej”.'},
@@ -2006,7 +2011,7 @@ const TRAIN=[
   {tab:'dzis',sheet:'exp',sel:'.cat-pills',t:'Kategoria',d:'Jedzenie, nocleg, transport, atrakcje… Z kategorii powstaje podsumowanie wydatków.'},
   {tab:'wydatki',sel:'.exp-sum',t:'Podsumowanie',d:'Ile wydane razem i średnio dziennie, w porównaniu z planem. „Kopiuj raport” daje gotowy tekst do wysłania.'},
   {tab:'dzis',sel:'#today [data-open="ci"]',t:'Check-in',d:'Zapisuje, gdzie jesteś i o której. GPS działa też bez internetu. Check-iny pojawiają się na mapie jako złote pinezki i tworzą ślad podróży.'},
-  {sel:'#mode-btn',t:'Tryb Podróż',d:'W dniu wyjazdu apka sama przełączy się na Podróż: na dole Dziś, Mapa i Wydatki. Przełączyć możesz też ręcznie.'}]},
+  {sel:'#mode-btn',t:'Tryb Podróż',d:'W dniu wyjazdu apka sama przełączy się na Podróż: na dole Dziś, Przewodnik, Mapa i Wydatki. Przełączyć możesz też ręcznie.'}]},
  {id:'koszt',n:'Kosztorys przed wyjazdem',d:'Ile wyjdzie wyprawa i co jest już zapłacone.',steps:[
   {tab:'kosztorys',sel:'.calc-sum',t:'Kosztorys',d:'Planowane koszty przed wyjazdem: ile razem, ile zapłacone, ile do zapłaty na miejscu.'},
   {tab:'kosztorys',sel:'#calc-cap',t:'Twój limit',d:'Wpisz budżet, a apka pokaże, czy się w nim mieścisz.'},
@@ -2016,9 +2021,9 @@ const TRAIN=[
   {trips:true,sel:'#sheet .newtrip',t:'Nowa wyprawa',d:'Wpisz nazwę albo kraj, opcjonalnie datę i walutę. Apka doda listę spraw na pierwszy dzień: karta SIM, bankomat, dojazd z lotniska.'},
   {trips:true,sel:'#sheet .packs',t:'Pakiety',d:'Gotowe wyprawy z przewodnikiem wczytujesz z pliku albo dostajesz linkiem. Autor może je później poprawiać, a poprawki przyjdą same.'},
   {trips:true,sel:'#sheet .trip .t-z',t:'Usypianie',d:'☾ chowa wyprawę z przełącznika i ekranu Dziś. Nic nie ginie, a obudzisz ją jednym dotknięciem.'},
-  {sel:'#export-btn',t:'Backup',d:'Zapisuje wszystkie wyprawy, wydatki i check-iny do jednego pliku. Na telefonie od razu wyślesz go mailem albo zapiszesz na Dysku.'},
-  {sel:'#import-btn',t:'Import',d:'Wczytuje backup, np. na nowym telefonie. Przed importem apka robi kopię obecnych danych, a „Cofnij import” przywraca poprzedni stan.'},
-  {sel:'#backup-age',t:'Przypomnienie',d:'Tu widać, kiedy był ostatni backup. Po tygodniu bez kopii apka przypomni o tym na ekranie Dziś.'}]}
+  {sheet:'dane',sel:'#export-btn',t:'Backup',d:'Zapisuje wszystkie wyprawy, wydatki i check-iny do jednego pliku. Na telefonie od razu wyślesz go mailem albo zapiszesz na Dysku.'},
+  {sheet:'dane',sel:'#import-btn',t:'Import',d:'Wczytuje backup, np. na nowym telefonie. Przed importem apka robi kopię obecnych danych, a „Cofnij import” przywraca poprzedni stan.'},
+  {sheet:'dane',sel:'#backup-age',t:'Przypomnienie',d:'Tu widać, kiedy był ostatni backup. Po tygodniu bez kopii apka przypomni o tym na ekranie Dziś.'}]}
 ];
 let tourI=-1,tourBack=null,tourShown=0,tourCh=null,tourSheet=null;
 const tourSteps=()=>tourCh?tourCh.steps:[];
@@ -2056,11 +2061,12 @@ function tourPlace(){
 }
 function tourPrep(s){
   // właściwy arkusz albo zakładka pod krok
-  const want=s.sheet?'exp':s.trips?'trips':null;
+  const want=s.sheet||(s.trips?'trips':null);
   if(want!==tourSheet){closeSheet();tourSheet=null;}
   if(s.tab&&curTab!==s.tab)goTab(s.tab);
   if(want==='exp'&&tourSheet!=='exp'){openSheet('exp');tourSheet='exp';setTimeout(()=>{const a=document.activeElement;if(a&&a.blur)a.blur();},300);}
   if(want==='trips'&&tourSheet!=='trips'){openTrips();tourSheet='trips';}
+  if(want==='dane'&&tourSheet!=='dane'){openDataSheet();tourSheet='dane';}
 }
 function tourStep(i){
   const steps=tourSteps();
@@ -2099,6 +2105,7 @@ function openTraining(){
 sheet.addEventListener('click',e=>{
   const b=e.target.closest('[data-train]');if(b){tourBack=curTab;startChapter(b.dataset.train,true);return;}
   if(e.target.closest('[data-train-open]')){openTraining();}
+  if(e.target.closest('[data-dane-open]')){openDataSheet();}
 });
 $('#tour-btn').addEventListener('click',openTraining);
 
