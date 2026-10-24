@@ -1636,6 +1636,7 @@ function openTrips(){
     '<div class="unconf">Pakiet to jeden plik JSON z gotową wyprawą: etapy, miejsca, smaki, zwroty, lista spraw i budżet. Wczytujesz go tutaj — bez podmieniania apki.</div>'+
     '<div class="packs">'+
       PUBLIC_PACKS.filter(k=>PACKS[k]&&!trips.some(t=>t.pack===k)).map(k=>'<button class="tb-btn" data-pkadd="'+k+'">＋ '+esc(PACKS[k].emoji+' '+PACKS[k].name)+'</button>').join('')+
+      '<div class="pk-code"><input id="pk-id" placeholder="kod pakietu, np. bilbao" autocapitalize="off" autocomplete="off"><button class="tb-btn" id="pk-id-go">＋ Dodaj</button></div>'+
       '<button class="tb-btn" id="pk-load">📦 Wczytaj pakiet</button>'+
       '<button class="tb-btn" id="pk-tpl">⬇ Szablon wyprawy</button>'+
       '<button class="tb-btn" id="pk-gtpl">⬇ Szablon przewodnika (dla AI)</button>'+
@@ -1684,6 +1685,7 @@ sheet.addEventListener('click',e=>{
     setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Pobrano pakiet');return;}
   const pa=e.target.closest('[data-pkadd]');
   if(pa){const t=patchTrip(freshTrip(pa.dataset.pkadd));trips.push(t);saveTrips();switchTrip(t.id);closeSheet();goTab('plan');toast('Dodano „'+t.name+'”');return;}
+  if(e.target.id==='pk-id-go'){const v=$('#pk-id').value;if(!v.trim()){$('#pk-id').focus();return;}closeSheet();addPackById(v);return;}
   if(e.target.id==='pk-load'){$('#pk-file').click();return;}
   const pd=e.target.closest('[data-pkdel]');
   if(pd){const k=pd.dataset.pkdel;
@@ -2119,10 +2121,14 @@ function isUntouchedDefault(t){
   return t&&!t.pack&&/^t/.test(t.id)&&t.name==='Moja pierwsza wyprawa'&&!(t.stages||[]).length&&
     !expenses.some(x=>x.trip===t.id)&&!checkins.some(x=>x.trip===t.id)&&!ideas.some(x=>x.trip===t.id);
 }
+/* Link zostaje w pasku adresu celowo: iPhone przy „Dodaj do ekranu początkowego” zapamiętuje ten adres,
+   a apka z ekranu ma osobną pamięć — przy pierwszym uruchomieniu sama wczyta pakiet. */
 async function openPackLink(){
   const q=new URLSearchParams(location.search).get('pack');if(!q)return;
-  const id=q.toLowerCase().replace(/[^a-z0-9_-]/g,'');
-  try{history.replaceState(null,'',location.pathname);}catch(e){}
+  return addPackById(q);
+}
+async function addPackById(raw){
+  const id=String(raw||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'');
   if(!id)return;
   const had=trips.find(t=>t.pack===id);
   let o;

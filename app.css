@@ -1214,3 +1214,7 @@ body:not(.compact) .fab{display:none}
 .train-ok{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
 .train-ch.done .train-ok{background:var(--olive,#6b7a3a);border-color:transparent}
 .train-go{flex:0 0 auto;font-size:22px;color:var(--cop)}
+
+/* Dodawanie pakietu po kodzie */
+.pk-code{display:flex;gap:8px;width:100%;margin-bottom:4px}
+.pk-code input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font:15px Inter,sans-serif;background:#fff}
