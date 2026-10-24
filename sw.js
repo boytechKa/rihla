@@ -3,7 +3,7 @@
    Podbij VERSION przy każdym wgraniu — inaczej przeglądarka nie zauważy zmiany.
    Tę samą liczbę wpisz w index.html w ?v= (5 miejsc). Dzięki temu nowy index.html
    nigdy nie dostanie starego app.js z pamięci. */
-const VERSION = 'v46';   // ← ta sama liczba co ?v= w index.html
+const VERSION = 'v48';   // ← ta sama liczba co ?v= w index.html
 const Q = '?v=' + VERSION.slice(1);
 const SHELL   = 'powrot-shell-' + VERSION;
 const TILES   = 'powrot-tiles';   // BEZ wersji — aktualizacja apki nie kasuje zapisanych map
@@ -113,6 +113,22 @@ self.addEventListener('fetch', e => {
   // 1b. pogoda, kursy walut, wyszukiwanie miejsc — zawsze z sieci;
   //     apka sama trzyma ostatni wynik, żeby działał offline
   if (/(^|\.)open-meteo\.com$|(^|\.)er-api\.com$/.test(url.hostname)) return;
+
+  // 1c. pakiety z linku (packs/*.json) — najpierw sieć, żeby poprawki docierały; offline z kopii
+  if (url.origin === location.origin && url.pathname.includes('/packs/')) {
+    e.respondWith((async () => {
+      const c = await caches.open(SHELL);
+      const key = url.origin + url.pathname;
+      try {
+        const res = await fetch(req);
+        if (res && res.ok) c.put(key, res.clone());
+        return res;
+      } catch (err) {
+        return (await c.match(key)) || new Response('', { status: 504 });
+      }
+    })());
+    return;
+  }
 
   // 2. nawigacja (wejście na stronę) — sieć, a gdy jej nie ma: zapisana kopia
   if (req.mode === 'navigate') {

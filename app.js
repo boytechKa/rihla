@@ -196,6 +196,7 @@ async function refreshRates(){
 
 /* ---------- stan ---------- */
 let trips=load(K.trips,null);
+const FIRST_RUN=trips==null;   // pierwsze uruchomienie na tym telefonie — pokaż samouczek
 let expenses=load(K.exp,[]);
 let checkins=load(K.ci,[]);
 let learned=load(K.learned,{});
@@ -640,10 +641,11 @@ function renderStage(i){
       '<div class="date-badge'+(s.mode==='med'||s.mode==='ferry'?' hot':'')+'"><span class="wd">'+esc(dt.d)+'</span><span class="d">'+esc(s.dep||'—')+'</span><span class="m">'+esc(dt.wd)+'</span></div>'+
       '<div class="day-head-txt"><div class="day-route">'+esc(stageTitle(s))+(isToday?'<span class="today-pill">dziś</span>':'')+(s.star?' <span style="color:var(--gold)">★</span>':'')+'</div>'+
         '<div class="day-see">'+esc(s.see)+'</div>'+
+        '<span class="chip day-chip">'+m.i+' '+esc(m.s)+'</span>'+
         (function(){const c=(typeof onsiteForStage==='function')?onsiteForStage(T(),s):0;
           return c?'<div class="day-cash">⌂ Płatność na miejscu: <b>'+fmt(c)+' zł</b></div>':'';})()+
         '</div>'+
-      '<span class="chip">'+m.i+' '+esc(m.s)+'</span><span class="expand">⌄</span>'+
+      '<span class="expand">⌄</span>'+
     '</div>'+
     '<div class="status-bar">'+
       '<button class="st-btn done'+(s.status==='done'?' on':'')+'" data-st="'+i+'" data-v="done">✓ odbyło się</button>'+
@@ -1772,6 +1774,14 @@ function drawRouteLayer(fit){
       L.marker(p.c,{icon:mkIcon('var',String.fromCharCode(65+i))}).addTo(routeLayer).bindPopup('<div class="map-pop"><div class="mp-date">'+esc(p.tag||'')+'</div><b>'+esc(p.n)+'</b><br>'+esc(p.f||'')+'</div>',{maxWidth:300});});
     L.polyline(vl,{color:'#B45A2E',weight:3,opacity:.7,dashArray:'4 7'}).addTo(routeLayer);
   }
+  // miejsca z przewodnika, które mają współrzędne (pole c:[lat,lng]) — mniejsze pinezki
+  (P()&&P().places||[]).forEach(x=>{
+    if(!Array.isArray(x.c)||x.c.length!==2)return;
+    const v=!!visited[t.id+'|'+x.key];
+    L.marker(x.c,{icon:mkIcon('poi'+(x.tag==='must'?' must':'')+(v?' done':''),esc(x.icon||'◇'))}).addTo(routeLayer)
+      .bindPopup('<div class="map-pop"><div class="mp-date">'+esc(x.area||'')+'</div><b>'+esc(x.name)+'</b><br>'+esc(x.desc||'')+'</div>',{maxWidth:300});
+    pts.push(x.c);
+  });
   // check-iny
   checkins.filter(x=>x.trip===t.id).forEach(x=>{
     L.marker([x.lat,x.lng],{icon:mkIcon('ci','📍')}).addTo(routeLayer)
@@ -1925,6 +1935,74 @@ if('serviceWorker' in navigator){
   });
 }
 
+/* ============ SAMOUCZEK: chmurki krok po kroku ============
+   Pokazuje się sam przy pierwszym uruchomieniu (także z linku z pakietem).
+   Powtórka: stopka → „Jak korzystać z apki”. Krok, którego elementu nie ma na ekranie, jest pomijany. */
+const TOUR=[
+  {sel:'#trip-btn',t:'Twoje wyprawy',d:'Tu przełączasz się między wyprawami, dodajesz nową albo wczytujesz gotowy pakiet.'},
+  {sel:'#mode-btn',t:'Plan i Podróż',d:'„Plan” to przygotowania przed wyjazdem. „Podróż” to tryb na miejscu. W dniu wyjazdu apka przełączy się sama.'},
+  {sel:'#tabs',t:'Zakładki',d:'Na dole są najważniejsze zakładki dla danego trybu. Reszta, czyli Przewodnik, Lista i Insta, jest pod „Więcej”.'},
+  {tab:'plan',sel:'#stages .day',alt:'#add-stage',t:'Etapy dzień po dniu',d:'Dotknij etapu, żeby zobaczyć szczegóły. Przyciskami − i + zmieniasz liczbę nocy, a „pomijam” wyłącza etap. Daty reszty przeliczą się same.',altd:'Tu dodajesz kolejne etapy podróży. Daty przeliczają się z liczby nocy.'},
+  {tab:'plan',sel:'.trip-bar',t:'Termin',d:'Ustaw datę startu albo wybierz jeden z sugerowanych terminów. Do tego czasu wyprawa ma „termin nieustalony”.'},
+  {tab:'przew',sel:'#subtabs',t:'Przewodnik',d:'Miejsca, jedzenie, zwroty, kultura i święta. Kółkiem przy miejscu odhaczasz to, co już zobaczone.'},
+  {tab:'dzis',sel:'#today .acts',t:'W podróży',d:'„Wydatek” wpisujesz w lokalnej walucie, apka przeliczy na złote. „Check-in” zapisuje miejsce i godzinę na mapie, także bez internetu.'},
+  {sel:'#export-btn',t:'Twoje dane',d:'Wszystko zapisuje się tylko w tym telefonie. Co jakiś czas zrób backup i zachowaj plik, np. w mailu albo na Dysku.'}
+];
+let tourI=-1,tourBack=null,tourShown=0;
+function tourVisible(n){if(!n)return false;const r=n.getBoundingClientRect();return r.width>0&&r.height>0;}
+function tourEnd(){
+  tourI=-1;const o=$('#tour');if(o)o.remove();
+  document.removeEventListener('keydown',tourKey);window.removeEventListener('resize',tourPlace);window.removeEventListener('scroll',tourPlace,true);
+  try{localStorage.setItem('wy-tour','1');}catch(e){}
+  if(tourBack&&tourBack!==curTab)goTab(tourBack);window.scrollTo({top:0});
+}
+function tourKey(e){if(e.key==='Escape')tourEnd();if(e.key==='ArrowRight'||e.key==='Enter')tourStep(tourI+1);}
+function tourTarget(s){
+  let n=$(s.sel),d=s.d;
+  if(!tourVisible(n)&&s.alt){n=$(s.alt);d=s.altd||d;}
+  return tourVisible(n)?{n,d}:null;
+}
+function tourPlace(){
+  const o=$('#tour');if(!o||tourI<0)return;
+  const s=TOUR[tourI],tg=tourTarget(s);if(!tg)return;
+  const r=tg.n.getBoundingClientRect(),pad=6,hole=o.querySelector('.tour-hole'),bub=o.querySelector('.tour-bub');
+  Object.assign(hole.style,{left:(r.left-pad)+'px',top:(r.top-pad)+'px',width:(r.width+pad*2)+'px',height:(r.height+pad*2)+'px'});
+  const vw=window.innerWidth,vh=window.innerHeight,bw=Math.min(320,vw-32);
+  bub.style.width=bw+'px';
+  const bh=bub.offsetHeight,below=vh-r.bottom,above=r.top;
+  let top=below>=bh+20||below>above?r.bottom+pad+12:r.top-pad-12-bh;
+  top=Math.max(12,Math.min(top,vh-bh-12));
+  let left=r.left+r.width/2-bw/2;left=Math.max(16,Math.min(left,vw-bw-16));
+  bub.style.top=top+'px';bub.style.left=left+'px';
+}
+function tourStep(i){
+  closeSheet();
+  while(i<TOUR.length){
+    const s=TOUR[i];if(s.tab&&curTab!==s.tab)goTab(s.tab);
+    const tg=tourTarget(s);
+    if(tg){tourI=i;break;}
+    i++;
+  }
+  if(i>=TOUR.length){tourEnd();toast('Samouczek znajdziesz zawsze w stopce apki');return;}
+  tourShown++;
+  const s=TOUR[tourI],tg=tourTarget(s);
+  const fixed=!!tg.n.closest('header,nav,.sysbar');
+  if(!fixed)tg.n.scrollIntoView({block:'center'});
+  let o=$('#tour');
+  if(!o){o=el('div','tour');o.id='tour';o.setAttribute('role','dialog');o.setAttribute('aria-modal','true');
+    o.innerHTML='<div class="tour-hole"></div><div class="tour-bub"></div>';document.body.appendChild(o);
+    o.addEventListener('click',e=>{
+      if(e.target.closest('[data-tnext]'))tourStep(tourI+1);
+      else if(e.target.closest('[data-tskip]')){tourEnd();toast('Samouczek znajdziesz zawsze w stopce apki');}});
+    document.addEventListener('keydown',tourKey);window.addEventListener('resize',tourPlace);window.addEventListener('scroll',tourPlace,true);}
+  const last=tourI===TOUR.length-1||!TOUR.slice(tourI+1).length;
+  o.querySelector('.tour-bub').innerHTML='<div class="tour-n">KROK '+tourShown+'</div><b>'+esc(s.t)+'</b><p>'+esc(tg.d)+'</p>'+
+    '<div class="tour-btns"><button type="button" class="tour-skip" data-tskip>Pomiń</button><button type="button" class="tour-next" data-tnext>'+(last?'Gotowe':'Dalej')+'</button></div>';
+  requestAnimationFrame(()=>{tourPlace();setTimeout(tourPlace,250);const b=o.querySelector('[data-tnext]');if(b)b.focus({preventScroll:true});});
+}
+function startTour(){tourBack=curTab;tourShown=0;tourStep(0);}
+$('#tour-btn').addEventListener('click',startTour);
+
 /* ============ START ============ */
 if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';
   sb.innerHTML='<b>Uwaga:</b> ta przeglądarka blokuje zapis (tryb prywatny?). Możesz czytać, ale zmiany nie zostaną zapisane.';}
@@ -1945,10 +2023,77 @@ if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';
   b.querySelector('button').onclick=()=>{try{localStorage.setItem('wy-iosbar',String(Date.now()));}catch(e){}b.remove();};
   $('#sysbar').after(b);
 })();
+/* ============ PAKIET Z LINKU: index.html?pack=bilbao ============
+   Pakiet leży w repo w packs/<id>.json. Link przy pierwszym otwarciu tworzy wyprawę
+   i ustawia ją jako aktywną; nietkniętą „Moją pierwszą wyprawę” usuwa.
+   Pakiety z linku same się aktualizują, gdy w pliku wzrośnie „rev”. */
+function packUrl(id){return 'packs/'+id+'.json';}
+async function fetchPack(id){
+  const r=await fetch(packUrl(id),{cache:'no-store'});
+  if(!r.ok)throw new Error(r.status===404?'Nie ma takiego pakietu: '+id:'Błąd serwera '+r.status);
+  const o=await r.json();o.id=id;o._url=packUrl(id);return o;
+}
+function isUntouchedDefault(t){
+  return t&&!t.pack&&/^t/.test(t.id)&&t.name==='Moja pierwsza wyprawa'&&!(t.stages||[]).length&&
+    !expenses.some(x=>x.trip===t.id)&&!checkins.some(x=>x.trip===t.id)&&!ideas.some(x=>x.trip===t.id);
+}
+async function openPackLink(){
+  const q=new URLSearchParams(location.search).get('pack');if(!q)return;
+  const id=q.toLowerCase().replace(/[^a-z0-9_-]/g,'');
+  try{history.replaceState(null,'',location.pathname);}catch(e){}
+  if(!id)return;
+  const had=trips.find(t=>t.pack===id);
+  let o;
+  try{o=await fetchPack(id);}catch(err){
+    if(had){switchTrip(had.id);return;}
+    const sb=$('#sysbar');sb.className='sysbar';sb.style.display='block';
+    sb.innerHTML=navigator.onLine?'Nie udało się wczytać pakietu: '+esc(err.message):'Brak internetu — otwórz link jeszcze raz, gdy będziesz online.';return;}
+  const prev=userPacks[id];
+  const r=installPack(o);if(r.err){toast(r.err);return;}
+  if(had){if((had.packRev||1)<(r.pack.rev||1))updateLinkedTrip(had,prev,r.pack);saveTrips();switchTrip(had.id);toast('„'+had.name+'” jest aktualna');return;}
+  const t=patchTrip(freshTrip(r.pack.id));
+  trips=trips.filter(x=>!isUntouchedDefault(x));trips.push(t);saveTrips();
+  switchTrip(t.id);goTab(effMode()==='travel'?'dzis':'przew');
+  toast('Dodano wyprawę „'+t.name+'”');
+}
+/* Nowa wersja pakietu z linku: bierze nowe etapy, ale zostawia to, co użytkownik sam zmienił
+   (pole różne od poprzedniej wersji pakietu). Etapy dopasowuje po armIdx, a bez niego po kolejności. */
+const REV_FIELDS=['title','from','to','via','mode','nights','dep','arr','carrier','price','curr','stay','stayUrl','stayPrice','curr2','see','detail','note','star','food','status','lat','lng'];
+function updateLinkedTrip(t,oldP,newP){
+  if(t.stages.some(s=>s.src==='user')){t.pendingRev=true;return;}
+  const key=(s,i)=>s.armIdx!=null?'a'+s.armIdx:'i'+i;
+  const mine={},base={};
+  t.stages.forEach((s,i)=>mine[key(s,i)]=s);
+  ((oldP&&oldP.stages)||[]).forEach((s,i)=>base[key(s,i)]=s);
+  t.stages=JSON.parse(JSON.stringify(newP.stages)).map((s,i)=>{
+    const k=key(s,i),o=mine[k],b=base[k]||{};if(!o)return s;
+    REV_FIELDS.forEach(f=>{const v=o[f];if(v==null||v==='')return;
+      if(JSON.stringify(v)!==JSON.stringify(b[f]))s[f]=v;});
+    return s;});
+  const had={};(t.checks||[]).forEach(c=>had[c.t]=1);
+  (newP.checks||[]).forEach(c=>{if(!had[c.t])t.checks.push(Object.assign({done:false},c));});
+  t.packRev=newP.rev||1;delete t.pendingRev;
+}
+async function syncLinkedPacks(){
+  if(!navigator.onLine)return;
+  for(const id of Object.keys(userPacks)){
+    const p=userPacks[id];if(!p||!p._url)continue;
+    try{
+      const o=await fetchPack(id);if((num(o.rev)||1)<=(p.rev||1))continue;
+      const r=installPack(o);if(r.err)continue;
+      trips.filter(t=>t.pack===id).forEach(t=>updateLinkedTrip(t,p,r.pack));
+      saveTrips();refresh();buildHeader();toast('Zaktualizowano przewodnik „'+(o.name||id)+'”');
+    }catch(e){}
+  }
+}
+
 netState();updateBackupAge();buildHeader();applyMode();a11y();revDot();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 goTab(effMode()==='travel'?'dzis':'plan');
 refreshRates().then(ok=>{if(ok&&curTab==='dzis')buildToday();});
+let tourDone=false;try{tourDone=!!localStorage.getItem('wy-tour');}catch(e){}
+if(new URLSearchParams(location.search).get('pack'))openPackLink().then(()=>{if(!tourDone&&FIRST_RUN)setTimeout(startTour,900);});
+else{syncLinkedPacks();if(!tourDone&&FIRST_RUN)setTimeout(startTour,900);}
 if(REV_NOTE)setTimeout(()=>toast(REV_NOTE),600);
 
 /* ============ POMYSŁY / RESEARCH ============ */
