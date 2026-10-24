@@ -1278,3 +1278,14 @@ footer .sig{font-size:17px;margin-bottom:2px}
 .acts .act{margin:0;border:0;border-radius:16px;padding:18px 12px;box-shadow:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff}
 .acts .act.exp{background:var(--cop)}
 .acts .act.chk{background:var(--iznik)}
+
+/* Nagłówek na pozostałych zakładkach: jeden rząd — nazwa wyprawy ▾ po lewej, Plan/Podróż po prawej, bez flagi */
+body.compact .brand{display:flex;align-items:center;gap:10px;padding-bottom:12px}
+body.compact .h1-wrap{flex:1;min-width:0}
+body.compact .h1-btn{max-width:100%;align-items:center}
+body.compact .h1-btn #h1{display:block;font-size:21px;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+body.compact .h1-caret{font-size:16px;transform:none}
+body.compact .hdr-row2{margin:0;flex:0 0 auto;min-height:0}
+body.compact #hdr-mark{display:none}
+body.compact #mode-btn .seg{padding:6px 9px}
+body.compact #mode-btn{font-size:12px}
