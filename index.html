@@ -15,8 +15,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-rihla-192.png">
 <!-- WERSJA: przy każdym wgraniu podbij ?v= tutaj ORAZ VERSION w sw.js (ta sama liczba) -->
-<link rel="stylesheet" href="leaflet.css?v=48">
-<link rel="stylesheet" href="app.css?v=48">
+<link rel="stylesheet" href="leaflet.css?v=50">
+<link rel="stylesheet" href="app.css?v=50">
 </head>
 <body>
 <div class="sysbar" id="sysbar" style="display:none"></div>
@@ -76,6 +76,7 @@
       <span class="tb-info" id="stage-count"></span>
     </div>
     <div id="stages"></div>
+    <div id="city-plan"></div>
     <div id="options"></div>
     <div id="infos"></div>
     <div class="unconf">Daty liczą się z liczby nocy. Zmień noce albo pomiń etap, a wszystko poniżej przesunie się samo.</div>
@@ -136,7 +137,7 @@
     <button id="export-btn" class="data-btn">⬇ Backup wszystkich wypraw</button>
     <button id="import-btn" class="data-btn">⬆ Importuj</button>
     <button id="undo-import" class="data-btn" style="display:none">↶ Cofnij import</button>
-    <button id="tour-btn" class="data-btn">? Jak korzystać z apki</button>
+    <button id="tour-btn" class="data-btn">? Szkolenie: jak korzystać z apki</button>
     <input type="file" id="import-file" accept="application/json,.json" style="display:none">
   </div>
   <div id="data-msg" class="data-msg"></div>
@@ -148,8 +149,8 @@
 <div class="sheet-bg" id="sheet-bg"></div>
 <div class="sheet" id="sheet"></div>
 
-<script src="leaflet.js?v=48"></script>
-<script src="packs.js?v=48"></script>
-<script src="app.js?v=48"></script>
+<script src="leaflet.js?v=50"></script>
+<script src="packs.js?v=50"></script>
+<script src="app.js?v=50"></script>
 </body>
 </html>

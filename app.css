@@ -1158,3 +1158,59 @@ body:not(.compact) .fab{display:none}
 .tour-btns{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .tour-skip{appearance:none;border:0;background:transparent;color:var(--muted);font:500 14px Inter,sans-serif;padding:10px 4px;cursor:pointer}
 .tour-next{appearance:none;border:0;background:var(--cop);color:#fff;font:700 14px Inter,sans-serif;padding:11px 22px;border-radius:12px;cursor:pointer;min-height:44px}
+
+/* ===== Układacz dni dla miasta ===== */
+.cy-head{margin-bottom:16px}
+.cy-intro{font-size:14px;line-height:1.55;color:var(--muted);margin-bottom:12px}
+.cy-intro b{display:block;font-family:'Fraunces',serif;font-size:20px;color:var(--burgundy);margin-bottom:4px}
+.cy-ctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.cy-days{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.cy-days b{font-family:'Fraunces',serif;font-size:20px;color:var(--ink);min-width:22px;text-align:center}
+.cy-pace{display:inline-flex;background:var(--sand-2);border-radius:999px;padding:3px}
+.cy-pace button{appearance:none;border:0;background:transparent;font:600 13px Inter,sans-serif;color:var(--muted);padding:9px 12px;border-radius:999px;cursor:pointer;min-height:40px}
+.cy-pace button.on{background:#fff;color:var(--burgundy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.cy-legend{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.5}
+.cy-day{background:#FFFDF8;border-radius:16px;padding:14px 16px 8px;margin-bottom:12px;box-shadow:0 1px 2px rgba(34,29,28,.06),0 3px 10px rgba(34,29,28,.04)}
+.cy-day.rain{background:#EEF3F3}
+.cy-dh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.cy-dh b{font-family:'Fraunces',serif;font-size:17px;color:var(--ink)}
+.cy-dh small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.cy-rain{appearance:none;border:1px solid var(--line);background:#fff;color:var(--iznik-deep);border-radius:999px;padding:7px 11px;font:600 12px Inter,sans-serif;cursor:pointer;white-space:nowrap;min-height:36px}
+.cy-rain.on{background:var(--iznik-deep);color:#fff;border-color:transparent}
+.cy-bar{height:4px;background:var(--sand-2);border-radius:4px;margin:10px 0 6px;overflow:hidden}
+.cy-bar i{display:block;height:100%;background:var(--cop);border-radius:4px}
+.cy-note{font-size:12px;color:var(--muted);font-style:italic;margin:2px 0 4px}
+.cy-act{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(34,29,28,.07)}
+.cy-act:first-of-type{border-top:0}
+.cy-act.eve .cy-t::before{content:'☾ ';color:var(--iznik-deep)}
+.cy-main{flex:1;min-width:0}
+.cy-t{font-weight:600;font-size:15px;color:var(--ink);overflow-wrap:anywhere}
+.cy-must{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--cop);border-radius:20px;padding:2px 7px;vertical-align:2px;white-space:nowrap}
+.cy-m{font-size:12px;color:var(--muted);margin-top:2px}
+.cy-d{font-size:13.5px;line-height:1.45;margin-top:4px;color:var(--ink);opacity:.85}
+.cy-ctl{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:0 0 auto}
+.cy-move{appearance:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 9px;font:600 12px Inter,sans-serif;color:var(--cop-deep);max-width:118px;min-height:36px}
+.cy-x{appearance:none;border:0;background:transparent;color:var(--muted);font-size:15px;padding:4px 8px;cursor:pointer;min-height:32px}
+.cy-empty{font-size:13.5px;color:var(--muted);padding:8px 0 10px}
+.cy-over{background:#FBEDE4;border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.cy-over>b{display:block;color:var(--cop-deep);font-size:15px}
+.cy-over>span{display:block;font-size:13px;color:var(--muted);margin:2px 0 6px}
+.cy-over-btns{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.cy-sum{display:flex;flex-direction:column;gap:2px;padding:10px 0;border-top:1px solid rgba(34,29,28,.08);font-size:13.5px}
+.cy-sum b{font-size:14px}
+.cy-sum span{color:var(--muted);line-height:1.45}
+.cy-sum.warn b{color:var(--cop-deep)}
+.cy-today .cy-day{box-shadow:none;padding:0;background:transparent}
+.cy-today-ft{margin-top:6px}
+#city-plan{margin:8px 0 18px}
+
+/* Szkolenie — lista rozdziałów */
+.train-intro{font-size:14px;color:var(--muted);line-height:1.5;margin:-4px 0 14px}
+.train-list{display:flex;flex-direction:column;gap:10px}
+.train-ch{appearance:none;display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;cursor:pointer;font-family:'Inter';min-height:64px}
+.train-ch b{display:block;font-size:15px;color:var(--ink)}
+.train-ch small{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.train-tx{flex:1;min-width:0}
+.train-ok{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+.train-ch.done .train-ok{background:var(--olive,#6b7a3a);border-color:transparent}
+.train-go{flex:0 0 auto;font-size:22px;color:var(--cop)}
