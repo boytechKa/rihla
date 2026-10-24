@@ -1,0 +1,828 @@
+{
+ "_opis": "Pakiet publiczny Rihla: Bilbao, 2–4 dni. Tylko treść przewodnikowa — żadnych danych osobowych. Ceny i godziny sprawdzone w październiku 2026.",
+ "id": "bilbao",
+ "name": "Bilbao",
+ "emoji": "🇪🇸",
+ "start": "2027-02-18",
+ "cur": "EUR",
+ "extra": [
+  "PLN"
+ ],
+ "rev": 1,
+ "dateless": true,
+ "stages": [
+  {
+   "title": "Przylot i Casco Viejo",
+   "from": "Lotnisko Bilbao",
+   "to": "Bilbao",
+   "mode": "bus",
+   "nights": 1,
+   "lat": 43.263,
+   "lng": -2.935,
+   "carrier": "Bizkaibus A3247 · co 15–20 min",
+   "price": "5",
+   "curr": "€",
+   "stay": "Bilbao — Casco Viejo albo Abando",
+   "see": "Siedem ulic, Plaza Nueva i pierwszy wieczór na pintxos.",
+   "detail": "Autobus z lotniska jedzie ok. 20–30 min i zatrzymuje się m.in. na Plaza Moyua i przy dworcu Termibus. Po zameldowaniu: spacer po Casco Viejo — katedra Santiago, Siete Calles, Mercado de la Ribera nad rzeką. Wieczorem Plaza Nueva: arkady, bary jeden przy drugim.",
+   "note": "Na pierwszym przystanku metra kup kartę Barik (3 € + doładowanie min. 5 €). Działa w metrze, tramwaju, autobusach, funikularze i na moście Bizkaia, a przejazd wychodzi mniej więcej o połowę taniej niż bilet jednorazowy."
+  },
+  {
+   "title": "Guggenheim, ría i Artxanda",
+   "from": "Bilbao",
+   "to": "Bilbao",
+   "mode": "walk",
+   "nights": 1,
+   "lat": 43.263,
+   "lng": -2.935,
+   "carrier": "Pieszo + funikular Artxanda",
+   "price": "12",
+   "curr": "€",
+   "stay": "Bilbao",
+   "see": "Gehry, spacer wzdłuż rzeki i całe miasto z góry o zachodzie.",
+   "detail": "Rano Guggenheim (otwarte od 10:00, w poniedziałki zwykle zamknięte). Potem bulwarem wzdłuż ría: kładka Zubizuri, czerwone łuki na moście La Salve, park Doña Casilda. Po południu funikularem na Artxandę — widok na całe Bilbao, a na górze bary z txakoli.",
+   "note": "Bilet do Guggenheima kupuj na oficjalnej stronie muzeum — są fałszywe sprzedaże. Bilet łączony z Bellas Artes kosztuje 16 €. Jeśli wypada wtorek, kolekcja Bellas Artes jest za darmo (10:00–18:00)."
+  },
+  {
+   "title": "Getxo i most Bizkaia",
+   "from": "Bilbao",
+   "to": "Getxo",
+   "mode": "train",
+   "nights": 1,
+   "lat": 43.333,
+   "lng": -3.015,
+   "carrier": "Metro L1 do Areeta, wracasz z Algorty",
+   "price": "4",
+   "curr": "€",
+   "stay": "Bilbao",
+   "see": "Najstarszy most transportowy świata, port rybacki i klify nad Atlantykiem.",
+   "detail": "Metrem L1 do Areeta (ok. 20 min). Gondolą przez ría pod mostem Bizkaia, a dla odważnych górą po kładce na 45 m. Potem nabrzeżem Las Arenas i Ereaga do Puerto Viejo w Algorcie: białe domki, rybackie tawerny. Jeśli pogoda dopisze, dalej klifami w stronę Sopeli.",
+   "note": "Wariant dla miłośników natury: zamiast Getxo cały dzień na San Juan de Gaztelugatxe. Zimą bez auta to trudny dojazd (autobus do Bakio, dalej taxibus tylko w dni robocze), więc prościej wykupić wycieczkę albo wynająć auto na dzień. W dni z kontrolowanym wejściem obowiązuje darmowa rezerwacja online."
+  },
+  {
+   "title": "Ribera, Bilbao La Vieja i wylot",
+   "from": "Bilbao",
+   "to": "Lotnisko Bilbao",
+   "mode": "bus",
+   "nights": 0,
+   "lat": 43.263,
+   "lng": -2.935,
+   "carrier": "Bizkaibus A3247",
+   "price": "5",
+   "curr": "€",
+   "stay": "",
+   "see": "Targ, kawa w Café Iruña i ostatnie pintxos przed lotem.",
+   "detail": "Rano Mercado de la Ribera: na dole stragany, w strefie gastro bary z pintxos. Przez most na drugi brzeg do Bilbao La Vieja — murale, galerie, najbardziej alternatywna część miasta. Jeśli lot jest późno, Café Iruña przy Jardines de Albia (neomauretańskie wnętrze z początku XX wieku).",
+   "note": "Na lotnisko wyjedź z zapasem: autobus co 15–20 min, ale w godzinach szczytu stoi w korkach. Taksówka kosztuje ok. 25–30 €."
+  }
+ ],
+ "windows": [
+  {
+   "name": "Styczeń–luty",
+   "when": "połowa stycznia → koniec lutego 2027",
+   "start": "2027-02-18",
+   "why": "Najtaniej i najmniej ludzi, muzea bez kolejek. W zamian chłodno (ok. 5–14°C) i deszczowo. Na początku lutego Santa Ageda i karnawał."
+  },
+  {
+   "name": "Marzec–kwiecień",
+   "when": "marzec → kwiecień 2027",
+   "start": "2027-04-15",
+   "why": "Cieplej (do ok. 18°C), dłuższe dni, dobre warunki na klify i Artxandę. Unikaj Wielkiego Tygodnia (21–28.03.2027), jeśli nie lubisz tłumów i zamkniętych lokali."
+  }
+ ],
+ "places": [
+  {
+   "area": "Bilbao — must see",
+   "name": "Muzeum Guggenheima",
+   "tag": "must",
+   "icon": "★",
+   "c": [
+    43.2687,
+    -2.934
+   ],
+   "where": "Abandoibarra",
+   "desc": "Budynek Franka Gehry'ego z tytanu, który w 1997 r. zmienił przemysłowe Bilbao w cel podróży. Przed wejściem kwiatowy pies Puppy Jeffa Koonsa, od strony rzeki pająk Maman Louise Bourgeois. Wewnątrz m.in. stalowe labirynty Richarda Serry.",
+   "tip": "12 € (studenci 18–25 i seniorzy 6 €), audioprzewodnik w cenie. Wt–nd 10:00–19:00, w zwykłe poniedziałki zamknięte; w Wielki Tydzień dłużej i otwarte też w poniedziałek. Bilety tylko z oficjalnej strony."
+  },
+  {
+   "area": "Bilbao — must see",
+   "name": "Casco Viejo i Plaza Nueva",
+   "tag": "must",
+   "icon": "★",
+   "c": [
+    43.2596,
+    -2.9236
+   ],
+   "where": "Stare miasto",
+   "desc": "Siedem średniowiecznych uliczek (Siete Calles), gotycka katedra Santiago i neoklasyczny plac z arkadami, który wieczorem staje się jednym wielkim barem z pintxos.",
+   "tip": "Najlepiej w czwartek albo piątek wieczorem, gdy miejscowi chodzą od baru do baru (poteo). W niedzielę rano na Plaza Nueva bywa targ staroci i znaczków."
+  },
+  {
+   "area": "Bilbao — must see",
+   "name": "Funikular i góra Artxanda",
+   "tag": "must",
+   "icon": "★",
+   "c": [
+    43.2727,
+    -2.92
+   ],
+   "where": "Dolna stacja: Funikularreko Plaza",
+   "desc": "Kolejka z 1915 r. wjeżdża w kilka minut na wzgórze nad miastem. Ok. 100 m od górnej stacji jest punkt widokowy 360°: Guggenheim, San Mamés, góry Pagasarri, a przy dobrej pogodzie morze.",
+   "tip": "Z kartą Barik 0,42 €, bez niej 3 € w jedną stronę, 5 € w obie. Kursy co 15 min, mniej więcej 7:15–22:00. Najpiękniej przed zachodem słońca."
+  },
+  {
+   "area": "Bilbao — must see",
+   "name": "Most Bizkaia (Puente Colgante)",
+   "tag": "must",
+   "icon": "★",
+   "c": [
+    43.3232,
+    -3.0167
+   ],
+   "where": "Getxo / Portugalete, metro Areeta",
+   "desc": "Pierwszy na świecie most transportowy (1893), wpisany na listę UNESCO. Nie przechodzi się po nim, tylko przepływa w zawieszonej gondoli, która kursuje całą dobę.",
+   "tip": "Gondola dla pieszych kosztuje kilkadziesiąt centów (działa też Barik). Wejście na górną kładkę to ok. 10 € — sprawdź aktualne ceny i godziny na puente-colgante.com. Zimą kładka mniej więcej 10:00–19:00."
+  },
+  {
+   "area": "Sztuka i architektura",
+   "name": "Museo de Bellas Artes",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2652,
+    -2.9374
+   ],
+   "where": "Park Doña Casilda",
+   "desc": "Jedno z najważniejszych muzeów sztuki w Hiszpanii, od 6.10.2026 po rozbudowie według projektu Normana Fostera. Od El Greca i Goi po sztukę baskijską XX wieku.",
+   "tip": "12 €, we wtorki kolekcja za darmo (10:00–18:00, bez wystaw czasowych). Pn, śr–sb 10:00–19:00, nd 10:00–15:00. Zamknięte 1 i 6 stycznia. Bilet łączony z Guggenheimem 16 €."
+  },
+  {
+   "area": "Sztuka i architektura",
+   "name": "Azkuna Zentroa (Alhóndiga)",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2593,
+    -2.9363
+   ],
+   "where": "Plaza Arriquíbar",
+   "desc": "Dawny skład wina przerobiony przez Philippe'a Starcka na centrum kultury. W atrium 43 kolumny, każda w innym stylu, a na dachu basen ze szklanym dnem widocznym z dołu.",
+   "tip": "Wejście do atrium jest bezpłatne. Dobre miejsce na deszczową godzinę."
+  },
+  {
+   "area": "Sztuka i architektura",
+   "name": "Zubizuri i czerwone łuki",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.269,
+    -2.9278
+   ],
+   "where": "Nad ría, między Campo Volantín a Uribitarte",
+   "desc": "Biały łukowy most pieszy Santiago Calatravy i — dalej w stronę Guggenheima — czerwone łuki Daniela Burena na moście La Salve. Razem dobry spacer wzdłuż rzeki.",
+   "tip": "Szklana nawierzchnia Zubizuri bywa śliska w deszczu — uważaj na podeszwy."
+  },
+  {
+   "area": "Sztuka i architektura",
+   "name": "Museo Vasco",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2586,
+    -2.9223
+   ],
+   "where": "Plaza Unamuno, Casco Viejo",
+   "desc": "Muzeum etnograficzne Kraju Basków, ponownie otwarte w czerwcu 2026 po kilkuletnim remoncie. Dobre wprowadzenie do tego, kim są Baskowie.",
+   "tip": "Ceny i godziny po remoncie sprawdź przed wizytą na stronie muzeum."
+  },
+  {
+   "area": "Sztuka i architektura",
+   "name": "San Mamés",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2642,
+    -2.9494
+   ],
+   "where": "Stadion Athleticu",
+   "desc": "„Katedra” Athleticu Bilbao — klubu, który od ponad stu lat gra wyłącznie zawodnikami z Kraju Basków. Muzeum i zwiedzanie stadionu, a w dzień meczu całe miasto w biało-czerwonych pasach.",
+   "tip": "Terminarz i bilety na athletic-club.eus. Nawet bez biletu warto obejrzeć mecz w barze przy Pozas."
+  },
+  {
+   "area": "Natura i wybrzeże",
+   "name": "Puerto Viejo w Algorcie",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.351,
+    -3.011
+   ],
+   "where": "Getxo, metro Algorta",
+   "desc": "Stary port rybacki na skarpie: białe domki, strome uliczki i tawerny z widokiem na zatokę. Stąd zaczyna się spacer klifami w stronę Sopeli.",
+   "tip": "Do Algorty ok. 25 min metrem L1. Połącz z mostem Bizkaia: tam metrem do Areeta, z powrotem z Algorty."
+  },
+  {
+   "area": "Natura i wybrzeże",
+   "name": "Klify Barinatxe (La Salvaje)",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.3872,
+    -2.9967
+   ],
+   "where": "Sopela, metro Larrabasterra",
+   "desc": "Dzika plaża pod klifami z warstwami fliszu, ulubione miejsce surferów z Bilbao. Ścieżka po krawędzi daje widok na cały brzeg.",
+   "tip": "Zimą wieje i bywa błotniście — buty z bieżnikiem. Kąpiel nie, ale zachód słońca tak."
+  },
+  {
+   "area": "Natura i wybrzeże",
+   "name": "Pagasarri",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2178,
+    -2.923
+   ],
+   "where": "Góra nad miastem, start z dzielnicy Iralabarri",
+   "desc": "Domowa góra Bilbaínos (673 m). Ok. 2 h podejścia z miasta, na szczycie schronisko i widok na całą dolinę ría.",
+   "tip": "Na pół dnia, przy suchej pogodzie. Po deszczu ścieżki są śliskie."
+  },
+  {
+   "area": "Natura i wybrzeże",
+   "name": "San Juan de Gaztelugatxe",
+   "tag": "detour",
+   "icon": "◆",
+   "c": [
+    43.4475,
+    -2.7853
+   ],
+   "where": "Bermeo, ok. 1 h od Bilbao",
+   "desc": "Pustelnia na skalnej wysepce połączonej z lądem kamiennym mostem i 241 schodami. Najbardziej znany widok baskijskiego wybrzeża (Smocza Skała z „Gry o tron”).",
+   "tip": "Wstęp darmowy, ale w dni z kontrolowanym dostępem trzeba wcześniej zarezerwować bezpłatny bilet (limit 1462 osoby dziennie). Kalendarz i rezerwacja na stronie bizkaia.eus/gaztelugatxe. Zimą bez auta trudny dojazd; przy pomarańczowym alercie pogodowym nie wchodzić."
+  },
+  {
+   "area": "Wieczorem",
+   "name": "Bilbao La Vieja i San Francisco",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2563,
+    -2.9268
+   ],
+   "where": "Po drugiej stronie rzeki od Ribery",
+   "desc": "Dawna dzielnica robotnicza, dziś galerie, murale, bary z muzyką i najlepsze nocne życie alternatywne w mieście. Ulice San Francisco, Dos de Mayo i okolice.",
+   "tip": "Wieczorem pełno ludzi, ale w bocznych uliczkach po północy lepiej trzymać się głównych ulic i grupy."
+  },
+  {
+   "area": "Wieczorem",
+   "name": "Kafe Antzokia",
+   "tag": "worth",
+   "icon": "◇",
+   "c": [
+    43.2637,
+    -2.929
+   ],
+   "where": "San Vicente 2, przy Jardines de Albia",
+   "desc": "Dawne kino zamienione w baskijskie centrum kultury: koncerty, kawiarnia, a w weekendy dyskoteka do rana. Dobre miejsce, żeby usłyszeć muzykę po baskijsku.",
+   "tip": "Program koncertów na stronie klubu. Bilety na popularne koncerty znikają szybko."
+  }
+ ],
+ "food": [
+  {
+   "area": "Pintxos — co zamawiać",
+   "name": "Gilda",
+   "icon": "◍",
+   "desc": "Oliwka, anchois i ostra papryczka guindilla na wykałaczce. Najprostszy i najbardziej baskijski pintxo, idealny do zimnego txakoli.",
+   "tip": "Zjada się w całości, na jeden kęs."
+  },
+  {
+   "area": "Pintxos — co zamawiać",
+   "name": "Pintxos de bacalao",
+   "icon": "◍",
+   "desc": "Dorsz w każdej postaci: brandada na grzance, al pil-pil, w tempurze. Bilbao zbudowało kuchnię na solonym dorszu.",
+   "tip": "Pytaj o „pintxo caliente” — ciepłe przygotowują na zamówienie i są lepsze od tych z lady."
+  },
+  {
+   "area": "Pintxos — co zamawiać",
+   "name": "Croquetas i txampis",
+   "icon": "◍",
+   "desc": "Krokiety z szynką albo dorszem i grzyby (txampiñones) z grilla z czosnkiem. Klasyka barów Casco Viejo.",
+   "tip": "W Bilbao krokiety bierze się po kilka — jedna to za mało, żeby ocenić bar."
+  },
+  {
+   "area": "Dania na talerzu",
+   "name": "Bacalao al pil-pil / a la vizcaína",
+   "icon": "◍",
+   "desc": "Dorsz w emulsji z oliwy i czosnku (pil-pil) albo w czerwonym sosie z papryki choricero (a la vizcaína). Dwa sztandarowe dania Bizkai.",
+   "tip": "Obiad to w Hiszpanii główny posiłek: menú del día w dni robocze za kilkanaście euro, zwykle 13:30–15:30."
+  },
+  {
+   "area": "Dania na talerzu",
+   "name": "Txipirones en su tinta",
+   "icon": "◍",
+   "desc": "Małe kalmary w czarnym sosie z własnego atramentu, podawane z ryżem.",
+   "tip": "Wygląda dziwnie, smakuje świetnie. Uwaga na białe ubranie."
+  },
+  {
+   "area": "Dania na talerzu",
+   "name": "Txuleta",
+   "icon": "◍",
+   "desc": "Gruby stek z wołowiny z kością, z grilla, na krwisto, z grubą solą. Porcja zwykle na dwie osoby albo więcej.",
+   "tip": "Zamawia się na wagę — zapytaj o cenę za kilogram, zanim kelner przyniesie."
+  },
+  {
+   "area": "Do picia",
+   "name": "Txakoli",
+   "icon": "◍",
+   "desc": "Lekkie, lekko musujące białe wino z baskijskiego wybrzeża. Nalewa się z wysoka, żeby się napowietrzyło.",
+   "tip": "W Bizkai szukaj etykiety Bizkaiko Txakolina. Do pintxos idealne."
+  },
+  {
+   "area": "Do picia",
+   "name": "Zurito i kalimotxo",
+   "icon": "◍",
+   "desc": "Zurito to mała szklaneczka piwa do chodzenia od baru do baru. Kalimotxo — czerwone wino z colą, napój baskijskich imprez.",
+   "tip": "Przy poteo zamawia się małe porcje — w każdym barze jeden pintxo i jeden mały napój."
+  },
+  {
+   "area": "Do picia",
+   "name": "Sidra (cydr baskijski)",
+   "icon": "◍",
+   "desc": "Wytrawny, niegazowany cydr nalewany z wysoka. Od stycznia do kwietnia trwa sezon txotx, gdy w cydrowniach pije się prosto z beczki.",
+   "tip": "Większość cydrowni jest w Gipuzkoi (np. Astigarraga), ok. 1,5 h od Bilbao — to raczej osobna wyprawa niż wieczór."
+  },
+  {
+   "area": "Słodkie i śniadanie",
+   "name": "Carolina i bollo de mantequilla",
+   "icon": "◍",
+   "desc": "Carolina to babeczka z wysoką czapą bezy oblanej czekoladą, a bollo de mantequilla — maślana bułka z kremem. Obie typowo bilbaińskie.",
+   "tip": "Do kawy rano, w cukierni albo barze."
+  },
+  {
+   "area": "Gdzie jeść — Plaza Nueva",
+   "name": "Gure Toki, Sorginzulo, Victor Montes, Café Bar Bilbao",
+   "icon": "◍",
+   "desc": "Cztery klasyki pod arkadami Plaza Nueva, każdy z innym charakterem: nowoczesne pintxos (Gure Toki), kalmary (Sorginzulo), elegancka sala i wina (Victor Montes), tradycyjny bar ze starym wnętrzem (Café Bar Bilbao).",
+   "tip": "Zrób rundę: w każdym jeden pintxo i jeden mały napój."
+  },
+  {
+   "area": "Gdzie jeść — Ensanche",
+   "name": "El Globo i La Viña del Ensanche",
+   "icon": "◍",
+   "desc": "Dwa bary obok siebie przy Diputación. El Globo słynie z zapiekanego kraba (txangurro), La Viña to bardziej restauracja z szynką i daniami do dzielenia.",
+   "tip": "Dobry wybór, gdy Casco Viejo jest zatłoczone. W La Viña lepiej zarezerwować stolik."
+  },
+  {
+   "area": "Gdzie jeść — Ribera i okolice",
+   "name": "Mercado de la Ribera",
+   "icon": "◍",
+   "desc": "Uchodzi za jeden z największych zadaszonych targów w Europie, stoi nad samą rzeką. Na dole strefa gastro z kilkunastoma barami — na szybki lunch w deszczowy dzień.",
+   "tip": "Godziny barów i straganów się różnią; niedziele często zamknięte."
+  }
+ ],
+ "lang": [
+  {
+   "sec": "Hiszpański w barze",
+   "note": "Wszędzie dogadasz się po hiszpańsku. Nazwy, menu i tablice są często dwujęzyczne.",
+   "items": [
+    {
+     "pl": "Dzień dobry / Cześć",
+     "local": "Hola / Buenos días",
+     "say": "O-la / BUE-nos DI-as"
+    },
+    {
+     "pl": "Poproszę txakoli",
+     "local": "Un txakoli, por favor",
+     "say": "un cza-KO-li, por fa-WOR"
+    },
+    {
+     "pl": "Małe piwo",
+     "local": "Un zurito",
+     "say": "un su-RI-to"
+    },
+    {
+     "pl": "Ten (wskazując pintxo)",
+     "local": "Este, por favor",
+     "say": "ES-te, por fa-WOR"
+    },
+    {
+     "pl": "Czy jest ciepłe?",
+     "local": "¿Hay algo caliente?",
+     "say": "aj AL-go ka-LIEN-te"
+    },
+    {
+     "pl": "Ile płacę?",
+     "local": "¿Cuánto es?",
+     "say": "KUAN-to es"
+    },
+    {
+     "pl": "Rachunek proszę",
+     "local": "La cuenta, por favor",
+     "say": "la KUEN-ta, por fa-WOR"
+    },
+    {
+     "pl": "Dziękuję",
+     "local": "Gracias",
+     "say": "GRA-sjas"
+    }
+   ]
+  },
+  {
+   "sec": "Baskijski na dzień dobry",
+   "note": "Euskara nie jest spokrewniona z żadnym innym znanym językiem. Kilka słów po baskijsku robi wrażenie większe niż cały hiszpański.",
+   "items": [
+    {
+     "pl": "Cześć",
+     "local": "Kaixo",
+     "say": "KAJ-szo"
+    },
+    {
+     "pl": "Dzień dobry",
+     "local": "Egun on",
+     "say": "e-GUN on"
+    },
+    {
+     "pl": "Dziękuję",
+     "local": "Eskerrik asko",
+     "say": "es-KE-rrik AS-ko"
+    },
+    {
+     "pl": "Proszę",
+     "local": "Mesedez",
+     "say": "me-SE-des"
+    },
+    {
+     "pl": "Przepraszam",
+     "local": "Barkatu",
+     "say": "bar-KA-tu"
+    },
+    {
+     "pl": "Na zdrowie!",
+     "local": "Topa!",
+     "say": "TO-pa"
+    },
+    {
+     "pl": "Do widzenia",
+     "local": "Agur",
+     "say": "a-GUR"
+    },
+    {
+     "pl": "Tak / Nie",
+     "local": "Bai / Ez",
+     "say": "baj / es"
+    }
+   ]
+  }
+ ],
+ "culture": [
+  {
+   "cat": "Architektura",
+   "items": [
+    {
+     "t": "Efekt Guggenheima",
+     "m": "1997",
+     "d": "Muzeum Gehry'ego zmieniło upadające miasto stoczni i hut w cel podróży. Od tego czasu „efekt Bilbao” to pojęcie w urbanistyce.",
+     "star": true
+    },
+    {
+     "t": "Metro Normana Fostera",
+     "m": "1995",
+     "d": "Szklane wejścia do stacji metra miejscowi nazywają „fosteritos”. Warto zjechać na jedną z dużych stacji, np. Sarriko albo Moyua."
+    },
+    {
+     "t": "Calatrava i Starck",
+     "m": "Zubizuri, lotnisko, Azkuna Zentroa",
+     "d": "Jedno miasto, kilka gwiazd architektury: biały most i terminal lotniska Calatravy, kolumny Starcka w Alhóndidze."
+    }
+   ]
+  },
+  {
+   "cat": "Muzyka i noc",
+   "items": [
+    {
+     "t": "Trikitixa",
+     "m": "akordeon + tamburyn",
+     "d": "Tradycyjna baskijska muzyka taneczna: mały diatoniczny akordeon i tamburyn. Słychać ją na festynach i w barach."
+    },
+    {
+     "t": "Fermin Muguruza",
+     "m": "rock radykalny, ska",
+     "d": "Najbardziej znany głos baskijskiego rocka od lat 80. (Kortatu, Negu Gorriak). Dobre wprowadzenie do muzyki z tego regionu."
+    },
+    {
+     "t": "Bilbao BBK Live",
+     "m": "lipiec",
+     "d": "Duży festiwal na zboczach Kobetamendi — poza terminem tej podróży, ale świetny powód, żeby wrócić latem."
+    }
+   ]
+  },
+  {
+   "cat": "Sport i tożsamość",
+   "items": [
+    {
+     "t": "Athletic Club",
+     "m": "od 1898",
+     "d": "Gra tylko zawodnikami z Kraju Basków i nigdy nie spadł z najwyższej ligi. Kibicowanie Athleticowi to w Bilbao część tożsamości.",
+     "star": true
+    },
+    {
+     "t": "Euskara",
+     "m": "język izolowany",
+     "d": "Jeden z najstarszych języków Europy, niespokrewniony z indoeuropejskimi. Na co dzień używany obok hiszpańskiego, napisy w mieście są dwujęzyczne."
+    }
+   ]
+  },
+  {
+   "cat": "Na wieczór przed wyjazdem",
+   "items": [
+    {
+     "t": "„Ocho apellidos vascos”",
+     "m": "film, 2014",
+     "d": "Hiszpańska komedia o stereotypach na temat Basków. Lekka i zabawna, a przy okazji pokazuje baskijskie miasteczka."
+    },
+    {
+     "t": "„Świat to za mało”",
+     "m": "Bond, 1999",
+     "d": "W scenie otwierającej widać Guggenheima tuż po otwarciu."
+    }
+   ]
+  }
+ ],
+ "events": [
+  {
+   "cat": "Święta i tradycje",
+   "t": "Santa Ageda bezpera",
+   "where": "Całe Bilbao i okolice",
+   "when": "4 lutego (wieczór)",
+   "iso": "2027-02-04",
+   "sure": true,
+   "d": "W wigilię św. Agaty grupy w strojach ludowych chodzą od baru do baru i od domu do domu, śpiewając kuplety i uderzając laskami o ziemię — żeby obudzić naturę przed wiosną.",
+   "tip": "Najwięcej grup chodzi wieczorem po Casco Viejo. Za śpiew zwykle wrzuca się kilka monet do skarbonki."
+  },
+  {
+   "cat": "Święta i tradycje",
+   "t": "Karnawał (Aratusteak)",
+   "where": "Bilbao, Casco Viejo i okolice",
+   "when": "luty 2027, kulminacja we wtorek 9.02",
+   "iso": "2027-02-09",
+   "sure": false,
+   "d": "Przebrania, parady i imprezy na ulicach w ostatnie dni przed Wielkim Postem. W okolicznych miasteczkach (np. Mundaka, Tolosa) karnawał jest jeszcze bardziej tradycyjny.",
+   "tip": "Data wtorku jest pewna; program Bilbao ogłasza miasto zwykle w styczniu."
+  },
+  {
+   "cat": "Święta i tradycje",
+   "t": "Wielki Tydzień",
+   "where": "Cały region",
+   "when": "21–28 marca 2027",
+   "iso": "2027-03-25",
+   "sure": true,
+   "warn": true,
+   "d": "Wielki Czwartek (25.03), Wielki Piątek (26.03) i zwykle także Poniedziałek Wielkanocny (29.03) to w Kraju Basków dni wolne: część sklepów i restauracji jest zamknięta, a noclegi i Gaztelugatxe pełne.",
+   "tip": "Guggenheim ma w tym czasie dłuższe godziny i otwiera także w poniedziałek. Noclegi rezerwuj wcześniej."
+  },
+  {
+   "cat": "Jedzenie",
+   "t": "Sezon cydrowy (txotx)",
+   "where": "Cydrownie, głównie Gipuzkoa",
+   "when": "styczeń–kwiecień",
+   "iso": null,
+   "sure": false,
+   "d": "W cydrowniach je się menu (omlet z dorszem, txuleta, ser z pigwą), a cydr pije się prosto z beczki na okrzyk „txotx!”.",
+   "tip": "Z Bilbao to wyprawa na cały wieczór — najlepiej w grupie i z rezerwacją."
+  },
+  {
+   "cat": "Sport",
+   "t": "Mecz Athleticu na San Mamés",
+   "where": "San Mamés",
+   "when": "mniej więcej co drugi weekend",
+   "iso": null,
+   "sure": false,
+   "d": "Stadion na ponad 50 tys. ludzi, jedna z najlepszych atmosfer w Hiszpanii. Przed meczem bary przy Pozas i Licenciado Poza pękają w szwach.",
+   "tip": "Terminarz La Ligi ustalany jest na kilka tygodni przed meczem."
+  }
+ ],
+ "eventsNote": "Daty świąt kościelnych w 2027 są pewne; programy karnawału i koncertów ogłaszane są bliżej terminu.",
+ "ig": [
+  {
+   "t": "Puppy przed Guggenheimem",
+   "d": "Kwiatowy pies Koonsa z tytanową ścianą w tle. Rano, zanim zbiorą się wycieczki."
+  },
+  {
+   "t": "Maman nad rzeką",
+   "d": "Pająk Bourgeois od strony ría, kadr z dołu z muzeum za nogami."
+  },
+  {
+   "t": "Bilbao z Artxandy",
+   "d": "Całe miasto w dolinie, najlepiej w złotej godzinie przed zachodem."
+  },
+  {
+   "t": "Gondola pod mostem Bizkaia",
+   "d": "Zdjęcie z gondoli albo z nabrzeża, gdy przepływa pod stalową konstrukcją."
+  },
+  {
+   "t": "Arkady Plaza Nueva wieczorem",
+   "d": "Ciepłe światło barów i ludzie z kieliszkami pod łukami."
+  },
+  {
+   "t": "Czerwone łuki na moście La Salve",
+   "d": "Geometria łuków Burena, z Guggenheimem w tle."
+  }
+ ],
+ "checks": [
+  {
+   "cat": "Przed wyjazdem",
+   "t": "EKUZ i ubezpieczenie podróżne — Hiszpania jest w UE, EKUZ działa w publicznej służbie zdrowia",
+   "w": "dok"
+  },
+  {
+   "cat": "Przed wyjazdem",
+   "t": "Dowód osobisty albo paszport ważny na czas podróży",
+   "w": "dok"
+  },
+  {
+   "cat": "Przed wyjazdem",
+   "t": "Bilet do Guggenheima z oficjalnej strony (guggenheim-bilbao.eus)",
+   "w": "bilety"
+  },
+  {
+   "cat": "Przed wyjazdem",
+   "t": "Jeśli Gaztelugatxe — sprawdzić kalendarz dni z rezerwacją i zarezerwować darmowy bilet",
+   "w": "bilety"
+  },
+  {
+   "cat": "Przed wyjazdem",
+   "t": "Parasol, kurtka przeciwdeszczowa i buty, które nie przemakają — w styczniu–kwietniu pada co drugi dzień",
+   "w": "bagaż"
+  },
+  {
+   "cat": "Przed wyjazdem",
+   "t": "Terminarz Athleticu — czy jest mecz w czasie pobytu",
+   "w": "opcjonalnie"
+  },
+  {
+   "cat": "Pierwszy dzień na miejscu",
+   "t": "Karta Barik w automacie metra (3 € + min. 5 € doładowania)",
+   "w": "transport",
+   "on": "day0"
+  },
+  {
+   "cat": "Pierwszy dzień na miejscu",
+   "t": "Zapisać mapę offline centrum i Getxo (zakładka Mapa, na wifi)",
+   "w": "mapa",
+   "on": "day0"
+  },
+  {
+   "cat": "Pierwszy dzień na miejscu",
+   "t": "Pora posiłków: obiad 13:30–15:30, kolacja od ok. 20:30 — wcześniej kuchnie bywają zamknięte",
+   "w": "info",
+   "on": "day0"
+  }
+ ],
+ "keyChecks": [
+  "Bilet do Guggenheima z oficjalnej strony (guggenheim-bilbao.eus)"
+ ],
+ "budget": [
+  {
+   "n": "Nocleg — 3 noce (orientacyjnie, sprawdź ceny w swoim terminie)",
+   "v": 240,
+   "c": "€"
+  },
+  {
+   "n": "Jedzenie i pintxos — 4 dni po ~40 €",
+   "v": 160,
+   "c": "€"
+  },
+  {
+   "n": "Autobus z lotniska i na lotnisko",
+   "v": 10,
+   "c": "€"
+  },
+  {
+   "n": "Karta Barik + przejazdy po mieście",
+   "v": 15,
+   "c": "€"
+  },
+  {
+   "n": "Guggenheim",
+   "v": 12,
+   "c": "€"
+  },
+  {
+   "n": "Bellas Artes (we wtorek kolekcja gratis)",
+   "v": 12,
+   "c": "€"
+  },
+  {
+   "n": "Most Bizkaia — kładka górą",
+   "v": 10,
+   "c": "€"
+  }
+ ],
+ "info": [
+  {
+   "title": "Jak się poruszać",
+   "rows": [
+    [
+     "Karta Barik",
+     "3 € za kartę, doładowanie od 5 €. Na jednej karcie może jechać do 10 osób. Przy wejściu i wyjściu z metra przykładasz kartę."
+    ],
+    [
+     "Metro",
+     "Dwie linie, stacje Normana Fostera. Bilet jednorazowy ok. 1,60–1,85 €, z Barikiem mniej więcej 1 €. W piątki i soboty kursuje do ok. 2:00."
+    ],
+    [
+     "Lotnisko",
+     "Bizkaibus A3247 co 15–20 min, bilet 5 €, ok. 20–30 min do centrum (przystanki m.in. Termibus, Plaza Moyua). Taksówka ok. 25–30 €."
+    ],
+    [
+     "Funikular Artxanda",
+     "Z Barikiem 0,42 €, bez niego 3 €. Co 15 min."
+    ],
+    [
+     "Pieszo",
+     "Centrum jest małe: z Casco Viejo do Guggenheima ok. 20 min wzdłuż rzeki."
+    ]
+   ]
+  },
+  {
+   "title": "Gdzie spać",
+   "rows": [
+    [
+     "Casco Viejo",
+     "Najwięcej klimatu i barów pod ręką. W weekendy głośno do późna — pytaj o pokój od podwórza."
+    ],
+    [
+     "Abando / Indautxu",
+     "Spokojniej, eleganckie kamienice, blisko metra i Guggenheima. Dobry wybór na pierwszą wizytę."
+    ],
+    [
+     "Bilbao La Vieja",
+     "Taniej i najbliżej nocnego życia, ale po zmroku w bocznych uliczkach różnie. Raczej dla tych, którzy znają takie dzielnice."
+    ]
+   ]
+  },
+  {
+   "title": "Pintxos — jak to działa",
+   "rows": [
+    [
+     "Zamawianie",
+     "Pintxos z lady możesz wziąć sam albo pokazać barmanowi. Ciepłe zamawia się z tablicy."
+    ],
+    [
+     "Płacenie",
+     "Zwykle na końcu: mówisz, co zjedzone i wypite, i płacisz. Uczciwość jest tu zasadą."
+    ],
+    [
+     "Rytm",
+     "Jeden-dwa pintxos i mały napój w barze, potem następny. Najwięcej ludzi w czwartki i piątki wieczorem (pintxo-pote)."
+    ],
+    [
+     "Ceny",
+     "Pintxo zwykle kosztuje 2,50–4 €, napój podobnie."
+    ]
+   ]
+  },
+  {
+   "title": "Pogoda styczeń–kwiecień",
+   "rows": [
+    [
+     "Styczeń",
+     "ok. 6–13°C, ok. 15 dni z deszczem"
+    ],
+    [
+     "Luty",
+     "ok. 5–14°C, ok. 14 dni z deszczem"
+    ],
+    [
+     "Marzec",
+     "ok. 7–17°C, ok. 13 dni z deszczem"
+    ],
+    [
+     "Kwiecień",
+     "ok. 8–18°C, ok. 15 dni z deszczem"
+    ],
+    [
+     "Wniosek",
+     "Pada często, ale zwykle krótko. Na każdy dzień miej plan B pod dachem: muzea, Ribera, Azkuna Zentroa."
+    ]
+   ]
+  },
+  {
+   "title": "Zamknięte i nietypowe dni",
+   "rows": [
+    [
+     "Guggenheim",
+     "Zamknięte w zwykłe poniedziałki oraz 1 stycznia."
+    ],
+    [
+     "Bellas Artes",
+     "Zamknięte 1 i 6 stycznia. W niedziele tylko do 15:00."
+    ],
+    [
+     "Niedziele",
+     "Większość sklepów zamknięta, bary i muzea działają."
+    ]
+   ]
+  }
+ ]
+}
