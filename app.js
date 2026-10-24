@@ -2109,6 +2109,11 @@ document.addEventListener('focusin',e=>{if(e.target.matches&&e.target.matches(KB
 document.addEventListener('focusout',()=>{setTimeout(()=>{const a=document.activeElement;
   if(!(a&&a.matches&&a.matches(KB_SEL)))document.body.classList.remove('kb-open');},120);});
 
+/* po przewinięciu przykryj pasek statusu iPhone'a, żeby tekst nie wchodził pod godzinę */
+let scrollQ=false;
+window.addEventListener('scroll',()=>{if(scrollQ)return;scrollQ=true;requestAnimationFrame(()=>{scrollQ=false;
+  document.body.classList.toggle('scrolled',window.scrollY>60);});},{passive:true});
+
 /* ============ START ============ */
 if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';
   sb.innerHTML='<b>Uwaga:</b> ta przeglądarka blokuje zapis (tryb prywatny?). Możesz czytać, ale zmiany nie zostaną zapisane.';}

@@ -1237,7 +1237,8 @@ body:not(.compact) .fab{display:none}
 body.kb-open nav,body.kb-open .fab{display:none!important}
 @media(max-width:700px){body.kb-open main{padding-bottom:40px}}
 /* iPhone z apką na ekranie początkowym: przewijana treść nie wchodzi pod godzinę i baterię */
-@media(display-mode:standalone){body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:#221D1C;z-index:2500;pointer-events:none}}
+@media(display-mode:standalone){body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:#221D1C;z-index:2500;pointer-events:none;opacity:0;transition:opacity .2s}
+  body.scrolled::before{opacity:1}}  /* pasek pojawia się dopiero po przewinięciu — na górze widać nagłówek i flagę */
 
 /* nagłówek: nazwy miejsc nie łamią się w połowie */
 .route-line em,.route-line u,.route-line span,.route-line s{white-space:nowrap}
