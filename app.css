@@ -1218,3 +1218,26 @@ body:not(.compact) .fab{display:none}
 /* Dodawanie pakietu po kodzie */
 .pk-code{display:flex;gap:8px;width:100%;margin-bottom:4px}
 .pk-code input{flex:1;min-width:0;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font:15px Inter,sans-serif;background:#fff}
+
+/* Dziś w mieście */
+.cy-stay h4{margin-bottom:6px}
+.cy-st-l{font-size:14.5px;line-height:1.5}
+.cy-stay.slim{padding-top:12px;padding-bottom:12px}
+.cy-stay.dep{background:#FBEDE4}
+.cy-tm-list div{font-size:14.5px;padding:4px 0}
+.cy-tm-list small{color:var(--muted);font-size:12px}
+/* Język: zwroty do odhaczenia */
+.phrase{display:flex;align-items:flex-start;gap:10px}
+.phrase .ph-t{flex:1;min-width:0}
+.phrase .learn{flex:0 0 auto;appearance:none;border:1px solid var(--line);background:#fff;color:var(--cop-deep);border-radius:999px;padding:6px 10px;font:600 12px Inter,sans-serif;cursor:pointer;min-height:34px;white-space:nowrap}
+.phrase.learned{opacity:.6}
+.phrase.learned .learn{background:var(--olive,#6b7a3a);color:#fff;border-color:transparent}
+
+/* Klawiatura otwarta — chowamy dolny pasek i „+”, żeby nie zasłaniały pola */
+body.kb-open nav,body.kb-open .fab{display:none!important}
+@media(max-width:700px){body.kb-open main{padding-bottom:40px}}
+/* iPhone z apką na ekranie początkowym: przewijana treść nie wchodzi pod godzinę i baterię */
+@media(display-mode:standalone){body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:#221D1C;z-index:2500;pointer-events:none}}
+
+/* nagłówek: nazwy miejsc nie łamią się w połowie */
+.route-line em,.route-line u,.route-line span,.route-line s{white-space:nowrap}

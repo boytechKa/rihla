@@ -696,6 +696,7 @@ function buildHeader(){
   $('#foot-name').textContent=t.name+' · '+(new Date(dAt(t.start))).getFullYear();
   const r=tripRange(t);
   $('#brand-dates').textContent=t.dateless?(plural(r.days,'dzień','dni','dni')+' · termin nieustalony'):(dateFor(t.start,0).d+' → '+dateFor(t.start,r.days-1).d);
+  if(cityPack()&&cityHeadline(t))return;
   const parts=[];
   t.stages.forEach(s=>{
     const nm=(s.to&&s.to!=='—')?s.to:s.from;if(!nm)return;
@@ -1007,10 +1008,16 @@ function tomorrowCard(c){
 }
 
 /* ---- zwroty do nauczenia ---- */
-let showLearned=false;
+$('#guide').addEventListener('click',e=>{
+  const l=e.target.closest('[data-learn]');
+  if(l){e.stopPropagation();const k=l.dataset.learn;if(learned[k])delete learned[k];else learned[k]=Date.now();save(K.learned,learned);buildGuide();return;}
+  if(e.target.closest('[data-langhide]')){langHide=!langHide;buildGuide();}
+});
+let showLearned=false,langHide=false;
 function phrasesCard(){
   const L=(P()&&P().lang)||[];
-  const quick=[];L.forEach(s=>s.items.forEach(it=>{if(it.quick)quick.push(it);}));
+  let quick=[];L.forEach(s=>s.items.forEach(it=>{if(it.quick)quick.push(it);}));
+  if(!quick.length)L.forEach(s=>s.items.forEach(it=>quick.push(it)));   // pakiet bez „quick” — wszystkie zwroty
   if(!quick.length)return'';
   const todo=quick.filter(q=>!learned[q.local]),done=quick.filter(q=>learned[q.local]);
   const list=(showLearned?quick:todo).slice(0,showLearned?99:6);
@@ -1176,7 +1183,8 @@ async function buildToday(){
     h+='<div class="card dest stay-day"><h4>Plan się urwał</h4><div class="d-to">Wybierz wariant</div>'+
       '<div class="d-note">Zaplanowane etapy się skończyły, a wyprawa trwa. Wejdź w Plan, wybierz wariant i wstaw jego odcinki — dni policzą się dalej.</div>'+
       '<div class="tm-prep"><button class="tb-btn" data-go="plan">Otwórz Plan</button></div></div>';
-  }else{h+=destCard(c);h+=dayPlanCard(c);h+=cityTodayCard(c);}
+  }else if(cityPack()){h+=c.d>=c.total?cityStayCard(c)+cityTodayCard(c):cityTodayCard(c)+cityStayCard(c);}   // w dzień wylotu najpierw wylot
+  else{h+=destCard(c);h+=dayPlanCard(c);}
 
   h+='<div class="acts"><button class="act exp" data-open="exp"><span>'+ICO.wydatki+'</span>Wydatek</button><button class="act chk" data-open="ci"><span>'+ICO.pin+'</span>Check-in</button></div>';
   h+=openCard(c);
@@ -1191,7 +1199,7 @@ async function buildToday(){
   if(todos.length)h+='<div class="card"><h4>Do zrobienia dziś</h4>'+todos.map(({x,i})=>
     '<div class="todo-row'+(x.done?' done':'')+'" data-tick="'+i+'"><span class="box">'+(x.done?'✓':'')+'</span><span class="tt">'+esc(x.t)+'</span></div>').join('')+'</div>';
 
-  h+=tomorrowCard(c);
+  h+=cityPack()?cityTomorrowCard(c):tomorrowCard(c);
   h+=phrasesCard();
   h+=convCard();
 
@@ -1506,8 +1514,15 @@ function buildGuide(){
         tickBtn(x.key,'Spróbowane')+'</div></div></div>';});});
     if(!list.length)h+='<div class="empty">Wszystko spróbowane. Zdejmij filtr, żeby zobaczyć listę.</div>';
   }else if(guideTab==='lang'){
-    p.lang.forEach(s=>{h+='<div class="area-h">'+esc(s.sec)+'</div>'+(s.note?'<div class="lang-note">'+safe(s.note)+'</div>':'')+
-      '<div class="lang-grid">'+s.items.map(x=>'<div class="phrase"><div class="pl">'+esc(x.pl)+'</div><div class="tr">'+esc(x.local)+'</div><div class="ph">['+esc(x.say)+']</div></div>').join('')+'</div>';});
+    const allP=[];p.lang.forEach(s=>s.items.forEach(x=>allP.push(x)));
+    const nL=allP.filter(x=>learned[x.local]).length;
+    h+='<div class="chk-progress"><span>Umiem: <b>'+nL+'</b> z <b>'+allP.length+'</b></span>'+
+      (nL?'<button class="g-hide'+(langHide?' on':'')+'" data-langhide>'+(langHide?'pokaż wszystkie':'ukryj nauczone')+'</button>':'')+'</div>';
+    p.lang.forEach(s=>{const its=s.items.filter(x=>!(langHide&&learned[x.local]));if(!its.length)return;
+      h+='<div class="area-h">'+esc(s.sec)+'</div>'+(s.note?'<div class="lang-note">'+safe(s.note)+'</div>':'')+
+      '<div class="lang-grid">'+its.map(x=>{const ok=!!learned[x.local];
+        return'<div class="phrase'+(ok?' learned':'')+'"><div class="ph-t"><div class="pl">'+esc(x.pl)+'</div><div class="tr">'+esc(x.local)+'</div><div class="ph">['+esc(x.say)+']</div></div>'+
+        '<button class="learn" data-learn="'+attr(x.local)+'" aria-pressed="'+ok+'" title="'+(ok?'cofnij':'umiem')+'">'+(ok?'✓ umiem':'umiem?')+'</button></div>';}).join('')+'</div>';});
     if(p.alphabet)h+='<div class="area-h">Alfabet</div><div class="abc">'+p.alphabet.map(x=>'<div><b>'+esc(x.c)+'</b><span>'+esc(x.t)+'</span></div>').join('')+'</div>';
   }else if(guideTab==='events'){
     const t=T(),r=tripRange(t),inTrip=d=>!t.dateless&&d&&d>=r.start&&d<=r.end;
@@ -2087,6 +2102,13 @@ sheet.addEventListener('click',e=>{
 });
 $('#tour-btn').addEventListener('click',openTraining);
 
+/* Klawiatura na telefonie: przyklejony dolny pasek „podjeżdża” nad nią i zasłania pole.
+   Gdy wpisujesz coś w pole tekstowe, pasek i przycisk „+” się chowają. */
+const KB_SEL='input:not([type=checkbox]):not([type=radio]):not([type=button]):not([type=file]),textarea,select';
+document.addEventListener('focusin',e=>{if(e.target.matches&&e.target.matches(KB_SEL))document.body.classList.add('kb-open');});
+document.addEventListener('focusout',()=>{setTimeout(()=>{const a=document.activeElement;
+  if(!(a&&a.matches&&a.matches(KB_SEL)))document.body.classList.remove('kb-open');},120);});
+
 /* ============ START ============ */
 if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';
   sb.innerHTML='<b>Uwaga:</b> ta przeglądarka blokuje zapis (tryb prywatny?). Możesz czytać, ale zmiany nie zostaną zapisane.';}
@@ -2138,7 +2160,7 @@ async function addPackById(raw){
     sb.innerHTML=navigator.onLine?'Nie udało się wczytać pakietu: '+esc(err.message):'Brak internetu — otwórz link jeszcze raz, gdy będziesz online.';return;}
   const prev=userPacks[id];
   const r=installPack(o);if(r.err){toast(r.err);return;}
-  if(had){if((had.packRev||1)<(r.pack.rev||1))updateLinkedTrip(had,prev,r.pack);saveTrips();switchTrip(had.id);toast('„'+had.name+'” jest aktualna');return;}
+  if(had){const upd=(had.packRev||1)<(r.pack.rev||1);if(upd)updateLinkedTrip(had,prev,r.pack);saveTrips();switchTrip(had.id);if(upd)toast('Zaktualizowano „'+had.name+'”');return;}
   const t=patchTrip(freshTrip(r.pack.id));
   trips=trips.filter(x=>!isUntouchedDefault(x));trips.push(t);saveTrips();
   switchTrip(t.id);goTab(effMode()==='travel'?'dzis':'przew');
@@ -2405,7 +2427,7 @@ function buildCalc(){
     h+='<div class="empty">Reszta kosztorysu pusta. Wpisz loty, transport i jedzenie, a apka policzy, czy to się spina.<br><br>Możesz też wygenerować szkic z planu wyprawy.</div>';
   }else{
     const rowHtml=(r,i)=>{const dis=isLocked(r)?' disabled':'';return'<div class="crow'+(r.off?' off':'')+' pay-'+(r.pay||'none')+(isLocked(r)?' locked':'')+'" data-ci="'+i+'">'+
-      '<div class="cr-1"><input class="cr-d" data-cf="desc"'+dis+' value="'+attr(r.desc||'')+'" placeholder="opis, np. Lizbona → Sal"></div>'+
+      '<div class="cr-1"><input class="cr-d" data-cf="desc"'+dis+' value="'+attr(r.desc||'')+'" placeholder="opis, np. lot Kraków → Bilbao"></div>'+
       '<div class="cr-2">'+
         '<select class="cr-c" data-cf="cat"'+dis+'>'+CALC_CATS.map(c=>'<option value="'+c[0]+'"'+(r.cat===c[0]?' selected':'')+'>'+esc(c[1])+'</option>').join('')+'</select>'+
         '<input class="cr-w" type="date" data-cf="when"'+dis+' value="'+attr(r.when||'')+'">'+
@@ -2758,7 +2780,23 @@ function buildCity(){
   if(L.unpicked.length)h+='<div class="blk-sec">Poza planem — dodaj, jeśli chcesz</div>'+L.unpicked.map(a=>cityActRow(L,a,null,{edit:true})).join('');
   w.innerHTML=h;a11y(w);
 }
-function cityApply(fn){const t=T();cityState(t);fn(t,t.city);saveTrips();refresh();}
+function cityApply(fn){const t=T();cityState(t);fn(t,t.city);saveTrips();refresh();buildHeader();}
+/* Nagłówek wyprawy miejskiej: zamiast „Lotnisko · Bilbao · Lotnisko” najważniejsze miejsca w kolejności planu.
+   Klocki z hl:true (krótka nazwa w short); bez nich — must see. Dziś podświetlone, minione dni przygaszone. */
+function cityHeadline(t){
+  const L=cityLayout(t),ti=todayIdx(t);
+  const hasHl=L.C.acts.some(a=>a.hl);
+  const seen={},out=[];
+  L.days.forEach(d=>d.items.forEach(a=>{
+    if(!(hasHl?a.hl:a.tag==='must')||seen[a.id])return;seen[a.id]=1;
+    out.push({n:a.short||a.t,day:d.i});}));
+  if(!out.length)return false;
+  const today=out.some(x=>x.day===ti);
+  $('#route-line').innerHTML=out.slice(0,7).map(x=>{const n=esc(x.n);
+    if(today&&x.day===ti)return'<em>'+n+'</em>';
+    if(ti>=0&&x.day<ti)return'<u>'+n+'</u>';return'<span>'+n+'</span>';}).join(' <i>·</i> ');
+  return true;
+}
 function cityClick(e){
   const g=k=>e.target.closest('['+k+']');
   let b;
@@ -2786,6 +2824,34 @@ function cityTodayCard(c){
   const L=cityLayout(c.t),d=L.days[c.d];if(!d)return'';
   return'<div class="card cy-today"><h4>Plan na dziś</h4>'+cityDayHTML(L,d,{edit:false})+
     '<div class="cy-today-ft"><button class="tb-btn" data-go="klocki">Zmień plan</button></div></div>';
+}
+/* Dziś: krótka karta pobytu — przylot, zwykły dzień albo wylot */
+function cityStayCard(c){
+  const t=c.t,st=cityStayStage(t);if(!st)return'';
+  const last=c.total,left=last-c.d;
+  const dep=t.stages.slice().reverse().find(s=>s!==st&&s.status!=='skip')||null;
+  const stay=stageStayTxt(t,st)||st.stay||'';
+  if(c.d===0&&last>0)return'<div class="card cy-stay"><h4>Przylot</h4>'+
+    (st.carrier?'<div class="cy-st-l">'+(MODES[st.mode]||MODES.bus).i+' '+esc(st.carrier)+(st.price?' · '+esc(st.price)+' '+esc(st.curr||''):'')+'</div>':'')+
+    (stay?'<div class="cy-st-l">🛏 '+esc(stay)+'</div>':'')+(st.note?'<div class="d-note">'+esc(st.note)+'</div>':'')+'</div>';
+  if(left<=0)return'<div class="card cy-stay dep"><h4>Dziś wylot</h4>'+
+    (dep&&dep.carrier?'<div class="cy-st-l">'+(MODES[dep.mode]||MODES.bus).i+' '+esc(dep.carrier)+(dep.price?' · '+esc(dep.price)+' '+esc(dep.curr||''):'')+'</div>':'')+
+    (dep&&dep.dep?'<div class="cy-st-l">⏱ '+esc(dep.dep)+'</div>':'')+
+    (dep&&dep.note?'<div class="d-note">'+esc(dep.note)+'</div>':'')+'</div>';
+  return'<div class="card cy-stay slim"><div class="cy-st-l">🛏 '+esc(stay||'nocleg')+'</div>'+
+    '<div class="cy-st-l">✈ wylot '+(left===1?'jutro':'za '+plural(left,'dzień','dni','dni'))+' · '+esc(dateFor(t.start,last).d)+'</div></div>';
+}
+/* Dziś: podgląd jutra z układacza (wieczorem warto kupić bilety, sprawdzić pogodę) */
+function cityTomorrowCard(c){
+  if(!cityPack()||c.d<0||c.d+1>c.total)return'';
+  const L=cityLayout(c.t),d=L.days[c.d+1];if(!d)return'';
+  const isDep=c.d+1===c.total;
+  const need=d.items.filter(a=>/bilet|rezerw/i.test(a.d||''));
+  return'<div class="card tomo cy-tomo"><h4>Jutro · '+esc(cityDayLabel(c.t,d.i))+'</h4>'+
+    (d.items.length?'<div class="cy-tm-list">'+d.items.map(a=>'<div>'+(a.slot==='evening'?'☾ ':'')+esc(a.t)+' <small>'+hrs(a.dur)+'</small></div>').join('')+'</div>':'<div class="d-note">Wolne — odpoczynek albo coś spoza listy.</div>')+
+    (need.length?'<div class="tm-prep">Dziś wieczorem: '+esc(need.map(a=>a.t).join(', '))+' — sprawdź bilety albo rezerwację.</div>':'')+
+    (isDep?'<div class="tm-prep">Jutro wylot: spakuj się wieczorem i sprawdź, o której autobus na lotnisko.</div>':'')+
+    '<div class="tm-prep"><button class="tb-btn" data-go="klocki">Zobacz albo zmień</button></div></div>';
 }
 /* Plan: skrót dni pod etapami */
 function cityPlanSummary(){
