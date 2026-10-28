@@ -86,6 +86,7 @@ const MODES={
   plane:{l:'Samolot',s:'lot',i:'✈'},train:{l:'Pociąg',s:'pociąg',i:'🚆'},bus:{l:'Autobus',s:'autobus',i:'🚌'},
   dolmus:{l:'Marszrutka / dolmusz',s:'minibus',i:'🚐'},ferry:{l:'Prom',s:'prom',i:'⚓'},car:{l:'Auto / transfer',s:'transfer',i:'🚗'},
   taxi:{l:'Taxi',s:'taxi',i:'🚕'},tour:{l:'Wycieczka / kolejka',s:'wycieczka',i:'🎟'},walk:{l:'Pieszo',s:'pieszo',i:'🚶'},
+  yacht:{l:'Jacht',s:'jacht',i:'⛵'},ship:{l:'Statek (cargo / ekspedycyjny)',s:'statek',i:'🚢'},moto:{l:'Motocykl',s:'motocykl',i:'🏍'},
   stay:{l:'Bez przejazdu',s:'na miejscu',i:'⏸'},med:{l:'Wizyta / sprawa',s:'sprawa',i:'⚕'}
 };
 const SYM={PLN:'zł',EUR:'€',USD:'$',TRY:'₺',AMD:'֏',GEL:'₾',GBP:'£',BGN:'лв',RON:'lei',HUF:'Ft',CZK:'Kč',CHF:'CHF',AZN:'₼',IRR:'﷼',UAH:'₴',RSD:'din',ALL:'L',MKD:'ден',BAM:'KM',THB:'฿',JPY:'¥',INR:'₹',VND:'₫',IDR:'Rp',MAD:'DH',EGP:'E£',ILS:'₪',JOD:'JD',MXN:'MX$',CVE:'$'};
@@ -173,6 +174,7 @@ function stageLocal(s){
   const g=gaz(s.to)||gaz(s.title);
   return{loc:s.loc||(g?g.loc:''),say:s.say||(g?g.say:'')};
 }
+const SEA_MODES=['ferry','yacht','ship'];   // na mapie i w Planie oznaczane jak morze
 const sameLoc=(a,b)=>norm(a).trim()===norm(b).trim();
 const isTransfer=s=>s&&s.from&&s.to&&s.to!=='—'&&!sameLoc(s.from,s.to);
 
@@ -578,7 +580,7 @@ function renderStage(i){
   const tIdx=todayIdx();
   const isToday=s.status!=='skip'&&(s._off===tIdx);
   const cls=['day'];
-  if(s.mode==='ferry')cls.push('sea');
+  if(SEA_MODES.includes(s.mode))cls.push('sea');
   if(s.mode==='med')cls.push('med');
   if(s.status)cls.push('st-'+s.status);
   if(isToday)cls.push('st-today');
@@ -637,16 +639,26 @@ function renderStage(i){
       '<div class="f2"><input data-i="'+i+'" data-k="lat" value="'+attr(s.lat)+'" placeholder="'+(g?g.c[0]:'szer.')+'" inputmode="decimal">'+
       '<input data-i="'+i+'" data-k="lng" value="'+attr(s.lng)+'" placeholder="'+(g?g.c[1]:'dł.')+'" inputmode="decimal"></div>'+
       '<button class="geo-btn" data-geocode="'+i+'">🔎 Znajdź „'+esc(s.to||'—')+'”</button> '+
+      '<button class="geo-btn" data-mappick="'+i+'">🗺 Wskaż na mapie</button> '+
       '<button class="geo-btn" data-gps="'+i+'">📍 Tu jestem</button><div class="geo-msg" id="geo-'+i+'"></div>'+
+      (SEA_MODES.includes(s.mode)?'<label>Miejsce na łodzi / statku</label><select data-i="'+i+'" data-k="crew">'+
+        [['','—'],['szukam','szukam łodzi'],['mam','mam miejsce']].map(([v,l])=>'<option value="'+v+'"'+((s.crew||'')===v?' selected':'')+'>'+l+'</option>').join('')+'</select>':'')+
+      '<label>Okno sezonowe (opcjonalnie) — od · do · nazwa</label>'+
+      '<div class="f3"><input data-i="'+i+'" data-k="winFrom" value="'+attr(s.winFrom)+'" placeholder="dd.mm" inputmode="decimal">'+
+      '<input data-i="'+i+'" data-k="winTo" value="'+attr(s.winTo)+'" placeholder="dd.mm" inputmode="decimal">'+
+      '<input data-i="'+i+'" data-k="winName" value="'+attr(s.winName)+'" placeholder="np. przejście Atlantyku"></div>'+
     '</div>'+
     '<div class="dv-actions"><button class="day-done-btn" data-done="'+i+'">✓ Gotowe</button></div>';
 
   c.innerHTML=
     '<div class="day-top">'+
-      '<div class="date-badge'+(s.mode==='med'||s.mode==='ferry'?' hot':'')+'"><span class="wd">'+esc(dt.d)+'</span><span class="d">'+esc(s.dep||'—')+'</span><span class="m">'+esc(dt.wd)+'</span></div>'+
+      '<div class="date-badge'+(s.mode==='med'||SEA_MODES.includes(s.mode)?' hot':'')+'"><span class="wd">'+esc(dt.d)+'</span><span class="d">'+esc(s.dep||'—')+'</span><span class="m">'+esc(dt.wd)+'</span></div>'+
       '<div class="day-head-txt"><div class="day-route">'+esc(stageTitle(s))+(isToday?'<span class="today-pill">dziś</span>':'')+(s.star?' <span style="color:var(--gold)">★</span>':'')+'</div>'+
         '<div class="day-see">'+esc(s.see)+'</div>'+
         '<span class="chip day-chip">'+m.i+' '+esc(m.s)+'</span>'+
+        (s.crew==='szukam'?'<span class="chip day-chip crew-wait">⛵ szukam łodzi</span>':s.crew==='mam'?'<span class="chip day-chip crew-ok">✓ mam miejsce</span>':'')+
+        (function(){const w=s.status!=='skip'&&stageWin(T(),s);if(!w)return'';
+          return w.ok===false?'<div class="win-warn">⚠ Poza oknem: '+esc(w.lbl)+' ('+esc(w.why)+')</div>':'<div class="win-ok">🗓 okno: '+esc(w.lbl)+(w.ok?' ✓':'')+'</div>';})()+
         (function(){const c=(typeof onsiteForStage==='function')?onsiteForStage(T(),s):0;
           return c?'<div class="day-cash">⌂ Płatność na miejscu: <b>'+fmt(c)+' zł</b></div>':'';})()+
         '</div>'+
@@ -664,6 +676,18 @@ function renderStage(i){
   if(isToday&&!editing)c.classList.add('open');
   return c;
 }
+/* okno sezonowe etapu: winFrom / winTo jako „dd.mm”, przez koniec roku też (np. 15.11–31.01) */
+function mdParse(x){const m=String(x||'').trim().match(/^(\d{1,2})[.\/-](\d{1,2})$/);if(!m)return null;const d=+m[1],mo=+m[2];return(mo>=1&&mo<=12&&d>=1&&d<=31)?mo*100+d:null;}
+function inWin(md,a,b){return a<=b?(md>=a&&md<=b):(md>=a||md<=b);}
+function stageWin(t,s){
+  const a=mdParse(s.winFrom),b=mdParse(s.winTo);if(a==null||b==null)return null;
+  const lbl=(s.winName?s.winName+' ':'')+s.winFrom+'–'+s.winTo;
+  if(t.dateless||s._off==null)return{ok:null,lbl};
+  const d0=dAt(addDays(t.start,s._off)),d1=dAt(addDays(t.start,s._off+Math.max(0,num(s.nights))));
+  const m0=(d0.getMonth()+1)*100+d0.getDate(),m1=(d1.getMonth()+1)*100+d1.getDate();
+  const okS=inWin(m0,a,b),okE=inWin(m1,a,b);
+  return{ok:okS&&okE,lbl,why:!okS?'start '+d0.getDate()+'.'+(d0.getMonth()+1):'koniec '+d1.getDate()+'.'+(d1.getMonth()+1)};
+}
 function buildStages(openIdx){
   const t=T(),total=computeOffsets(t);
   const w=$('#stages');w.innerHTML='';
@@ -676,6 +700,8 @@ function buildStages(openIdx){
   }else{
     const end=dateFor(t.start,total);
     $('#trip-sum').innerHTML='<b>'+esc(dateFor(t.start,0).d+' → '+end.d)+'</b>'+plural(total+1,'dzień','dni','dni')+' · koniec '+esc(end.full);
+    {const bad=t.stages.filter(s=>s.status!=='skip'&&(stageWin(t,s)||{}).ok===false).length;
+     if(bad)$('#trip-sum').innerHTML+='<div class="win-sum">⚠ '+plural(bad,'etap','etapy','etapów')+' poza oknem sezonowym — przesuń start albo zmień noce</div>';}
   }
   $('#trip-start').value=t.start;
   $('#trip-start').disabled=!!t.dateless;
@@ -792,13 +818,20 @@ $('#stages').addEventListener('click',async e=>{
   if(gc){const i=+gc.dataset.geocode,s=t.stages[i],msg=$('#geo-'+i);
     const g=gaz(s.to);if(g&&!navigator.onLine){s.lat=g.c[0];s.lng=g.c[1];saveTrips();buildStages(i);return;}
     msg.textContent='Szukam…';
-    try{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=pl&name='+encodeURIComponent(s.to||s.title));
-      const j=await r.json();const x=j.results&&j.results[0];
-      if(x){s.lat=+x.latitude.toFixed(4);s.lng=+x.longitude.toFixed(4);saveTrips();buildStages(i);
+    try{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=5&language=pl&name='+encodeURIComponent(s.to||s.title));
+      const j=await r.json();const xs=(j.results||[]);
+      if(xs.length===1){const x=xs[0];s.lat=+x.latitude.toFixed(4);s.lng=+x.longitude.toFixed(4);saveTrips();buildStages(i);
         const m2=$('#geo-'+i);if(m2)m2.textContent='✓ '+x.name+(x.country?', '+x.country:'');}
-      else msg.textContent='Nie znalazłem — wpisz ręcznie albo użyj „Tu jestem”.';
+      else if(xs.length){msg.innerHTML='Które to miejsce?'+xs.map(x=>'<button class="geo-pick" data-gpick="'+i+'" data-lat="'+(+x.latitude.toFixed(4))+'" data-lng="'+(+x.longitude.toFixed(4))+'">'+
+          esc([x.name,x.admin1,x.country].filter(Boolean).join(', '))+'</button>').join('')+'<small>Nie ma na liście? „Wskaż na mapie”.</small>';}
+      else msg.textContent='Nie znalazłem — wskaż na mapie albo wpisz współrzędne.';
     }catch(err){msg.textContent=g?'Offline — użyłem wbudowanych współrzędnych.':'Brak sieci.';if(g){s.lat=g.c[0];s.lng=g.c[1];saveTrips();}}
     return;}
+  const gk=e.target.closest('[data-gpick]');
+  if(gk){const i=+gk.dataset.gpick;t.stages[i].lat=+gk.dataset.lat;t.stages[i].lng=+gk.dataset.lng;saveTrips();buildStages(i);
+    const m2=$('#geo-'+i);if(m2)m2.textContent='✓ '+gk.textContent;return;}
+  const mp=e.target.closest('[data-mappick]');
+  if(mp){mapPick=+mp.dataset.mappick;goTab('mapa');return;}
   const gp=e.target.closest('[data-gps]');
   if(gp){const i=+gp.dataset.gps,msg=$('#geo-'+i);msg.textContent='Ustalam pozycję…';
     getPos().then(p=>{t.stages[i].lat=+p.lat.toFixed(5);t.stages[i].lng=+p.lng.toFixed(5);saveTrips();buildStages(i);},
@@ -1270,8 +1303,8 @@ document.addEventListener('keydown',e=>{
 
 /* ============ zakładki i tryb ============ */
 const tabs=$$('.tab');
-const BUILD={dzis:buildToday,plan:()=>{buildRevBar();buildStages();cityPlanSummary();buildOptions();buildInfos();if(!planScrolled&&!T().pendingRev){planScrolled=true;setTimeout(scrollToToday,120);}},
-  mapa:()=>setTimeout(initMap,60),wydatki:buildExpenses,przew:buildGuide,insta:buildIG,lista:buildChecks,kosztorys:buildCalc,klocki:()=>{(cityPack()?buildCity:blkPack()?buildBlocks:buildZarys)();buildIdeas();}};
+const BUILD={dzis:buildToday,plan:()=>{buildRevBar();buildRtwStats();buildStages();cityPlanSummary();buildOptions();buildInfos();if(!planScrolled&&!T().pendingRev){planScrolled=true;setTimeout(scrollToToday,120);}},
+  mapa:()=>{mapPickBar();buildHistBar();setTimeout(initMap,60);},wydatki:buildExpenses,przew:buildGuide,insta:buildIG,lista:buildChecks,kosztorys:buildCalc,klocki:()=>{(cityPack()?buildCity:blkPack()?buildBlocks:buildZarys)();buildIdeas();}};
 let curTab=null;
 /* które zakładki są „główne” (dolny pasek na telefonie) zależy od trybu */
 const TAB_SETS={travel:['dzis','przew','mapa','wydatki'],plan:['dzis','klocki','plan','kosztorys']};
@@ -1745,12 +1778,20 @@ document.addEventListener('change',e=>{
 });
 function switchTrip(id){
   activeId=id;save(K.active,id);editMode={};planScrolled=false;guideTab=null;
-  if(mapObj){mapObj.remove();mapObj=null;mapInited=false;}
+  if(mapObj){mapObj.remove();mapObj=null;mapInited=false;histLayer=null;}
   buildHeader();applyMode();refresh();
 }
 
 /* ============ MAPA ============ */
-let mapInited=false,mapObj=null,routeLayer=null;
+let mapInited=false,mapObj=null,routeLayer=null,mapPick=null;
+function mapPickBar(){
+  let b=$('#pick-bar');
+  if(mapPick==null){if(b)b.remove();return;}
+  const s=T().stages[mapPick];
+  if(!b){b=el('div','pick-bar');b.id='pick-bar';$('#mapa').insertBefore(b,$('#map'));}
+  b.innerHTML='Dotknij mapy w miejscu celu etapu <b>'+esc(s?stageTitle(s):'')+'</b>. <button class="tb-btn" id="pick-cancel">Anuluj</button>';
+  $('#pick-cancel').onclick=()=>{mapPick=null;mapPickBar();goTab('plan');};
+}
 function mkIcon(cls,label){return L.divIcon({className:'',html:'<div class="map-marker '+cls+'"><span>'+label+'</span></div>',iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});}
 function initMap(){
   if(mapInited&&mapObj){setTimeout(()=>mapObj.invalidateSize(),100);return;}
@@ -1759,6 +1800,12 @@ function initMap(){
   mapObj=L.map('map',{scrollWheelZoom:false}).setView([40,40],5);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(mapObj);
   routeLayer=L.layerGroup().addTo(mapObj);
+  mapObj.on('click',e=>{
+    if(mapPick==null)return;const t=T(),i=mapPick,s=t.stages[i];mapPick=null;mapPickBar();
+    if(!s)return;let lng=e.latlng.lng;while(lng>180)lng-=360;while(lng<-180)lng+=360;
+    s.lat=+e.latlng.lat.toFixed(4);s.lng=+lng.toFixed(4);saveTrips();
+    toast('Zapisano miejsce: '+stageTitle(s));editMode[i]=true;goTab('plan');setTimeout(()=>{buildStages(i);const n=$('#st-'+i);if(n)n.scrollIntoView({block:'center'});},120);
+  });
   drawRouteLayer(true);
   setTimeout(()=>mapObj.invalidateSize(),200);
   askTileInfo();
@@ -1772,10 +1819,15 @@ function drawRouteLayer(fit){
   if(!mapObj||!routeLayer)return;
   routeLayer.clearLayers();
   const t=T(),pts=[],line=[];computeOffsets(t);
-  const seen={};let n=0;
+  const seen={};let n=0,lastLng=null;
   t.stages.forEach(s=>{
     if(s.status==='skip')return;
-    const c=stageCoord(s);if(!c)return;
+    const c0=stageCoord(s);if(!c0)return;
+    // przez linię zmiany daty (np. Polinezja → Fidżi) nie rysuj kreski dookoła świata w drugą stronę:
+    // długość „rozwijamy” tak, żeby każdy skok był krótszy niż 180°
+    const c=[c0[0],c0[1]];
+    if(lastLng!=null){while(c[1]-lastLng>180)c[1]-=360;while(c[1]-lastLng<-180)c[1]+=360;}
+    lastLng=c[1];
     line.push(c);
     const k=c[0].toFixed(3)+','+c[1].toFixed(3);
     const d=dateFor(t.start,s._off).d;
@@ -1785,11 +1837,12 @@ function drawRouteLayer(fit){
   });
   Object.values(seen).forEach(o=>{
     const note=stopNote(o.where),lc=stageLocal(o.s);
-    L.marker(o.c,{icon:mkIcon(o.s.mode==='ferry'?'sea':'',String(o.n))}).addTo(routeLayer)
+    L.marker(o.c,{icon:mkIcon(SEA_MODES.includes(o.s.mode)?'sea':'',String(o.n))}).addTo(routeLayer)
       .bindPopup('<div class="map-pop"><div class="mp-date">'+esc(o.dates.join(', '))+'</div><b>'+esc(o.where)+'</b>'+(lc.loc&&norm(lc.loc)!==norm(o.where)?' · '+esc(lc.loc):'')+
         '<br>'+esc(note||o.s.see||'')+'</div>',{maxWidth:300});
     pts.push(o.c);
   });
+  routeLine=line;
   if(line.length>1)L.polyline(line,{color:'#6E1B24',weight:3,opacity:.6,dashArray:'6 8'}).addTo(routeLayer);
   // wybrany, niewstawiony wariant
   const g=(P()&&P().options||[]).find(x=>x.insert),v=g&&g.items.find(x=>x.id===t.picked[g.group]);
@@ -1815,6 +1868,7 @@ function drawRouteLayer(fit){
     pts.push([x.lat,x.lng]);
   });
   if(fit!==false&&pts.length)try{mapObj.fitBounds(L.latLngBounds(pts).pad(0.15));}catch(e){}
+  if(typeof drawHist==='function')drawHist();
 }
 /* kafelki offline */
 function tileXY(lat,lon,z){const n=Math.pow(2,z),x=Math.floor((lon+180)/360*n),r=lat*Math.PI/180;
@@ -2120,6 +2174,118 @@ document.addEventListener('focusout',()=>{setTimeout(()=>{const a=document.activ
 let scrollQ=false;
 window.addEventListener('scroll',()=>{if(scrollQ)return;scrollQ=true;requestAnimationFrame(()=>{scrollQ=false;
   document.body.classList.toggle('scrolled',window.scrollY>60);});},{passive:true});
+
+/* ============ WYPRAWA DOOKOŁA ŚWIATA: liczniki i trasy historyczne ============
+   Działa dla wypraw z flagą rtw (w pakiecie albo w wyprawie). */
+function isRtw(t){t=t||T();return !!(t.rtw||(P()&&P().rtw));}
+function kmBetween(a,b){const R=6371,r=Math.PI/180,dLa=(b[0]-a[0])*r,dLo=(b[1]-a[1])*r;
+  const h=Math.sin(dLa/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(h)));}
+/* kontynent ze współrzędnych — w przybliżeniu (wyspy liczone geograficznie: Kanary i Cabo Verde to Afryka, Karaiby — Ameryka Płn.) */
+function continentOf(lat,lng){
+  while(lng>180)lng-=360;while(lng<-180)lng+=360;
+  if(lat<-60)return'Antarktyda';
+  if(lat>=36&&lng>-25&&lng<45&&!(lng>-2&&lng<11.5&&lat<37.4)&&!(lng>26&&lat<41.5))return'Europa';
+  if((lng<-100&&lat<0)||lng<-150||(lng>150&&lat<5)||(lng>110&&lat<-10))return'Oceania';
+  if(lng<-30){
+    if(lat>=10.9&&lng<=-59&&lng>=-86)return'Ameryka Płn.';   // Karaiby
+    if(lat<12.5&&lng>-82&&!(lng<-77.2&&lat>7))return'Ameryka Płd.';
+    return'Ameryka Płn.';
+  }
+  if(lat<37.5&&lng>=-26&&lng<=52&&!(lng>34&&lat>12))return'Afryka';
+  return'Azja';
+}
+const MODE_GROUP=m=>m==='plane'?'air':['ferry','yacht','ship'].includes(m)?'sea':'land';
+function rtwStats(t){
+  computeOffsets(t);
+  let prev=null,km={air:0,sea:0,land:0},missing=0;const conts=[],modes={};
+  const first=t.stages.find(s=>s.status!=='skip');
+  if(first){const g=gaz(first.from);if(g)prev=g.c;}
+  t.stages.forEach(s=>{
+    if(s.status==='skip')return;
+    const c=stageCoord(s);
+    if(!c){missing++;return;}
+    if(prev)km[MODE_GROUP(s.mode)]+=kmBetween(prev,c);   // odcinek: poprzedni cel → ten cel
+    if(MODES[s.mode]&&s.mode!=='stay')modes[s.mode]=(modes[s.mode]||0)+1;
+    const k=continentOf(c[0],c[1]);if(!conts.includes(k))conts.push(k);
+    prev=c;
+  });
+  if(first){const g=gaz(first.from);if(g){const k=continentOf(g.c[0],g.c[1]);if(!conts.includes(k))conts.unshift(k);}}
+  const tot=km.air+km.sea+km.land;
+  return{km,tot,noAir:tot?Math.round((km.sea+km.land)/tot*100):0,conts,modes,missing};
+}
+function buildRtwStats(){
+  const box=$('#rtw-stats');if(!box)return;
+  const t=T();if(!isRtw(t)){box.innerHTML='';return;}
+  const r=rtwStats(t),k=x=>fmt(Math.round(x/100)*100);
+  box.innerHTML='<div class="rtw">'+
+    '<div class="rtw-h">Dookoła świata <small>w linii prostej między celami etapów</small></div>'+
+    '<div class="rtw-tiles">'+
+      '<div class="rtw-t main"><b>'+r.noAir+'%</b><span>trasy bez samolotu</span></div>'+
+      '<div class="rtw-t"><b>'+k(r.tot)+'</b><span>km razem</span></div>'+
+      '<div class="rtw-t"><b>'+r.conts.length+'</b><span>'+pl(r.conts.length,'kontynent','kontynenty','kontynentów')+'</span></div>'+
+    '</div>'+
+    '<div class="rtw-bar" title="morze · ląd · samolot"><i class="sea" style="width:'+(r.tot?r.km.sea/r.tot*100:0)+'%"></i><i class="land" style="width:'+(r.tot?r.km.land/r.tot*100:0)+'%"></i><i class="air" style="width:'+(r.tot?r.km.air/r.tot*100:0)+'%"></i></div>'+
+    '<div class="rtw-leg"><span><i class="sea"></i>morze '+k(r.km.sea)+' km</span><span><i class="land"></i>ląd '+k(r.km.land)+' km</span><span><i class="air"></i>samolot '+k(r.km.air)+' km</span></div>'+
+    '<div class="rtw-modes">'+Object.keys(r.modes).sort((a,b)=>r.modes[b]-r.modes[a]).map(m=>'<span>'+MODES[m].i+' '+r.modes[m]+'</span>').join('')+'</div>'+
+    '<div class="rtw-conts">'+r.conts.map(esc).join(' · ')+'</div>'+
+    (r.missing?'<div class="rtw-miss">'+plural(r.missing,'etap','etapy','etapów')+' bez miejsca na mapie — nie liczą się. Ustaw je w edycji etapu: „Znajdź” albo „Wskaż na mapie”.</div>':'')+
+  '</div>';
+}
+/* Trasy historyczne — uproszczone, z kilkunastu punktów. To przybliżenia, nie mapy historyczne. */
+const HIST=[
+ {id:'kolumb',n:'Kolumb 1492',c:'#C8962E',d:'Pierwsza wyprawa: Palos, Wyspy Kanaryjskie, Bahamy, Kuba, Hispaniola i powrót przez Azory.',
+  p:[[37.23,-6.90],[28.09,-17.11],[28.0,-30.0],[26.5,-55.0],[24.06,-74.53],[21.2,-75.9],[19.8,-72.2],[19.9,-70.0],[35.0,-45.0],[37.74,-25.67],[38.72,-9.14],[37.23,-6.90]]},
+ {id:'magellan',n:'Magellan i Elcano 1519–22',c:'#2E7D82',d:'Pierwsze opłynięcie Ziemi: Sanlúcar, Rio, Patagonia, Cieśnina Magellana, Pacyfik, Filipiny, Moluki, Przylądek Dobrej Nadziei.',
+  p:[[36.78,-6.35],[28.47,-16.25],[-22.9,-43.17],[-34.9,-56.2],[-49.3,-67.7],[-52.6,-69.5],[-53.5,-72.5],[-35.0,-90.0],[-10.0,-130.0],[13.4,144.8],[10.3,123.9],[0.68,127.4],[-9.5,124.0],[-34.36,18.47],[14.9,-23.5],[36.78,-6.35]]},
+ {id:'che',n:'Che Guevara 1952',c:'#9B2D2D',d:'Motocyklem i autostopem: Buenos Aires, Patagonia, Chile, Atakama, Peru, Amazonia, Kolumbia, Wenezuela.',
+  p:[[-34.6,-58.38],[-38.27,-57.84],[-38.72,-62.27],[-41.13,-71.31],[-38.74,-72.6],[-33.45,-70.67],[-33.05,-71.62],[-23.65,-70.4],[-22.3,-68.9],[-18.01,-70.25],[-13.53,-71.97],[-13.16,-72.55],[-12.05,-77.04],[-3.75,-73.25],[-4.2,-69.94],[4.71,-74.07],[10.48,-66.9]]},
+ {id:'polo',n:'Marco Polo 1271–95',c:'#6B4E9B',d:'Jedwabnym Szlakiem do Chin i morzem z powrotem: Wenecja, Akka, Tebryz, Ormuz, Kaszgar, Pekin, Sumatra, Cejlon.',
+  p:[[45.44,12.33],[32.92,35.07],[36.88,35.93],[38.08,46.29],[27.1,56.45],[36.76,66.9],[39.47,75.99],[40.14,94.66],[39.9,116.4],[24.87,118.68],[5.5,95.3],[7.9,79.9],[27.1,56.45],[41.0,39.72],[45.44,12.33]]},
+ {id:'battuta',n:'Ibn Battuta 1325–54',c:'#B45A2E',d:'Autor „Rihli”: Tanger, Kair, Damaszek, Mekka, Delhi, Malediwy, Cejlon, Chiny i powrót do Afryki Zachodniej.',
+  p:[[35.77,-5.8],[36.8,10.18],[30.04,31.24],[33.51,36.29],[21.42,39.83],[33.3,44.4],[24.1,56.3],[39.7,64.4],[28.61,77.21],[4.18,73.51],[7.9,79.9],[24.87,118.68],[30.04,31.24],[35.77,-5.8],[16.77,-3.0]]}
+];
+function unwrapLine(pts,ref){
+  const out=[];let last=ref!=null?ref:null;
+  pts.forEach(([la,lo])=>{if(last!=null){while(lo-last>180)lo-=360;while(lo-last<-180)lo+=360;}last=lo;out.push([la,lo]);});
+  return out;
+}
+let histLayer=null,routeLine=[];
+/* trasę historyczną przesuwamy o wielokrotność 360°, żeby leżała na tej samej „kopii” świata co Twoja trasa
+   (Twoja pętla na zachód kończy się ok. −360°; Marco Polo w Chinach powinien leżeć obok Twoich Filipin) */
+function alignToRoute(pts){
+  if(!routeLine.length)return pts;
+  let best=pts,bestCost=Infinity;
+  [-720,-360,0,360].forEach(off=>{
+    let cost=0;pts.forEach(([la,lo])=>{let m=Infinity;routeLine.forEach(([a,b])=>{const d=(la-a)**2+(lo+off-b)**2;if(d<m)m=d;});cost+=m;});
+    if(cost<bestCost){bestCost=cost;best=pts.map(([la,lo])=>[la,lo+off]);}
+  });
+  return best;
+}
+function drawHist(){
+  if(!mapObj)return;
+  if(!histLayer)histLayer=L.layerGroup().addTo(mapObj);
+  histLayer.clearLayers();
+  const t=T();if(!isRtw(t))return;
+  const on=t.hist||{};
+  HIST.filter(h=>on[h.id]).forEach(h=>{
+    L.polyline(alignToRoute(unwrapLine(h.p)),{color:h.c,weight:2.5,opacity:.85,dashArray:'2 6',lineCap:'round'}).addTo(histLayer)
+      .bindPopup('<div class="map-pop"><div class="mp-date">trasa historyczna · w przybliżeniu</div><b>'+esc(h.n)+'</b><br>'+esc(h.d)+'</div>',{maxWidth:280});
+  });
+}
+function buildHistBar(){
+  const box=$('#hist-bar');if(!box)return;
+  const t=T();if(!isRtw(t)){box.innerHTML='';return;}
+  const on=t.hist||{};
+  box.innerHTML='<div class="hist-h">Trasy historyczne <small>uproszczone, w przybliżeniu</small></div><div class="hist-chips">'+
+    HIST.map(h=>'<button class="hist-chip'+(on[h.id]?' on':'')+'" data-hist="'+h.id+'" aria-pressed="'+(!!on[h.id])+'"><i style="background:'+h.c+'"></i>'+esc(h.n)+'</button>').join('')+'</div>';
+}
+$('#hist-bar').addEventListener('click',e=>{
+  const b=e.target.closest('[data-hist]');if(!b)return;const t=T();t.hist=t.hist||{};
+  t.hist[b.dataset.hist]=!t.hist[b.dataset.hist];saveTrips();buildHistBar();drawHist();
+});
+
+/* na komputerze nie ma „Więcej” — Dane i kopia oraz Szkolenie są w stopce */
+document.querySelector('footer').addEventListener('click',e=>{if(e.target.closest('[data-dane-open]'))openDataSheet();if(e.target.closest('[data-train-open]'))openTraining();});
 
 /* ============ START ============ */
 if(!LS_OK){const sb=$('#sysbar');sb.style.display='block';

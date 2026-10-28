@@ -15,8 +15,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-rihla-192.png">
 <!-- WERSJA: przy każdym wgraniu podbij ?v= tutaj ORAZ VERSION w sw.js (ta sama liczba) -->
-<link rel="stylesheet" href="leaflet.css?v=58">
-<link rel="stylesheet" href="app.css?v=58">
+<link rel="stylesheet" href="leaflet.css?v=61">
+<link rel="stylesheet" href="app.css?v=61">
 </head>
 <body>
 <div class="sysbar" id="sysbar" style="display:none"></div>
@@ -64,6 +64,7 @@
       <label class="cbx nodate"><input type="checkbox" id="trip-nodate"> termin nieustalony</label>
       <div class="trip-sum" id="trip-sum"></div>
     </div>
+    <div id="rtw-stats"></div>
     <div id="windows"></div>
     <div class="toolbar">
       <button class="tb-btn" id="add-stage">+ Etap</button>
@@ -85,8 +86,10 @@
     <div class="map-legend">
       <span><i style="background:#6E1B24"></i>plan</span>
       <span><i style="background:#B45A2E"></i>wariant</span>
+      <span><i style="background:#2E7D82"></i>morze</span>
       <span><i style="background:#C89B3C"></i>check-in</span>
     </div>
+    <div id="hist-bar"></div>
     <div class="mapbar">
       <div class="mb-txt" id="tile-info">Mapa offline: <b>—</b><div class="prog" id="tile-prog" style="display:none"><i></i></div></div>
       <button class="tb-btn" id="save-tiles">⤓ Zapisz ten fragment offline</button>
@@ -129,6 +132,7 @@
 <footer>
   <span class="sig" id="sig">Dobrej drogi</span>
   <span id="foot-name">Rihla</span>
+  <div class="foot-links"><button class="foot-link" data-dane-open>Dane i kopia</button> · <button class="foot-link" data-train-open>Szkolenie</button></div>
 </footer>
 
 <!-- Dane i kopia: otwierane z „Więcej” -->
@@ -153,8 +157,8 @@
 <div class="sheet-bg" id="sheet-bg"></div>
 <div class="sheet" id="sheet"></div>
 
-<script src="leaflet.js?v=58"></script>
-<script src="packs.js?v=58"></script>
-<script src="app.js?v=58"></script>
+<script src="leaflet.js?v=61"></script>
+<script src="packs.js?v=61"></script>
+<script src="app.js?v=61"></script>
 </body>
 </html>

@@ -1255,8 +1255,6 @@ body.kb-open nav,body.kb-open .fab{display:none!important}
 .hdr-row2 #mode-btn{margin-left:auto;flex:0 0 auto}
 .netpill{flex:0 0 auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--alarm,#C0392B);border-radius:20px;padding:4px 9px}
 .netpill[hidden]{display:none}
-body.compact .h1-btn #h1{font-size:26px}
-body.compact .hdr-row2{margin-top:8px;min-height:0}
 header{padding-top:calc(26px + env(safe-area-inset-top))}
 /* ===== Stopka: tylko podpis; dane w arkuszu ===== */
 footer{padding:22px 20px 30px}
@@ -1280,6 +1278,49 @@ footer .sig{font-size:17px;margin-bottom:2px}
 .acts .act.chk{background:var(--iznik)}
 
 /* Nagłówek na pozostałych zakładkach: jeden rząd — nazwa wyprawy ▾ po lewej, Plan/Podróż po prawej, bez flagi */
+
+/* ===== Wyprawy morskie i dookoła świata ===== */
+.f3{display:grid;grid-template-columns:1fr 1fr 2fr;gap:8px}
+.geo-pick{display:block;width:100%;text-align:left;appearance:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 11px;margin-top:6px;font:500 13.5px Inter,sans-serif;color:var(--ink);cursor:pointer}
+.geo-msg small{display:block;margin-top:6px;color:var(--muted)}
+.pick-bar{background:var(--iznik-deep);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:14px;line-height:1.45}
+.pick-bar .tb-btn{margin-left:8px;padding:6px 12px;min-height:34px}
+.win-warn{margin-top:6px;font-size:12.5px;font-weight:600;color:#B0472F}
+.win-ok{margin-top:6px;font-size:12px;color:var(--muted)}
+.win-sum{margin-top:6px;font-size:13px;font-weight:600;color:#B0472F}
+.crew-wait{margin-left:6px;background:#FBEDE4!important;color:var(--cop-deep)!important}
+.crew-ok{margin-left:6px;background:rgba(107,122,79,.16)!important;color:var(--olive-deep)!important}
+
+/* ===== Dookoła świata: liczniki ===== */
+.rtw{background:#FFFDF8;border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(34,29,28,.06),0 3px 10px rgba(34,29,28,.04)}
+.rtw-h{font-family:'Fraunces',serif;font-weight:700;font-size:17px;color:var(--burgundy);margin-bottom:10px}
+.rtw-h small{display:block;font:500 11.5px Inter,sans-serif;color:var(--muted);margin-top:2px}
+.rtw-tiles{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:8px}
+.rtw-t{background:var(--sand);border-radius:12px;padding:10px 12px}
+.rtw-t b{display:block;font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--burgundy);line-height:1.1}
+.rtw-t span{font-size:11.5px;color:var(--muted)}
+.rtw-t.main{background:var(--iznik-deep)}.rtw-t.main b,.rtw-t.main span{color:#fff}
+.rtw-bar{display:flex;height:8px;border-radius:8px;overflow:hidden;margin:12px 0 6px;background:var(--sand-2)}
+.rtw-bar i,.rtw-leg i{display:block;height:100%}
+.rtw-leg{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--muted)}
+.rtw-leg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.rtw-bar .sea,.rtw-leg .sea{background:#2E7D82}.rtw-bar .land,.rtw-leg .land{background:#B45A2E}.rtw-bar .air,.rtw-leg .air{background:#9A8F86}
+.rtw-modes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.rtw-modes span{background:var(--sand);border-radius:20px;padding:4px 10px;font-size:13px}
+.rtw-conts{margin-top:10px;font-family:'Fraunces',serif;font-style:italic;font-size:14.5px;color:var(--ink)}
+.rtw-miss{margin-top:8px;font-size:12.5px;color:#B0472F}
+/* ===== Trasy historyczne na mapie ===== */
+.hist-h{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.hist-h small{text-transform:none;letter-spacing:0;font-weight:500}
+.hist-chips{display:flex;flex-wrap:wrap;gap:6px}
+.hist-chip{appearance:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 11px;font:600 12.5px Inter,sans-serif;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:36px}
+.hist-chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.hist-chip.on{border-color:var(--ink);background:var(--sand)}
+
+/* Zwinięty nagłówek tylko na telefonie — na komputerze nagłówek zostaje pełny */
+@media(max-width:700px){
+body.compact .h1-btn #h1{font-size:26px}
+body.compact .hdr-row2{margin-top:8px;min-height:0}
 body.compact .brand{display:flex;align-items:center;gap:10px;padding-bottom:12px}
 body.compact .h1-wrap{flex:1;min-width:0}
 body.compact .h1-btn{max-width:100%;align-items:center}
@@ -1289,3 +1330,9 @@ body.compact .hdr-row2{margin:0;flex:0 0 auto;min-height:0}
 body.compact #hdr-mark{display:none}
 body.compact #mode-btn .seg{padding:6px 9px}
 body.compact #mode-btn{font-size:12px}
+}
+
+/* stopka: linki tylko na komputerze (na telefonie są w „Więcej”) */
+.foot-links{margin-top:8px;font-size:13px;color:var(--muted)}
+.foot-link{appearance:none;border:0;background:none;color:var(--cop-deep);font:600 13px Inter,sans-serif;cursor:pointer;padding:4px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){.foot-links{display:none}}
