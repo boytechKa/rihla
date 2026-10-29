@@ -319,7 +319,8 @@ function freshTrip(packId){
     stages:JSON.parse(JSON.stringify(P.stages)),
     checks:P.checks.map(c=>Object.assign({done:false},c)),
     budget:JSON.parse(JSON.stringify(P.budget||[])),
-    picked:JSON.parse(JSON.stringify(P.picked||{})),packRev:P.rev||1,dateless:!!P.dateless,ferry:{},plan:null,booking:{}};
+    picked:JSON.parse(JSON.stringify(P.picked||{})),packRev:P.rev||1,dateless:!!P.dateless,ferry:{},plan:null,booking:{},
+    outline:P.outline?JSON.parse(JSON.stringify(P.outline)):undefined};
 }
 /* podmiana etapów na nowszą rewizję pakietu — zachowuje Twoje notatki przy etapach o tym samym armIdx */
 function applyPackRev(t){
@@ -339,6 +340,7 @@ function applyPackRev(t){
     t.checks=Pk.checks.map(c=>Object.assign({},c,{done:!!done[c.t]}));
   }
   if(Pk.restart)delete t.blocks;
+  if(Pk.outline&&!(t.outline&&Array.isArray(t.outline.blocks)&&t.outline.blocks.length))t.outline=JSON.parse(JSON.stringify(Pk.outline));
   t.packRev=Pk.rev;delete t.pendingRev;
 }
 let REV_NOTE='';
@@ -831,7 +833,7 @@ $('#stages').addEventListener('click',async e=>{
   if(gk){const i=+gk.dataset.gpick;t.stages[i].lat=+gk.dataset.lat;t.stages[i].lng=+gk.dataset.lng;saveTrips();buildStages(i);
     const m2=$('#geo-'+i);if(m2)m2.textContent='✓ '+gk.textContent;return;}
   const mp=e.target.closest('[data-mappick]');
-  if(mp){mapPick=+mp.dataset.mappick;goTab('mapa');return;}
+  if(mp){mapPick={type:'stage',i:+mp.dataset.mappick};goTab('mapa');return;}
   const gp=e.target.closest('[data-gps]');
   if(gp){const i=+gp.dataset.gps,msg=$('#geo-'+i);msg.textContent='Ustalam pozycję…';
     getPos().then(p=>{t.stages[i].lat=+p.lat.toFixed(5);t.stages[i].lng=+p.lng.toFixed(5);saveTrips();buildStages(i);},
@@ -1787,10 +1789,10 @@ let mapInited=false,mapObj=null,routeLayer=null,mapPick=null;
 function mapPickBar(){
   let b=$('#pick-bar');
   if(mapPick==null){if(b)b.remove();return;}
-  const s=T().stages[mapPick];
+  const isB=mapPick.type==='blk',x=isB?outline(T()).blocks[mapPick.i]:T().stages[mapPick.i];
   if(!b){b=el('div','pick-bar');b.id='pick-bar';$('#mapa').insertBefore(b,$('#map'));}
-  b.innerHTML='Dotknij mapy w miejscu celu etapu <b>'+esc(s?stageTitle(s):'')+'</b>. <button class="tb-btn" id="pick-cancel">Anuluj</button>';
-  $('#pick-cancel').onclick=()=>{mapPick=null;mapPickBar();goTab('plan');};
+  b.innerHTML='Dotknij mapy w miejscu '+(isB?'klocka':'celu etapu')+' <b>'+esc(x?(isB?x.name:stageTitle(x)):'')+'</b>. <button class="tb-btn" id="pick-cancel">Anuluj</button>';
+  $('#pick-cancel').onclick=()=>{const back=isB?'klocki':'plan';mapPick=null;mapPickBar();goTab(back);};
 }
 function mkIcon(cls,label){return L.divIcon({className:'',html:'<div class="map-marker '+cls+'"><span>'+label+'</span></div>',iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});}
 function initMap(){
@@ -1801,9 +1803,11 @@ function initMap(){
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(mapObj);
   routeLayer=L.layerGroup().addTo(mapObj);
   mapObj.on('click',e=>{
-    if(mapPick==null)return;const t=T(),i=mapPick,s=t.stages[i];mapPick=null;mapPickBar();
-    if(!s)return;let lng=e.latlng.lng;while(lng>180)lng-=360;while(lng<-180)lng+=360;
-    s.lat=+e.latlng.lat.toFixed(4);s.lng=+lng.toFixed(4);saveTrips();
+    if(mapPick==null)return;const t=T(),pk=mapPick;mapPick=null;mapPickBar();
+    let lng=e.latlng.lng;while(lng>180)lng-=360;while(lng<-180)lng+=360;const la=+e.latlng.lat.toFixed(4),lo=+lng.toFixed(4);
+    if(pk.type==='blk'){const b=outline(t).blocks[pk.i];if(!b)return;b.lat=la;b.lng=lo;saveTrips();toast('Zapisano miejsce: '+(b.name||'klocek'));goTab('klocki');return;}
+    const i=pk.i,s=t.stages[i];if(!s)return;
+    s.lat=la;s.lng=lo;saveTrips();
     toast('Zapisano miejsce: '+stageTitle(s));editMode[i]=true;goTab('plan');setTimeout(()=>{buildStages(i);const n=$('#st-'+i);if(n)n.scrollIntoView({block:'center'});},120);
   });
   drawRouteLayer(true);
@@ -3260,6 +3264,161 @@ function buildBlocks(){
   w.innerHTML=h;
 }
 
+/* ============ ZARYS DLA WYPRAWY DOOKOŁA ŚWIATA: klocki z oknami sezonowymi ============
+   Klocek (o.blocks[i]): name, nights, mode (dojazd), lat/lng, winFrom/winTo/winName („dd.mm”),
+   nMin/nMax (zakres nocy), opt (opcjonalny), off (wyłączony), wait (przeczekanie wstawione przez apkę), ext (ile nocy dołożyło dopasowanie). */
+const DAY=86400000;
+function dPlus(d,n){const x=new Date(d.getTime());x.setDate(x.getDate()+n);return x;}
+function dDiff(a,b){return Math.round((b-a)/DAY);}
+function dFmt(d){return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear();}
+function winRanges(b,from,to){
+  const a=mdParse(b.winFrom),z=mdParse(b.winTo);if(a==null||z==null)return null;
+  const out=[];
+  for(let y=from.getFullYear()-1;y<=to.getFullYear()+1;y++){
+    const s=new Date(y,Math.floor(a/100)-1,a%100,12),e=a<=z?new Date(y,Math.floor(z/100)-1,z%100,12):new Date(y+1,Math.floor(z/100)-1,z%100,12);
+    out.push({s,e});
+  }
+  return out;
+}
+function blkNights(b){return Math.max(0,num(b.nights));}
+function rtwSchedule(t,blocks){
+  if(t.dateless)return null;
+  let cur=dAt(t.start);const rows=[];
+  blocks.forEach((b,i)=>{
+    if(b.off){rows.push({b,i,off:true});return;}
+    const n=blkNights(b),s=cur,e=dPlus(cur,n);
+    let ok=null;const W=winRanges(b,s,dPlus(e,800));
+    if(W)ok=W.some(w=>s>=w.s&&e<=w.e);
+    rows.push({b,i,s,e,n,ok,W});cur=e;
+  });
+  return{rows,start:dAt(t.start),end:cur};
+}
+/* najwcześniejszy start ≥ d, przy którym klocek mieści się w oknie (ewentualnie skrócony do nMin) */
+function fitStart(b,d,n){
+  const W=winRanges(b,d,dPlus(d,1200));if(!W)return{start:d,n};
+  for(const w of W){
+    if(w.e<d)continue;
+    const c=w.s>d?w.s:d;
+    if(dPlus(c,n)<=w.e)return{start:c,n};
+    const room=dDiff(c,w.e),mn=Math.max(0,num(b.nMin)||n);
+    if(room>=mn&&room>0)return{start:c,n:room,short:true};
+  }
+  return null;
+}
+function rtwFit(t){
+  const o=outline(t);
+  // od nowa: bez poprzednich przeczekań i dołożonych nocy
+  const blocks=o.blocks.filter(b=>!b.wait).map(b=>{const x=Object.assign({},b);if(num(x.ext)){x.nights=Math.max(0,num(x.nights)-num(x.ext));}x.ext=0;return x;});
+  const out=[],changes=[],bad=[];let cur=dAt(t.start);
+  let prev=null,prevStart=null;
+  blocks.forEach(b=>{
+    if(b.off){out.push(b);return;}
+    let n=blkNights(b);
+    const r=fitStart(b,cur,n);
+    if(!r){bad.push(b.name);out.push(b);prevStart=cur;cur=dPlus(cur,n);prev=b;return;}
+    let wait=dDiff(cur,r.start);
+    if(wait>0&&prev){
+      let room=Math.max(0,(num(prev.nMax)||blkNights(prev))-blkNights(prev));
+      const PW=winRanges(prev,prevStart,dPlus(prevStart,800));
+      if(PW){const w=PW.find(w=>prevStart>=w.s&&prevStart<=w.e);room=w?Math.min(room,Math.max(0,dDiff(dPlus(prevStart,blkNights(prev)),w.e))):0;}
+      if(wait<=7)room=Math.max(room,wait);   // kilka dni czekania to po prostu dłuższy pobyt, nie osobne przeczekanie
+      let ext=Math.min(wait,room);
+      if(wait-ext>0&&wait-ext<=7)ext=wait;   // reszta kilku dni też idzie w dłuższy pobyt
+      if(ext>0){prev.nights=blkNights(prev)+ext;prev.ext=num(prev.ext)+ext;wait-=ext;
+        changes.push('<b>'+esc(prev.name)+'</b>: +'+plural(ext,'noc','noce','nocy')+' (razem '+prev.nights+') — czekasz na okno „'+esc(b.winName||b.name)+'”');}
+    }
+    if(wait>0){
+      const where=prev?prev.name:(o.home||'start');
+      out.push({name:'Przeczekanie · '+where,wait:true,nights:wait,mode:'stay',lat:prev&&prev.lat,lng:prev&&prev.lng,note:'Czekasz na okno: '+(b.winName||b.name)});
+      changes.push('⏸ <b>Przeczekanie '+plural(wait,'dzień','dni','dni')+'</b>'+(wait>=30?' (ok. '+Math.round(wait/30)+' mies.)':'')+' w: '+esc(where)+' — przed „'+esc(b.name)+'”'+
+        (b.opt&&wait>60?' <i>albo wyłącz ten klocek — jest opcjonalny</i>':''));
+    }
+    if(r.n<n){changes.push('<b>'+esc(b.name)+'</b>: skrócone do '+plural(r.n,'noc','noce','nocy')+', żeby zmieścić się w oknie');b.nights=r.n;}
+    out.push(b);prevStart=r.start;cur=dPlus(r.start,blkNights(b));prev=b;
+  });
+  return{blocks:out,changes,bad,end:cur};
+}
+let fitPending=null;
+function rtwTimeline(t,o){
+  const S=rtwSchedule(t,o.blocks);
+  if(!S)return'<div class="zr-none">Ustaw datę startu w Planie — wtedy zobaczysz klocki na osi czasu z oknami sezonowymi.</div>';
+  const D=Math.max(1,dDiff(S.start,S.end)),pct=d=>Math.max(0,Math.min(100,dDiff(S.start,d)/D*100));
+  let ticks='',m=new Date(S.start.getFullYear(),S.start.getMonth()+1,1,12);
+  const step=D>540?3:D>270?2:1;   // przy długich wyprawach co 2–3 miesiące, żeby podpisy się nie nakładały
+  while(m<S.end){const y=m.getMonth()===0;if(y||m.getMonth()%step===0)ticks+='<span class="stl-tick'+(y?' y':'')+'" style="left:'+pct(m)+'%">'+(y?m.getFullYear():MON[m.getMonth()])+'</span>';m=new Date(m.getFullYear(),m.getMonth()+1,1,12);}
+  const rows=S.rows.filter(r=>!r.off).map(r=>{
+    const win=(r.W||[]).filter(w=>w.e>S.start&&w.s<S.end).map(w=>'<i class="stl-win" style="left:'+pct(w.s)+'%;width:'+(pct(w.e)-pct(w.s))+'%"></i>').join('');
+    const cls=r.b.wait?'wait':r.ok===false?'bad':r.ok?'ok':'na';
+    return'<div class="stl-row"><span class="stl-n" title="'+attr(r.b.name)+'">'+esc(r.b.name||'—')+'</span><span class="stl-tr">'+win+
+      '<i class="stl-bar '+cls+'" style="left:'+pct(r.s)+'%;width:'+Math.max(.8,pct(r.e)-pct(r.s))+'%"></i></span></div>';}).join('');
+  const bad=S.rows.filter(r=>r.ok===false).length;
+  return'<div class="stl"><div class="stl-axis"><span class="stl-n"></span><span class="stl-tr">'+ticks+'</span></div>'+rows+'</div>'+
+    '<div class="stl-leg"><span><i class="stl-win"></i>okno sezonowe</span><span><i class="stl-bar ok"></i>w oknie</span><span><i class="stl-bar bad"></i>poza oknem</span><span><i class="stl-bar wait"></i>przeczekanie</span></div>'+
+    '<div class="zr-sum">'+dFmt(S.start)+' → '+dFmt(S.end)+' · '+plural(D,'dzień','dni','dni')+(bad?' · <b class="warn">'+plural(bad,'klocek','klocki','klocków')+' poza oknem</b>':' · wszystkie klocki w swoich oknach ✓')+'</div>';
+}
+function buildRtwZarys(){
+  const t=T(),o=outline(t),w=$('#blocks'),lk=!!o.locked,dis=lk?' disabled':'';
+  const S=rtwSchedule(t,o.blocks);
+  let h='<div class="cy-intro"><b>Zarys wyprawy</b>Klocki to większe kawałki trasy. Każdy ma zakres nocy i okno sezonowe — oś czasu pokazuje, co w nie trafia. „Dopasuj do sezonów” przesunie klocki za Ciebie, zawsze najpierw pokazując zmiany.</div>';
+  h+='<div class="zr-date">'+(t.dateless?'Termin <b>nieustalony</b>':'Start: <b>'+esc(dateFor(t.start,0).full)+'</b>')+' · <button class="tb-btn" data-z="setdate">'+(t.dateless?'ustaw start':'zmień')+'</button>'+
+    (lk?'':' <button class="tb-btn pri" data-z="fit"'+(t.dateless?' disabled':'')+'>⇄ Dopasuj do sezonów</button>')+'</div>';
+  if(fitPending){
+    h+='<div class="fit-box"><b>Propozycja dopasowania</b>'+
+      (fitPending.changes.length?'<ul>'+fitPending.changes.map(c=>'<li>'+c+'</li>').join('')+'</ul>':'<p>Wszystko już mieści się w oknach — nic do zmiany.</p>')+
+      (fitPending.bad.length?'<p class="warn">Nie da się dopasować w ciągu 3 lat: '+fitPending.bad.map(esc).join(', ')+'. Zmień kolejność albo okno.</p>':'')+
+      '<p>Koniec wyprawy: <b>'+dFmt(fitPending.end)+'</b></p>'+
+      '<div class="fit-btns">'+(fitPending.changes.length?'<button class="tb-btn pri" data-z="fitapply">Zastosuj</button>':'')+'<button class="tb-btn" data-z="fitcancel">'+(fitPending.changes.length?'Anuluj':'OK')+'</button></div></div>';
+  }
+  h+=rtwTimeline(t,o);
+  if(lk)h+='<div class="blk-lock"><b>🔒 Zarys zatwierdzony</b><span>Zmiana klocków jest wyłączona.</span><button class="tb-btn" data-z="unlock">Odblokuj</button></div>';
+  h+='<div class="zr-home"><label>Skąd wyruszasz</label><input data-zf="home"'+dis+' value="'+attr(o.home||'')+'" placeholder="np. Kraków"></div>';
+  const modeOpt=m=>Object.keys(MODES).map(k=>'<option value="'+k+'"'+(m===k?' selected':'')+'>'+MODES[k].i+' '+MODES[k].l+'</option>').join('');
+  o.blocks.forEach((b,i)=>{
+    const r=S&&S.rows[i];
+    const st=b.off?'<span class="zr-st off">wyłączony</span>':!r?'':r.ok===false?'<span class="zr-st bad">⚠ poza oknem</span>':r.ok?'<span class="zr-st ok">✓ w oknie</span>':'';
+    const when=r&&r.s?'<small class="zr-when">'+r.s.getDate()+' '+MON[r.s.getMonth()]+' '+r.s.getFullYear()+' → '+r.e.getDate()+' '+MON[r.e.getMonth()]+'</small>':'';
+    const prevName=i?o.blocks.slice(0,i).filter(x=>!x.off).map(x=>x.name).pop()||o.home:o.home;
+    h+='<div class="zr-blk'+(b.wait?' wait':'')+(b.off?' off':'')+'"><div class="zr-blk-h"><span class="zr-n">'+(b.wait?'⏸':(i+1))+'</span>'+
+      '<input class="zr-name" data-zf="name" data-i="'+i+'"'+dis+' value="'+attr(b.name||'')+'" placeholder="klocek: region / odcinek">'+
+      '<label class="zr-nt">nocy<input type="number" min="0" data-zf="nights" data-i="'+i+'"'+dis+' value="'+attr(b.nights!=null?b.nights:2)+'"></label>'+
+      (lk?'':'<button class="blk-x" data-z="up" data-i="'+i+'">↑</button><button class="blk-x" data-z="down" data-i="'+i+'">↓</button><button class="blk-x" data-z="del" data-i="'+i+'">✕</button>')+'</div>'+
+      '<div class="zr-line">'+st+when+'</div>';
+    if(!b.wait){
+      h+='<div class="zr-leg"><span>dojazd z: '+esc(prevName||'start')+' →</span><select data-zf="mode" data-i="'+i+'"'+dis+'>'+modeOpt(b.mode||'plane')+'</select></div>'+
+        '<div class="zr-rtw">'+
+          '<label>noce od–do<span><input type="number" min="0" data-zf="nMin" data-i="'+i+'"'+dis+' value="'+attr(b.nMin||'')+'" placeholder="min"> – <input type="number" min="0" data-zf="nMax" data-i="'+i+'"'+dis+' value="'+attr(b.nMax||'')+'" placeholder="max"></span></label>'+
+          '<label>okno sezonowe<span><input data-zf="winFrom" data-i="'+i+'"'+dis+' value="'+attr(b.winFrom||'')+'" placeholder="dd.mm"> – <input data-zf="winTo" data-i="'+i+'"'+dis+' value="'+attr(b.winTo||'')+'" placeholder="dd.mm"></span></label>'+
+          '<input class="zr-wn" data-zf="winName" data-i="'+i+'"'+dis+' value="'+attr(b.winName||'')+'" placeholder="nazwa okna, np. przejście Atlantyku">'+
+          '<div class="zr-loc">📍 '+(b.lat!=null&&b.lat!==''?(+b.lat).toFixed(2)+', '+(+b.lng).toFixed(2):'<i>brak miejsca na mapie</i>')+
+            (lk?'':' <button class="geo-btn" data-z="geo" data-i="'+i+'">🔎 Znajdź</button><button class="geo-btn" data-z="bpick" data-i="'+i+'">🗺 Na mapie</button>')+'</div>'+
+          '<div class="geo-msg" id="zgeo-'+i+'"></div>'+
+          (lk?'':'<div class="zr-opt"><button class="mini-tog'+(b.opt?' on':'')+'" data-z="opt" data-i="'+i+'">'+(b.opt?'✓ opcjonalny':'opcjonalny?')+'</button>'+
+            (b.opt?'<button class="mini-tog'+(b.off?' on':'')+'" data-z="off" data-i="'+i+'">'+(b.off?'włącz z powrotem':'wyłącz z trasy')+'</button>':'')+'</div>')+
+        '</div>';
+    }else h+='<div class="zr-wait-note">'+esc(b.note||'Czekasz na okno sezonowe następnego klocka.')+' Możesz tu wpisać pracę na łodzi, wolontariat albo dłuższy pobyt.</div>';
+    h+='</div>';
+  });
+  if(!o.blocks.length)h+='<div class="zr-none">Brak klocków. Dodaj pierwszy.</div>';
+  const R=o.ret,last=o.blocks.filter(b=>!b.off).map(b=>b.name).pop()||'ostatni klocek';
+  h+='<div class="zr-blk zr-ret"><div class="zr-blk-h"><span class="zr-n">↩</span><b>Powrót</b></div><div class="zr-leg"><span>'+esc(last)+' → '+esc(o.home||'start')+'</span><select data-zf="rmode"'+dis+'>'+modeOpt(R.mode||'plane')+'</select></div></div>';
+  if(!lk)h+='<div class="zr-add"><button class="tb-btn" data-z="addblk">＋ Klocek</button></div>';
+  h+='<div class="zr-acts">'+(lk?'':'<button class="tb-btn" data-z="lock">🔒 Zatwierdź zarys</button>')+
+    '<button class="tb-btn pri" data-z="build"'+(o.blocks.length?'':' disabled')+'>Zbuduj z tego plan →</button></div>'+
+    '<div class="unconf">„Zbuduj plan” zamienia klocki w etapy z miejscami i oknami — liczniki i mapa liczą się od razu. Wyłączone klocki pomija.</div>';
+  w.innerHTML=h;a11y(w);
+}
+async function rtwGeo(i){
+  const t=T(),o=outline(t),b=o.blocks[i],msg=$('#zgeo-'+i);if(!b)return;
+  const q=String(b.name||'').replace(/\(.*?\)/g,'').split(/[→,·]/).pop().trim();
+  if(!q){msg.textContent='Wpisz nazwę klocka.';return;}
+  msg.textContent='Szukam „'+q+'”…';
+  try{const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=5&language=pl&name='+encodeURIComponent(q));
+    const xs=((await r.json()).results||[]);
+    if(!xs.length){msg.textContent='Nie znalazłem — użyj „Na mapie”.';return;}
+    msg.innerHTML='Które to miejsce?'+xs.map(x=>'<button class="geo-pick" data-z="gpick" data-i="'+i+'" data-lat="'+(+x.latitude.toFixed(4))+'" data-lng="'+(+x.longitude.toFixed(4))+'">'+esc([x.name,x.admin1,x.country].filter(Boolean).join(', '))+'</button>').join('');
+  }catch(e){msg.textContent='Brak sieci — użyj „Na mapie”.';}
+}
+
 /* ---------- ZARYS: wstępne planowanie uniwersalnej wyprawy ---------- */
 const LVL={high:['wysoki sezon','#b4532a'],low:['niski sezon','#5a7d9a'],shoulder:['przejściowy','#7a8f4a']};
 function outline(t){
@@ -3275,7 +3434,8 @@ function checkedBadge(iso){
   return'<span class="zr-chk'+(d>180?' bad':'')+'">sprawdzone '+esc(iso)+(d>180?' — sprawdź ponownie':'')+'</span>';
 }
 function buildZarys(){
-  const t=T(),o=outline(t),w=$('#blocks'),p=P(),lk=!!o.locked,dis=lk?' disabled':'';
+  const t=T();if(isRtw(t)){buildRtwZarys();return;}
+  const o=outline(t),w=$('#blocks'),p=P(),lk=!!o.locked,dis=lk?' disabled':'';
   const guides=(t.guides||[]).map(i=>PACKS[i]).filter(Boolean);
   let h='';
   /* --- przewodniki --- */
@@ -3341,10 +3501,15 @@ function zarysBuild(){
   if(t.stages.length&&!confirm('Zastąpić etapy w Planie trasą z Zarysu? Dotychczasowe etapy przepadną (Kosztorys zostaje).'))return;
   const mk=x=>Object.assign({title:'',from:'',to:'',via:'',mode:'bus',modeSug:x.mode||'bus',nights:1,status:'',dep:'',arr:'',carrier:'',
     price:'',curr:toSym(t.cur),stay:'',stayPrice:'',curr2:toSym(t.cur),src:'user',see:'',detail:'',note:''},x);
-  const out=o.blocks.map((b,i)=>{const prev=i?o.blocks[i-1].name:(o.home||'');
-    return mk({title:(prev?prev+' → ':'Przylot · ')+b.name,from:prev,to:b.name,mode:b.mode||'plane',modeSug:b.mode||'plane',
-      nights:Math.max(0,num(b.nights)),price:b.price?String(b.price):'',curr:toSym(b.cur||t.cur),stay:b.name,see:b.note||''});});
-  const last=o.blocks[o.blocks.length-1].name;
+  const act=o.blocks.filter(b=>!b.off);
+  if(!act.length){toast('Wszystkie klocki są wyłączone');return;}
+  const out=act.map((b,i)=>{const prev=i?act[i-1].name:(o.home||'');
+    const geo=b.lat!=null&&b.lat!==''?{lat:+b.lat,lng:+b.lng}:{};
+    const win=b.winFrom&&b.winTo?{winFrom:b.winFrom,winTo:b.winTo,winName:b.winName||''}:{};
+    if(b.wait)return mk(Object.assign({title:b.name,from:prev,to:prev,mode:'stay',modeSug:'stay',nights:Math.max(0,num(b.nights)),stay:prev,see:b.note||''},geo));
+    return mk(Object.assign({title:(prev?prev+' → ':'Przylot · ')+b.name,from:prev,to:b.name,mode:b.mode||'plane',modeSug:b.mode||'plane',
+      nights:Math.max(0,num(b.nights)),price:b.price?String(b.price):'',curr:toSym(b.cur||t.cur),stay:b.name,see:b.note||''},geo,win));});
+  const last=act.filter(b=>!b.wait).map(b=>b.name).pop()||act[act.length-1].name;
   out.push(mk({title:last+' → '+(o.home||'start'),from:last,to:o.home||'start',mode:o.ret.mode||'plane',nights:0,src:'tail',
     price:o.ret.price?String(o.ret.price):'',curr:toSym(o.ret.cur||t.cur)}));
   t.stages=out;o.locked=true;saveTrips();goTab('plan');toast('Plan zbudowany: '+plural(out.length,'etap','etapy','etapów'));
@@ -3357,7 +3522,8 @@ $('#blocks').addEventListener('input',e=>{
   else if(f==='rmode')o.ret.mode=v;else if(f==='rprice')o.ret.price=v;else if(f==='rcur')o.ret.cur=v;
   else if(i!=null&&o.blocks[+i])o.blocks[+i][f]=(f==='nights')?Math.max(0,num(v)):v;
   saveTrips();
-  if(f==='home'||f==='name'||f==='nights'||f==='price'||f==='rprice'){clearTimeout(window._zt);window._zt=setTimeout(()=>{const a=document.activeElement,k=a&&a.dataset&&a.dataset.zf,ix=a&&a.dataset&&a.dataset.i;buildZarys();
+  fitPending=null;
+  if(['home','name','nights','price','rprice','nMin','nMax','winFrom','winTo'].includes(f)){clearTimeout(window._zt);window._zt=setTimeout(()=>{const a=document.activeElement,k=a&&a.dataset&&a.dataset.zf,ix=a&&a.dataset&&a.dataset.i;buildZarys();
     const n=k&&document.querySelector('#blocks [data-zf="'+k+'"]'+(ix!=null?'[data-i="'+ix+'"]':''));if(n){n.focus();try{n.setSelectionRange(n.value.length,n.value.length);}catch(_){}}},700);}
 });
 $('#blocks').addEventListener('change',e=>{if(!blkPack()&&e.target.dataset.zf){buildZarys();}});
@@ -3373,7 +3539,16 @@ $('#blocks').addEventListener('click',e=>{
   if(z==='unlock'){o.locked=false;saveTrips();buildZarys();return;}
   if(z==='lock'){o.locked=true;saveTrips();buildZarys();toast('Zarys zatwierdzony 🔒');return;}
   if(o.locked&&z!=='build')return;
-  if(z==='addblk'){o.blocks.push({name:'',nights:2,mode:'plane',price:'',cur:toCode(t.cur),note:''});}
+  if(z==='fit'){if(t.dateless){toast('Najpierw ustaw datę startu');return;}fitPending=rtwFit(t);buildZarys();$('#blocks').scrollIntoView({block:'start'});return;}
+  if(z==='fitcancel'){fitPending=null;buildZarys();return;}
+  if(z==='fitapply'){if(fitPending){o.blocks=fitPending.blocks;fitPending=null;saveTrips();buildZarys();toast('Dopasowano do sezonów');}return;}
+  if(z==='geo'){rtwGeo(i);return;}
+  if(z==='gpick'){const bb=o.blocks[i];if(bb){bb.lat=+b.dataset.lat;bb.lng=+b.dataset.lng;saveTrips();buildZarys();toast('✓ '+b.textContent);}return;}
+  if(z==='bpick'){mapPick={type:'blk',i};goTab('mapa');return;}
+  fitPending=null;
+  if(z==='opt'){const bb=o.blocks[i];bb.opt=!bb.opt;if(!bb.opt)bb.off=false;}
+  else if(z==='off'){o.blocks[i].off=!o.blocks[i].off;}
+  else if(z==='addblk'){o.blocks.push({name:'',nights:2,mode:'plane',price:'',cur:toCode(t.cur),note:''});}
   else if(z==='addreg'){const r=((P()||{}).regions||[]).find(x=>x.name===b.dataset.n);if(!r)return;
     const a=r.arrive||{};o.blocks.push({name:r.name,nights:num(r.nights)||2,mode:MODES[a.mode]?a.mode:'plane',price:a.price||'',cur:toCode(a.cur||t.cur),note:r.note||''});}
   else if(z==='del'){o.blocks.splice(i,1);}

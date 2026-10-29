@@ -3,7 +3,7 @@
    Podbij VERSION przy każdym wgraniu — inaczej przeglądarka nie zauważy zmiany.
    Tę samą liczbę wpisz w index.html w ?v= (5 miejsc). Dzięki temu nowy index.html
    nigdy nie dostanie starego app.js z pamięci. */
-const VERSION = 'v61';   // ← ta sama liczba co ?v= w index.html
+const VERSION = 'v62';   // ← ta sama liczba co ?v= w index.html
 const Q = '?v=' + VERSION.slice(1);
 const SHELL   = 'powrot-shell-' + VERSION;
 const TILES   = 'powrot-tiles';   // BEZ wersji — aktualizacja apki nie kasuje zapisanych map
