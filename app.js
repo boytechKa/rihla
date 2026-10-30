@@ -1222,6 +1222,7 @@ async function buildToday(){
   else{h+=destCard(c);h+=dayPlanCard(c);}
 
   h+='<div class="acts"><button class="act exp" data-open="exp"><span>'+ICO.wydatki+'</span>Wydatek</button><button class="act chk" data-open="ci"><span>'+ICO.pin+'</span>Check-in</button></div>';
+  h+=supTodayCard();
   h+=openCard(c);
 
   // przypomnienia
@@ -1363,12 +1364,14 @@ $('#fab').addEventListener('click',()=>openSheet('pick'));
 $('#more-btn').addEventListener('click',()=>openSheet('more'));
 let exDraft={};
 function openSheet(kind){
-  const t=T();
+  const t=T();sheet.dataset.kind=kind;
+  if(kind==='sup'){sheet.innerHTML=supSheetHTML();sheet.classList.add('on');sheetBg.classList.add('on');sheet.scrollTop=0;return;}
   if(kind==='pick'){
     sheet.innerHTML='<h3>Dodaj <button data-close>✕</button></h3><div class="acts" style="margin:0"><button class="act exp" data-open="exp"><span>'+ICO.wydatki+'</span>Wydatek</button><button class="act chk" data-open="ci"><span>'+ICO.pin+'</span>Check-in</button></div>';
   }else if(kind==='more'){
     sheet.innerHTML='<h3>Więcej <button data-close>✕</button></h3><div class="more-list">'+
       moreTabs().map(m=>'<button class="more-item'+(curTab===m[0]?' on':'')+'" data-gotab="'+m[0]+'"><span>'+m[1]+'</span>'+m[2]+'</button>').join('')+
+      (isRtw(t)?'<button class="more-item" data-open="sup"><span>💊</span>Zapasy</button>':'')+
       '<button class="more-item" data-dane-open><span>'+ICO.dane+'</span>Dane i kopia</button>'+
       '<button class="more-item" data-train-open><span>'+ICO.szkolenie+'</span>Szkolenie</button></div>';
   }else if(kind==='exp'){
@@ -3350,10 +3353,10 @@ function rtwTimeline(t,o){
     const win=(r.W||[]).filter(w=>w.e>S.start&&w.s<S.end).map(w=>'<i class="stl-win" style="left:'+pct(w.s)+'%;width:'+(pct(w.e)-pct(w.s))+'%"></i>').join('');
     const cls=r.b.wait?'wait':r.ok===false?'bad':r.ok?'ok':'na';
     return'<div class="stl-row"><span class="stl-n" title="'+attr(r.b.name)+'">'+esc(r.b.name||'—')+'</span><span class="stl-tr">'+win+
-      '<i class="stl-bar '+cls+'" style="left:'+pct(r.s)+'%;width:'+Math.max(.8,pct(r.e)-pct(r.s))+'%"></i></span></div>';}).join('');
+      '<i class="stl-bar '+cls+'" style="left:'+pct(r.s)+'%;width:'+Math.max(.8,pct(r.e)-pct(r.s))+'%"></i></span></div>';}).join('')+supTimelineRows(t,S,pct);
   const bad=S.rows.filter(r=>r.ok===false).length;
   return'<div class="stl"><div class="stl-axis"><span class="stl-n"></span><span class="stl-tr">'+ticks+'</span></div>'+rows+'</div>'+
-    '<div class="stl-leg"><span><i class="stl-win"></i>okno sezonowe</span><span><i class="stl-bar ok"></i>w oknie</span><span><i class="stl-bar bad"></i>poza oknem</span><span><i class="stl-bar wait"></i>przeczekanie</span></div>'+
+    '<div class="stl-leg"><span><i class="stl-win"></i>okno sezonowe</span><span><i class="stl-bar ok"></i>w oknie</span><span><i class="stl-bar bad"></i>poza oknem</span><span><i class="stl-bar wait"></i>przeczekanie</span>'+(supList(t).length?'<span><i class="stl-mk by"></i>kup zapas</span><span><i class="stl-mk end"></i>koniec zapasu</span>':'')+'</div>'+
     '<div class="zr-sum">'+dFmt(S.start)+' → '+dFmt(S.end)+' · '+plural(D,'dzień','dni','dni')+(bad?' · <b class="warn">'+plural(bad,'klocek','klocki','klocków')+' poza oknem</b>':' · wszystkie klocki w swoich oknach ✓')+'</div>';
 }
 function buildRtwZarys(){
@@ -3370,6 +3373,7 @@ function buildRtwZarys(){
       '<div class="fit-btns">'+(fitPending.changes.length?'<button class="tb-btn pri" data-z="fitapply">Zastosuj</button>':'')+'<button class="tb-btn" data-z="fitcancel">'+(fitPending.changes.length?'Anuluj':'OK')+'</button></div></div>';
   }
   h+=rtwTimeline(t,o);
+  h+=supZarysBox(t);
   if(lk)h+='<div class="blk-lock"><b>🔒 Zarys zatwierdzony</b><span>Zmiana klocków jest wyłączona.</span><button class="tb-btn" data-z="unlock">Odblokuj</button></div>';
   h+='<div class="zr-home"><label>Skąd wyruszasz</label><input data-zf="home"'+dis+' value="'+attr(o.home||'')+'" placeholder="np. Kraków"></div>';
   const modeOpt=m=>Object.keys(MODES).map(k=>'<option value="'+k+'"'+(m===k?' selected':'')+'>'+MODES[k].i+' '+MODES[k].l+'</option>').join('');
@@ -3393,7 +3397,8 @@ function buildRtwZarys(){
             (lk?'':' <button class="geo-btn" data-z="geo" data-i="'+i+'">🔎 Znajdź</button><button class="geo-btn" data-z="bpick" data-i="'+i+'">🗺 Na mapie</button>')+'</div>'+
           '<div class="geo-msg" id="zgeo-'+i+'"></div>'+
           (lk?'':'<div class="zr-opt"><button class="mini-tog'+(b.opt?' on':'')+'" data-z="opt" data-i="'+i+'">'+(b.opt?'✓ opcjonalny':'opcjonalny?')+'</button>'+
-            (b.opt?'<button class="mini-tog'+(b.off?' on':'')+'" data-z="off" data-i="'+i+'">'+(b.off?'włącz z powrotem':'wyłącz z trasy')+'</button>':'')+'</div>')+
+            (b.opt?'<button class="mini-tog'+(b.off?' on':'')+'" data-z="off" data-i="'+i+'">'+(b.off?'włącz z powrotem':'wyłącz z trasy')+'</button>':'')+
+            (supList(t).length?'<button class="mini-tog'+(blkNoBuy(b)?' on':'')+'" data-z="nobuy" data-i="'+i+'" title="czy da się tu kupić zapas">'+(blkNoBuy(b)?'🚫 bez apteki':'💊 apteka po drodze')+'</button>':'')+'</div>')+
         '</div>';
     }else h+='<div class="zr-wait-note">'+esc(b.note||'Czekasz na okno sezonowe następnego klocka.')+' Możesz tu wpisać pracę na łodzi, wolontariat albo dłuższy pobyt.</div>';
     h+='</div>';
@@ -3418,6 +3423,171 @@ async function rtwGeo(i){
     msg.innerHTML='Które to miejsce?'+xs.map(x=>'<button class="geo-pick" data-z="gpick" data-i="'+i+'" data-lat="'+(+x.latitude.toFixed(4))+'" data-lng="'+(+x.longitude.toFixed(4))+'">'+esc([x.name,x.admin1,x.country].filter(Boolean).join(', '))+'</button>').join('');
   }catch(e){msg.textContent='Brak sieci — użyj „Na mapie”.';}
 }
+
+
+/* ============ ZAPASY (leki, soczewki, filtry…) — dla wypraw dookoła świata ============
+   t.sup=[{id,name,packs,days,from,buf,refill,adds:[{d,packs}]}]
+   Dane są tylko w tej wyprawie na telefonie i w backupie — nigdy w plikach pakietów. */
+function supList(t){if(!Array.isArray(t.sup))t.sup=[];return t.sup;}
+function isoOf(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dShort(d){return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear();}
+/* klocek bez apteki: ustawiony ręcznie albo zgadnięty — przeprawa morska („→” jachtem/statkiem), Antarktyda, Wyspa Wielkanocna */
+function blkNoBuyAuto(b){
+  const n=String(b.name||'');
+  return ((b.mode==='yacht'||b.mode==='ship')&&/→/.test(n))||/antarkt|wielkanoc|easter|rapa nui/i.test(n)||(b.lat!=null&&b.lat!==''&&+b.lat<-60);
+}
+function blkNoBuy(b){if(b.wait)return false;return b.nobuy!=null?!!b.nobuy:blkNoBuyAuto(b);}
+/* oś do liczenia zapasów: w podróży — etapy z Planu (to, co naprawdę się dzieje), w Zarysie — klocki */
+function supGeoStages(t){
+  const live=(t.stages||[]).filter(s=>s.status!=='skip');if(!live.length)return null;
+  const end=computeOffsets(t),st=dAt(t.start);
+  const segs=live.filter(s=>num(s.nights)>0).map(s=>{const a=dPlus(st,s._off);
+    return{name:stageTitle(s),s:a,e:dPlus(a,num(s.nights)),nb:s.nobuy!=null?!!s.nobuy:blkNoBuyAuto({name:stageTitle(s),mode:s.mode,lat:(stageCoord(s)||[])[0]})};});
+  return segs.length?{segs,start:st,end:dPlus(st,end)}:null;
+}
+function supGeo(t,live){
+  if(!t||t.dateless||!isRtw(t))return null;
+  if(live){const g=supGeoStages(t);if(g)return g;}
+  const o=outline(t);if(!o.blocks.length)return null;
+  const S=rtwSchedule(t,o.blocks);if(!S)return null;
+  const wn=b=>{const n=String(b.name||'').replace(/^Przeczekanie · /,'');return'przeczekanie: '+(n.includes('→')?n.split('→').pop().trim():n);};
+  return{segs:S.rows.filter(r=>!r.off).map(r=>({name:r.b.wait?wn(r.b):(r.b.name||'—'),s:r.s,e:r.e,nb:blkNoBuy(r.b)})),start:S.start,end:S.end};
+}
+/* gdzie kupić, żeby zdążyć przed datą d: gdy d wypada w klocku bez apteki — ostatni klocek z apteką przed nim */
+function supWhere(G,d){
+  if(!G)return{by:d};
+  if(d<G.start)return{by:d,pre:true};
+  if(d>=G.end)return{by:d,post:true};
+  let k=G.segs.findIndex(x=>d>=x.s&&d<x.e);if(k<0)return{by:d};
+  let shifted=false;
+  while(k>=0&&G.segs[k].nb){k--;shifted=true;}
+  if(k<0)return{by:G.start,pre:true,shifted:true,skip:G.segs.slice(0,G.segs.findIndex(x=>!x.nb)).map(x=>x.name)};
+  const seg=G.segs[k],skip=[];
+  for(let j=k+1;j<G.segs.length&&G.segs[j].nb;j++)skip.push(G.segs[j].name);
+  let by=d;
+  if(shifted){by=dPlus(seg.e,-1);if(by<seg.s)by=seg.s;}
+  return{by,seg,skip,shifted};
+}
+function supCalc(t,x){
+  const days=Math.max(1,num(x.days)||30),from=dAt(/^\d{4}-\d{2}-\d{2}$/.test(x.from||'')?x.from:t.start);
+  const packs=Math.max(0,num(x.packs))+(x.adds||[]).reduce((a,y)=>a+Math.max(0,num(y.packs)),0);
+  const end=dPlus(from,packs*days);
+  const buf=x.buf===''||x.buf==null?30:Math.max(0,num(x.buf));
+  const refill=Math.max(1,num(x.refill)||Math.floor(120/days)||1);
+  return{days,from,end,buf,by:dPlus(end,-buf),refill};
+}
+/* kolejne dokładki aż do końca wyprawy (zakładając, że każda to „refill” opakowań) */
+function supPlan(t,x,G){
+  const c=supCalc(t,x),out=[];let end=c.end;
+  for(let k=0;k<24;k++){
+    if(G&&end>=G.end)break;
+    const by=dPlus(end,-c.buf);
+    out.push({end,by,w:supWhere(G,by)});
+    if(!G)break;
+    end=dPlus(end,c.refill*c.days);
+  }
+  return{c,out};
+}
+function supWhereTxt(w){
+  if(w.pre)return'przed wyjazdem'+(w.skip&&w.skip.length?' — na starcie: '+w.skip.map(esc).join(', '):'');
+  if(w.post)return'po powrocie';
+  if(!w.seg)return'';
+  return esc(w.seg.name)+(w.skip&&w.skip.length?' <span class="sup-skip">potem bez apteki: '+w.skip.map(esc).join(' · ')+'</span>':'');
+}
+/* --- karta w Zarysie RTW --- */
+function supZarysBox(t){
+  const L=supList(t),G=supGeo(t);
+  let h='<div class="sup-box"><div class="sup-h"><b>💊 Zapasy</b><button class="tb-btn" data-z="sup">'+(L.length?'Edytuj':'＋ Dodaj')+'</button></div>';
+  if(!L.length){
+    h+='<div class="sup-empty">Leki, soczewki, filtry — wszystko, co się kończy. Wpisz, ile zabierasz, a apka pokaże na osi, gdzie na trasie uzupełnić zapas: zawsze przed rejsem albo odludziem, nie w ich trakcie.</div></div>';
+    return h;
+  }
+  L.forEach(x=>{
+    const P=supPlan(t,x,G);
+    h+='<div class="sup-it-z"><div class="sup-n">'+esc(x.name||'Zapas')+' <small>start: '+plural(Math.max(0,num(x.packs)),'opakowanie','opakowania','opakowań')+' · starcza do '+dShort(P.c.end)+'</small></div>';
+    if(!P.out.length)h+='<div class="sup-ok">✓ Wystarczy do końca wyprawy.</div>';
+    else h+='<ol class="sup-pts">'+P.out.map((p,i)=>'<li><b>kup do '+dShort(p.w.by)+'</b> · '+supWhereTxt(p.w)+
+      (p.w.shifted?' <span class="sup-shift">przesunięte przed odcinek bez apteki</span>':'')+'<small>'+(i?'po dokładce '+P.c.refill+' op. ':'')+'zapas kończy się '+dShort(p.end)+'</small></li>').join('')+'</ol>';
+    h+='</div>';
+  });
+  h+='<div class="sup-note">Kolejne dokładki liczone tak, jak ustawisz w „Edytuj” (domyślnie 120 dni). Klocki bez apteki apka zgaduje (przeprawy oceaniczne, Antarktyda, Wyspa Wielkanocna) — popraw przyciskiem w klocku.</div></div>';
+  return h;
+}
+/* --- znaczniki na osi czasu Zarysu --- */
+function supTimelineRows(t,S,pct){
+  const L=supList(t);if(!L.length||!S)return'';
+  const G=supGeo(t);
+  return L.map(x=>{
+    const P=supPlan(t,x,G);
+    const mk=P.out.map(p=>'<i class="stl-mk by" style="left:'+pct(p.w.by)+'%" title="kup do '+attr(dShort(p.w.by))+'"></i><i class="stl-mk end" style="left:'+pct(p.end)+'%" title="koniec zapasu '+attr(dShort(p.end))+'"></i>').join('');
+    return'<div class="stl-row sup"><span class="stl-n" title="'+attr(x.name||'Zapas')+'">💊 '+esc(x.name||'Zapas')+'</span><span class="stl-tr"><i class="stl-sup"></i>'+mk+'</span></div>';
+  }).join('');
+}
+/* --- przypomnienie na „Dziś” (45 dni przed terminem zakupu) --- */
+function supTodayCard(){
+  const t=T();if(!isRtw(t))return'';
+  const L=supList(t);if(!L.length)return'';
+  const G=supGeo(t,true),now=dAt(isoToday());
+  const rows=L.map(x=>{
+    const c=supCalc(t,x);
+    if(now<dPlus(c.from,-45))return'';
+    const left=dDiff(now,c.end),w=supWhere(G,c.by),toBuy=dDiff(now,w.by);
+    if(left>0&&toBuy>45)return'';
+    const red=left<=0||toBuy<0;
+    return'<div class="sup-row'+(red?' red':'')+'"><b>'+esc(x.name||'Zapas')+'</b>: '+
+      (left<=0?'zapas skończył się '+dShort(c.end):'zostało na <b>'+plural(left,'dzień','dni','dni')+'</b> (do '+dShort(c.end)+')')+
+      (left>0?'<br>'+(toBuy<0?'Termin zakupu minął ('+dShort(w.by)+')':'Kup najpóźniej '+(toBuy===0?'<b>dziś</b>':'za <b>'+plural(toBuy,'dzień','dni','dni')+'</b> ('+dShort(w.by)+')'))+
+        (w.seg?' · '+supWhereTxt(w):w.pre?' · przed wyjazdem':''):'')+'</div>';
+  }).join('');
+  if(!rows)return'';
+  return'<div class="remind sup-rem">💊 <div><b>Zapasy</b>'+rows+'</div><button class="tb-btn" data-open="sup">Dokupiłem</button></div>';
+}
+/* --- arkusz edycji --- */
+function supSheetHTML(){
+  const t=T(),L=supList(t),G=supGeo(t,effMode()==='travel');
+  let h='<h3>Zapasy <button data-close>✕</button></h3>'+
+    '<div class="sup-intro">Apka liczy, kiedy zapas się skończy, i pokazuje na osi Zarysu, gdzie go uzupełnić — przed rejsem, nie w trakcie. Dane zostają tylko w tym telefonie i w backupie.</div>';
+  L.forEach((x,k)=>{
+    const c=supCalc(t,x),w=supWhere(G,c.by);
+    h+='<div class="sup-it" data-k="'+k+'">'+
+      '<input class="note-in sup-name" data-sf="name" data-k="'+k+'" value="'+attr(x.name||'')+'" placeholder="nazwa, np. Lek A">'+
+      '<div class="sup-grid">'+
+        '<label>opakowań na start<input type="number" min="0" inputmode="numeric" data-sf="packs" data-k="'+k+'" value="'+attr(x.packs!=null?x.packs:'')+'"></label>'+
+        '<label>dni na opakowanie<input type="number" min="1" inputmode="numeric" data-sf="days" data-k="'+k+'" value="'+attr(x.days!=null?x.days:30)+'"></label>'+
+        '<label>liczę od<input type="date" data-sf="from" data-k="'+k+'" value="'+attr(x.from||t.start||'')+'"></label>'+
+        '<label>margines (dni)<input type="number" min="0" inputmode="numeric" data-sf="buf" data-k="'+k+'" value="'+attr(x.buf!=null&&x.buf!==''?x.buf:30)+'"></label>'+
+        '<label>dokładka (opak.)<input type="number" min="1" inputmode="numeric" data-sf="refill" data-k="'+k+'" value="'+attr(x.refill||'')+'" placeholder="'+c.refill+'"></label>'+
+      '</div>'+
+      '<div class="sup-st">Starcza do <b>'+dShort(c.end)+'</b> · kup do <b>'+dShort(w.by)+'</b>'+(w.seg||w.pre?' · '+supWhereTxt(w):'')+'</div>'+
+      ((x.adds||[]).length?'<div class="sup-adds">'+x.adds.map((a,j)=>'<span class="sup-add-chip">'+esc(a.d?dShort(dAt(a.d)):'?')+' · +'+num(a.packs)+' op. <button data-sup="adel" data-k="'+k+'" data-j="'+j+'" aria-label="usuń dokładkę">✕</button></span>').join('')+'</div>':'')+
+      '<div class="sup-addrow"><input type="date" id="sup-ad-'+k+'" value="'+isoToday()+'"><input type="number" min="1" inputmode="numeric" id="sup-an-'+k+'" value="'+c.refill+'"><span>op.</span>'+
+        '<button class="tb-btn pri" data-sup="add" data-k="'+k+'">＋ Dokupiłem</button></div>'+
+      '<button class="sup-del" data-sup="del" data-k="'+k+'">Usuń „'+esc(x.name||'Zapas')+'”</button>'+
+    '</div>';
+  });
+  h+='<button class="go" data-sup="new">＋ '+(L.length?'Kolejny zapas':'Dodaj zapas')+'</button>'+
+    '<div class="hint">Domyślna dokładka to 120 dni — tyle w Polsce wykupisz naraz z e-recepty rocznej. Do zakupu za granicą przyda się nazwa substancji czynnej i dawka.</div>';
+  return h;
+}
+function supRefresh(){saveTrips();if(sheet.classList.contains('on')&&sheet.dataset.kind==='sup'){const st=sheet.scrollTop;sheet.innerHTML=supSheetHTML();sheet.scrollTop=st;}refresh();}
+sheet.addEventListener('click',e=>{
+  const b=e.target.closest('[data-sup]');if(!b)return;
+  const t=T(),L=supList(t),k=+b.dataset.k,x=L[k],a=b.dataset.sup;
+  if(a==='new'){L.push({id:uid(),name:'',packs:6,days:30,from:t.start||isoToday(),buf:30,refill:'',adds:[]});supRefresh();
+    setTimeout(()=>{const n=$$('#sheet .sup-name');if(n.length)n[n.length-1].focus();},50);return;}
+  if(!x)return;
+  if(a==='add'){const d=($('#sup-ad-'+k)||{}).value||isoToday(),n=num(($('#sup-an-'+k)||{}).value);
+    if(!n){toast('Wpisz liczbę opakowań');return;}
+    x.adds=x.adds||[];x.adds.push({d,packs:n});x.adds.sort((p,q)=>p.d<q.d?-1:1);supRefresh();toast('Dodano '+n+' op. — starcza do '+dShort(supCalc(t,x).end));return;}
+  if(a==='adel'){(x.adds||[]).splice(+b.dataset.j,1);supRefresh();return;}
+  if(a==='del'){if(!confirm('Usunąć „'+(x.name||'Zapas')+'”?'))return;L.splice(k,1);supRefresh();return;}
+});
+sheet.addEventListener('change',e=>{
+  const f=e.target.closest('[data-sf]');if(!f)return;
+  const t=T(),x=supList(t)[+f.dataset.k];if(!x)return;
+  const v=f.value;x[f.dataset.sf]=f.dataset.sf==='name'||f.dataset.sf==='from'?v.trim():(v===''?'':num(v));
+  supRefresh();
+});
 
 /* ---------- ZARYS: wstępne planowanie uniwersalnej wyprawy ---------- */
 const LVL={high:['wysoki sezon','#b4532a'],low:['niski sezon','#5a7d9a'],shoulder:['przejściowy','#7a8f4a']};
@@ -3536,6 +3706,7 @@ $('#blocks').addEventListener('click',e=>{
   if(z==='season'){const x=((P()||{}).seasons||[])[i];if(!x||!x.start)return;
     if(!t.dateless&&t.start!==x.start&&!dateGuard(t))return;
     t.start=x.start;t.dateless=false;saveTrips();buildZarys();toast('Start ustawiony na '+dateFor(x.start,0).full);return;}
+  if(z==='sup'){openSheet('sup');return;}
   if(z==='unlock'){o.locked=false;saveTrips();buildZarys();return;}
   if(z==='lock'){o.locked=true;saveTrips();buildZarys();toast('Zarys zatwierdzony 🔒');return;}
   if(o.locked&&z!=='build')return;
@@ -3548,6 +3719,7 @@ $('#blocks').addEventListener('click',e=>{
   fitPending=null;
   if(z==='opt'){const bb=o.blocks[i];bb.opt=!bb.opt;if(!bb.opt)bb.off=false;}
   else if(z==='off'){o.blocks[i].off=!o.blocks[i].off;}
+  else if(z==='nobuy'){const bb=o.blocks[i];const v=!blkNoBuy(bb);bb.nobuy=v===blkNoBuyAuto(bb)?undefined:v;}
   else if(z==='addblk'){o.blocks.push({name:'',nights:2,mode:'plane',price:'',cur:toCode(t.cur),note:''});}
   else if(z==='addreg'){const r=((P()||{}).regions||[]).find(x=>x.name===b.dataset.n);if(!r)return;
     const a=r.arrive||{};o.blocks.push({name:r.name,nights:num(r.nights)||2,mode:MODES[a.mode]?a.mode:'plane',price:a.price||'',cur:toCode(a.cur||t.cur),note:r.note||''});}
