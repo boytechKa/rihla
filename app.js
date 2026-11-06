@@ -320,7 +320,8 @@ function freshTrip(packId){
     checks:P.checks.map(c=>Object.assign({done:false},c)),
     budget:JSON.parse(JSON.stringify(P.budget||[])),
     picked:JSON.parse(JSON.stringify(P.picked||{})),packRev:P.rev||1,dateless:!!P.dateless,ferry:{},plan:null,booking:{},
-    outline:P.outline?JSON.parse(JSON.stringify(P.outline)):undefined};
+    outline:P.outline?JSON.parse(JSON.stringify(P.outline)):undefined,
+    sup:Array.isArray(P.sup)?JSON.parse(JSON.stringify(P.sup)):undefined,extrasRev:P.rev||1};
 }
 /* podmiana etapów na nowszą rewizję pakietu — zachowuje Twoje notatki przy etapach o tym samym armIdx */
 function applyPackRev(t){
@@ -422,6 +423,12 @@ function patchTrip(t){
     });
   }
   const Pk=t.pack&&PACKS[t.pack];
+  /* dodatki z nowej wersji pakietu, niezależnie od etapów: brakujące pozycje listy i zapasy (tylko gdy pusto) */
+  if(Pk&&Pk.rev&&(t.extrasRev||t.packRev||1)<Pk.rev){
+    if(Pk.mergeChecks&&Array.isArray(Pk.checks)){t.checks=t.checks||[];Pk.checks.forEach(c=>{if(!t.checks.some(x=>x.t===c.t))t.checks.push(Object.assign({done:false},c));});}
+    if(Array.isArray(Pk.sup)&&!(Array.isArray(t.sup)&&t.sup.length))t.sup=JSON.parse(JSON.stringify(Pk.sup));
+    t.extrasRev=Pk.rev;
+  }
   if(Pk&&Pk.rev&&(t.packRev||1)<Pk.rev&&!t.pendingRev){
     if(!t.stages.some(s=>s.src==='user')){applyPackRev(t);REV_NOTE='Plan „'+t.name+'” zaktualizowany do Twojej prawdziwej trasy';}
     else t.pendingRev=true;
@@ -1771,8 +1778,12 @@ document.addEventListener('change',e=>{
       packsVer++;closeSheet();refresh();toast('Wczytano przewodnik „'+p.name+'”');return;
     }
     if(had){
-      applyPackRev(had);saveTrips();switchTrip(had.id);closeSheet();
-      toast('Zaktualizowano wyprawę „'+p.name+'”');
+      // nowa wersja: dodatki (lista, zapasy) zawsze; etapy podmieniam tylko, gdy nie masz własnych — inaczej decydujesz w Planie
+      patchTrip(had);
+      if(!had.pendingRev&&!had.stages.some(s=>s.src==='user'))applyPackRev(had);
+      saveTrips();switchTrip(had.id);closeSheet();
+      if(had.pendingRev){goTab('plan');toast('Nowa wersja „'+p.name+'” — Twoje etapy zostały, wybierz w Planie');}
+      else toast('Zaktualizowano wyprawę „'+p.name+'”');
     }else{
       const t=patchTrip(freshTrip(p.id));trips.push(t);saveTrips();switchTrip(t.id);closeSheet();
       goTab('plan');toast('Wczytano pakiet „'+p.name+'”');
@@ -2518,7 +2529,11 @@ function stageStayTxt(t,s){const i=stageStayInfo(t,s);return i.txt||s.stay||'';}
 function stageMoneyRows(t,s){
   if(t.dateless||!t.start||s._off==null)return[];
   const iso=dateFor(t.start,s._off).iso;
-  return calcRows(t).filter(r=>!r.off&&r.when===iso&&(r.cat==='lot'||r.cat==='transport'));
+  const all=calcRows(t).filter(r=>!r.off&&r.when===iso&&(r.cat==='lot'||r.cat==='transport'));
+  /* dwa przejazdy jednego dnia (np. prom rano, lot wieczorem): każdy etap bierze tylko swoje pozycje */
+  if(s.mode==='plane'){const a=all.filter(r=>r.cat==='lot');return a.length?a:all;}
+  if(s.mode==='ferry'||s.mode==='yacht'||s.mode==='ship'){const a=all.filter(r=>/prom|ferry|statek|rejs|łódź|łodz|jacht/i.test(r.desc||''));return a.length?a:all.filter(r=>r.cat==='transport');}
+  return all.filter(r=>r.cat==='transport').length?all.filter(r=>r.cat==='transport'):all;
 }
 /* ---------- noclegi noc po nocy ---------- */
 function bedsMap(t){if(!t.beds||typeof t.beds!=='object')t.beds={};return t.beds;}
